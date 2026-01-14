@@ -3,40 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <title>Vocarchive</title>
-</head>
-<body>
 
-<h1>Vocarchive</h1>
-
-<!-- TARJETA -->
 <style>
+body{
+  font-family:Arial;
+  background:#f4f4f4;
+  padding:20px;
+}
+h1{text-align:center;}
+
+.search{
+  max-width:400px;
+  margin:0 auto 20px auto;
+  display:flex;
+}
+.search input{
+  flex:1;
+  padding:10px;
+  font-size:16px;
+}
+
+.filters{
+  text-align:center;
+  margin-bottom:20px;
+}
+.filter-tag{
+  display:inline-block;
+  padding:6px 12px;
+  background:#ddd;
+  border-radius:14px;
+  font-size:13px;
+  margin:4px;
+  cursor:pointer;
+}
+.filter-tag.active{
+  background:black;
+  color:white;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+
 .card{
-  max-width:320px;
-  background:#ffffff;
+  background:#fff;
   border-radius:18px;
   padding:15px;
   box-shadow:0 6px 20px rgba(0,0,0,.12);
-  font-family:Arial;
 }
 .card img{
   width:100%;
   border-radius:14px;
 }
 .card h2{
-  margin:10px 0 5px 0;
-  font-size:20px;
+  margin:10px 0 5px;
 }
 .tag{
   display:inline-block;
   padding:4px 10px;
-  background:#f0f0f0;
+  background:#eee;
   border-radius:12px;
   font-size:12px;
   margin:2px;
+  cursor:pointer;
 }
-.audio-box{
-  margin-top:10px;
-}
+.audio-box{margin-top:10px;}
 .button{
   display:inline-block;
   margin-top:10px;
@@ -47,26 +80,107 @@
   text-decoration:none;
 }
 </style>
+</head>
 
-<div class="card">
-  <img src="https://via.placeholder.com/300x300">
-  <h2>Nombre del voicebank</h2>
-  <div>
-    <span class="tag">Motor</span>
-    <span class="tag">Idioma</span>
-    <span class="tag">Género</span>
-    <span class="tag">Estatus</span>
-    <span class="tag">Disponibilidad</span>
-  </div>
+<body>
 
-  <div class="audio-box">
-    <audio controls>
-      <source src="AUDIO_URL" type="audio/mpeg">
-    </audio>
-  </div>
+<h1>Vocarchive</h1>
 
-  <a class="button" href="#" target="_blank">Página oficial</a>
+<!-- BUSCADOR -->
+<div class="search">
+  <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
+
+<!-- FILTROS ACTIVOS -->
+<div class="filters" id="filters"></div>
+
+<!-- TARJETAS -->
+<div class="grid" id="cards"></div>
+
+<script>
+const voicebanks = [
+  {
+    name:"Ejemplo Voicebank",
+    engine:"UTAU",
+    language:"Español",
+    gender:"Femenino",
+    status:"Activo",
+    availability:"Gratis",
+    image:"https://via.placeholder.com/300",
+    audio:"AUDIO_URL",
+    url:"#"
+  },
+  {
+    name:"Otro Bank",
+    engine:"SynthV",
+    language:"Japonés",
+    gender:"Masculino",
+    status:"Inactivo",
+    availability:"Pago",
+    image:"https://via.placeholder.com/300",
+    audio:"AUDIO_URL",
+    url:"#"
+  }
+];
+
+let activeFilters = [];
+
+function renderFilters(){
+  const tags = new Set();
+  voicebanks.forEach(v=>{
+    Object.values(v).forEach(val=>{
+      if(typeof val === "string" && val !== v.name && !val.includes("http")){
+        tags.add(val);
+      }
+    });
+  });
+
+  document.getElementById("filters").innerHTML =
+    [...tags].map(t=>`<span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t}')">${t}</span>`).join("");
+}
+
+function toggleFilter(tag){
+  activeFilters.includes(tag)
+    ? activeFilters = activeFilters.filter(t=>t!==tag)
+    : activeFilters.push(tag);
+  update();
+}
+
+function update(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = voicebanks.filter(v=>{
+    const matchSearch = v.name.toLowerCase().includes(search);
+    const matchTags = activeFilters.every(t=>Object.values(v).includes(t));
+    return matchSearch && matchTags;
+  });
+  renderCards(filtered);
+  renderFilters();
+}
+
+function renderCards(list){
+  document.getElementById("cards").innerHTML = list.map(v=>`
+    <div class="card">
+      <img src="${v.image}">
+      <h2>${v.name}</h2>
+      <div>
+        <span class="tag" onclick="toggleFilter('${v.engine}')">${v.engine}</span>
+        <span class="tag" onclick="toggleFilter('${v.language}')">${v.language}</span>
+        <span class="tag" onclick="toggleFilter('${v.gender}')">${v.gender}</span>
+        <span class="tag" onclick="toggleFilter('${v.status}')">${v.status}</span>
+        <span class="tag" onclick="toggleFilter('${v.availability}')">${v.availability}</span>
+      </div>
+      <div class="audio-box">
+        <audio controls src="${v.audio}"></audio>
+      </div>
+      <a class="button" href="${v.url}" target="_blank">Página oficial</a>
+    </div>
+  `).join("");
+}
+
+document.getElementById("searchInput").addEventListener("input", update);
+
+update();
+</script>
 
 </body>
 </html>

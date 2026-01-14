@@ -15,10 +15,9 @@ h1{text-align:center;}
 .search{
   max-width:400px;
   margin:0 auto 20px auto;
-  display:flex;
 }
 .search input{
-  flex:1;
+  width:100%;
   padding:10px;
   font-size:16px;
 }
@@ -91,54 +90,57 @@ h1{text-align:center;}
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
-<!-- FILTROS ACTIVOS -->
+<!-- TAGS DE FILTRO -->
 <div class="filters" id="filters"></div>
 
 <!-- TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-const voicebanks = [
-  {
-    name:"Ejemplo Voicebank",
-    engine:"UTAU",
-    language:"Español",
-    gender:"Femenino",
-    status:"Activo",
-    availability:"Gratis",
-    image:"https://via.placeholder.com/300",
-    audio:"AUDIO_URL",
-    url:"#"
-  },
-  {
-    name:"Otro Bank",
-    engine:"SynthV",
-    language:"Japonés",
-    gender:"Masculino",
-    status:"Inactivo",
-    availability:"Pago",
-    image:"https://via.placeholder.com/300",
-    audio:"AUDIO_URL",
-    url:"#"
-  }
-];
+// 🔴 PEGA AQUÍ TU URL CSV PUBLICADA
+const SHEET_URL = "PEGA_AQUI_TU_URL_CSV";
 
+let voicebanks = [];
 let activeFilters = [];
 
+// Cargar datos desde Google Sheets
+fetch(SHEET_URL)
+  .then(r => r.text())
+  .then(csv => {
+    const rows = csv.split("\n").map(r => r.split(","));
+    rows.shift(); // quitar encabezados
+
+    voicebanks = rows.map(r => ({
+      name: r[1],
+      engine: r[2],
+      language: r[3],
+      gender: r[4],
+      status: r[5],
+      availability: r[6],
+      image: r[7],
+      audio: r[8],
+      url: r[9]
+    })).filter(v => v.name);
+
+    update();
+  });
+
+// Renderizar filtros únicos
 function renderFilters(){
   const tags = new Set();
   voicebanks.forEach(v=>{
-    Object.values(v).forEach(val=>{
-      if(typeof val === "string" && val !== v.name && !val.includes("http")){
-        tags.add(val);
-      }
-    });
+    [v.engine, v.language, v.gender, v.status, v.availability]
+      .forEach(t => tags.add(t));
   });
 
   document.getElementById("filters").innerHTML =
-    [...tags].map(t=>`<span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t}')">${t}</span>`).join("");
+    [...tags].map(t =>
+      `<span class="filter-tag ${activeFilters.includes(t)?"active":""}"
+       onclick="toggleFilter('${t}')">${t}</span>`
+    ).join("");
 }
 
+// Activar / desactivar filtros
 function toggleFilter(tag){
   activeFilters.includes(tag)
     ? activeFilters = activeFilters.filter(t=>t!==tag)
@@ -146,17 +148,21 @@ function toggleFilter(tag){
   update();
 }
 
+// Actualizar resultados
 function update(){
   const search = document.getElementById("searchInput").value.toLowerCase();
   const filtered = voicebanks.filter(v=>{
     const matchSearch = v.name.toLowerCase().includes(search);
-    const matchTags = activeFilters.every(t=>Object.values(v).includes(t));
+    const matchTags = activeFilters.every(t =>
+      [v.engine, v.language, v.gender, v.status, v.availability].includes(t)
+    );
     return matchSearch && matchTags;
   });
   renderCards(filtered);
   renderFilters();
 }
 
+// Renderizar tarjetas
 function renderCards(list){
   document.getElementById("cards").innerHTML = list.map(v=>`
     <div class="card">
@@ -177,9 +183,8 @@ function renderCards(list){
   `).join("");
 }
 
-document.getElementById("searchInput").addEventListener("input", update);
-
-update();
+document.getElementById("searchInput")
+  .addEventListener("input", update);
 </script>
 
 </body>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Vocarchive</title>
+</head>
+<body>
+
+<h1>Vocarchive</h1>
+
+<!-- TARJETA -->
+<style>
+.card{
+  max-width:320px;
+  background:#ffffff;
+  border-radius:18px;
+  padding:15px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+  font-family:Arial;
+}
+.card img{
+  width:100%;
+  border-radius:14px;
+}
+.card h2{
+  margin:10px 0 5px 0;
+  font-size:20px;
+}
+.tag{
+  display:inline-block;
+  padding:4px 10px;
+  background:#f0f0f0;
+  border-radius:12px;
+  font-size:12px;
+  margin:2px;
+}
+.audio-box{
+  margin-top:10px;
+}
+.button{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 12px;
+  border-radius:10px;
+  background:black;
+  color:white;
+  text-decoration:none;
+}
+</style>
+
+<div class="card">
+  <img src="https://via.placeholder.com/300x300">
+  <h2>Nombre del voicebank</h2>
+  <div>
+    <span class="tag">Motor</span>
+    <span class="tag">Idioma</span>
+    <span class="tag">Género</span>
+    <span class="tag">Estatus</span>
+    <span class="tag">Disponibilidad</span>
+  </div>
+
+  <div class="audio-box">
+    <audio controls>
+      <source src="AUDIO_URL" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <a class="button" href="#" target="_blank">Página oficial</a>
+</div>
+
+</body>
+</html>

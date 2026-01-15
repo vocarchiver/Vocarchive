@@ -144,7 +144,7 @@ fetch(SHEET_URL)
       status: r[7],
       availability: r[8],
       image: driveImage(r[2]),
-      audio:driveImage(r[3]),
+      audio:driveAudio(r[3]),
       url: r[9]
     })).filter(v => v.name);
 

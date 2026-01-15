@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Vocarchive - Fixed Cards</title>
+<title>Vocarchive - Vocaloid Style Cards</title>
 <style>
 body { font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:20px; color:#333; }
 h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
-/* GRID con tarjetas centradas */
+/* GRID */
 .grid {
   display:flex;
   flex-wrap:wrap;
@@ -17,27 +17,39 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
 /* TARJETA */
 .card {
+  width:411px;
   background:#fff;
-  width:250px;              /* ancho fijo */
   border-radius:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.1);
   overflow:hidden;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+  transition:transform 0.2s, box-shadow 0.2s;
   display:flex;
   flex-direction:column;
-  transition:transform 0.2s, box-shadow 0.2s;
 }
 .card:hover { transform: translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.15); }
 
-/* IMAGEN */
-.card-image {
+/* SECCIÓN SUPERIOR - IMAGEN */
+.card-image-section {
+  width:411px;
+  height:290px;
+  background:#f5f5f5;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition: all 0.3s ease;
   position:relative;
-  width:250px;
-  height:250px;             /* alto fijo */
 }
-.card-image img {
+.card:hover .card-image-section {
+  height:260px; /* se reduce el fondo al pasar el mouse */
+}
+
+/* IMAGEN */
+.card-image-section img {
   width:250px;
   height:250px;
   object-fit:cover;
+  z-index:1;
+  border-radius:8px;
 }
 
 /* Badge NEW */
@@ -51,17 +63,18 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
   padding:3px 8px;
   border-radius:12px;
   font-weight:bold;
+  z-index:2;
 }
 
-/* CONTENIDO */
+/* SECCIÓN INFERIOR - CONTENIDO */
 .card-content {
-  padding:12px;
+  padding:16px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
 }
-.card-content h2 { font-size:1.1rem; margin-bottom:5px; }
-.card-content p { font-size:0.9rem; margin-bottom:8px; color:#555; }
+.card-content h2 { font-size:1.2rem; margin-bottom:5px; }
+.card-content p { font-size:0.95rem; margin-bottom:10px; color:#555; }
 
 /* TAGS */
 .tags {
@@ -80,7 +93,7 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 /* BOTÓN */
 .button {
   display:inline-block;
-  padding:8px 14px;
+  padding:10px 16px;
   border-radius:12px;
   background:#222;
   color:white;
@@ -107,7 +120,6 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
 <h1>Vocarchive</h1>
 
-<!-- BUSCADOR -->
 <div class="search">
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
@@ -117,7 +129,7 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 <script>
 // URL de tu CSV publicado desde Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
-const NEW_DAYS = 14; // días para mostrar badge NEW
+const NEW_DAYS = 14; // días para badge NEW
 
 let voicebanks = [];
 
@@ -173,7 +185,7 @@ function update(){
 function renderCards(list){
   document.getElementById("cards").innerHTML=list.map(v=>`
     <div class="card">
-      <div class="card-image">
+      <div class="card-image-section">
         <img src="${v.image}" alt="${v.name}">
         ${v.isNew?'<span class="badge">NEW</span>':''}
       </div>

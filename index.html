@@ -112,13 +112,13 @@ fetch(SHEET_URL)
 
     voicebanks = rows.map(r => ({
       name: r[1],
-      engine: r[2],
-      language: r[3],
-      gender: r[4],
-      status: r[5],
-      availability: r[6],
-      image: r[7],
-      audio: r[8],
+      engine: r[4],
+      language: r[5],
+      gender: r[6],
+      status: r[7],
+      availability: r[8],
+      image: r[2],
+      audio: r[3],
       url: r[9]
     })).filter(v => v.name);
 

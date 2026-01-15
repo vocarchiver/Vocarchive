@@ -90,19 +90,23 @@ h1{text-align:center;}
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
-<!-- TAGS DE FILTRO -->
+<!-- FILTROS -->
 <div class="filters" id="filters"></div>
 
 <!-- TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-// 🔴 PEGA AQUÍ TU URL CSV PUBLICADA
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
+// 🔴 TU CSV PUBLICADO
+const SHEET_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
 let activeFilters = [];
 
+/* =========================
+   GOOGLE DRIVE → DIRECT
+========================= */
 function driveDirect(url){
   if(!url) return "";
   const id = extractDriveId(url);
@@ -122,90 +126,20 @@ function extractDriveId(url){
   return null;
 }
 
+/* =========================
+   CSV PARSER REAL
+========================= */
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let insideQuotes = false;
 
-// Cargar datos desde Google Sheets
-fetch(SHEET_URL)
-  .then(r => r.text())
-  .then(csv => {
-    const rows = csv.split("\n").map(r => r.split(","));
-    rows.shift(); // quitar encabezados
-
-    voicebanks = rows.map(r => ({
-      name: r[1],
-      engine: r[4],
-      language: r[5],
-      gender: r[6],
-      status: r[7],
-      availability: r[8],
-      image: driveDirect(r[2]),
-      audio: driveDirect(r[3]),
-      url: r[9]
-    })).filter(v => v.name);
-
-    update();
-  });
-
-// Renderizar filtros únicos
-function renderFilters(){
-  const tags = new Set();
-  voicebanks.forEach(v=>{
-    [v.engine, v.language, v.gender, v.status, v.availability]
-      .forEach(t => tags.add(t));
-  });
-
-  document.getElementById("filters").innerHTML =
-    [...tags].map(t =>
-      `<span class="filter-tag ${activeFilters.includes(t)?"active":""}"
-       onclick="toggleFilter('${t}')">${t}</span>`
-    ).join("");
-}
-
-// Activar / desactivar filtros
-function toggleFilter(tag){
-  activeFilters.includes(tag)
-    ? activeFilters = activeFilters.filter(t=>t!==tag)
-    : activeFilters.push(tag);
-  update();
-}
-
-// Actualizar resultados
-function update(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = voicebanks.filter(v=>{
-    const matchSearch = v.name.toLowerCase().includes(search);
-    const matchTags = activeFilters.every(t =>
-      [v.engine, v.language, v.gender, v.status, v.availability].includes(t)
-    );
-    return matchSearch && matchTags;
-  });
-  renderCards(filtered);
-  renderFilters();
-}
-
-// Renderizar tarjetas
-function renderCards(list){
-  document.getElementById("cards").innerHTML = list.map(v=>`
-    <div class="card">
-      <img src="${v.image}">
-      <h2>${v.name}</h2>
-      <div>
-        <span class="tag" onclick="toggleFilter('${v.engine}')">${v.engine}</span>
-        <span class="tag" onclick="toggleFilter('${v.language}')">${v.language}</span>
-        <span class="tag" onclick="toggleFilter('${v.gender}')">${v.gender}</span>
-        <span class="tag" onclick="toggleFilter('${v.status}')">${v.status}</span>
-        <span class="tag" onclick="toggleFilter('${v.availability}')">${v.availability}</span>
-      </div>
-      <div class="audio-box">
-        <audio controls src="${v.audio}"></audio>
-      </div>
-      <a class="button" href="${v.url}" target="_blank">Página oficial</a>
-    </div>
-  `).join("");
-}
-
-document.getElementById("searchInput")
-  .addEventListener("input", update);
-</script>
-
-</body>
-</html>
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(c === '"'){
+      insideQuotes = !insideQuotes;
+    }else if(c === "," && !insideQuotes){
+      row.push(cell);
+      cell = "";
+    }else if((c =

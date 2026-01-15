@@ -2,166 +2,157 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Vocarchive</title>
+<title>Vocarchive - Modern Cards</title>
 <style>
-body{
-  font-family:Arial, sans-serif;
-  background:#f4f4f4;
-  padding:20px;
+/* =========================
+   RESET BÁSICO
+========================= */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:20px; color:#333; }
+
+/* =========================
+   HEADER
+========================= */
+h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
+
+/* =========================
+   GRID
+========================= */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+  gap:20px;
 }
-h1{text-align:center;}
-.search{max-width:400px;margin:0 auto 20px auto;}
-.search input{width:100%;padding:10px;font-size:16px;}
-.filters{text-align:center;margin-bottom:20px;}
-.filter-tag{display:inline-block;padding:6px 12px;background:#ddd;border-radius:14px;font-size:13px;margin:4px;cursor:pointer;}
-.filter-tag.active{background:black;color:white;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
-.card{background:#fff;border-radius:18px;padding:15px;box-shadow:0 6px 20px rgba(0,0,0,.12);}
-.card img{width:100%;border-radius:14px;}
-.card h2{margin:10px 0 5px;}
-.tag{display:inline-block;padding:4px 10px;background:#eee;border-radius:12px;font-size:12px;margin:2px;cursor:pointer;}
-.audio-box{margin-top:10px;}
-.button{display:inline-block;margin-top:10px;padding:8px 12px;border-radius:10px;background:black;color:white;text-decoration:none;}
-.release-date{font-size:12px;margin-top:5px;color:#555;}
+
+/* =========================
+   TARJETA
+========================= */
+.card {
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { transform: translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.15); }
+
+/* =========================
+   IMAGEN
+========================= */
+.card-image {
+  position:relative;
+}
+.card-image img {
+  width:100%;
+  height:250px;
+  object-fit:cover;
+}
+
+/* Badge NEW */
+.badge {
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:#e74c3c;
+  color:white;
+  font-size:12px;
+  padding:3px 8px;
+  border-radius:12px;
+  font-weight:bold;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+.card-content {
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+
+.card-content h2 {
+  font-size:1.2rem;
+  margin-bottom:5px;
+}
+
+.card-content p {
+  font-size:0.9rem;
+  margin-bottom:8px;
+  color:#555;
+}
+
+/* TAGS */
+.tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:12px;
+}
+.tag {
+  font-size:11px;
+  background:#eee;
+  padding:4px 8px;
+  border-radius:12px;
+}
+
+/* BOTÓN */
+.button {
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:12px;
+  background:#222;
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:background 0.2s;
+}
+.button:hover { background:#444; }
 </style>
 </head>
 <body>
 
 <h1>Vocarchive</h1>
 
-<!-- BUSCADOR -->
-<div class="search">
-  <input type="text" id="searchInput" placeholder="Buscar voicebank...">
-</div>
-
-<!-- FILTROS -->
-<div class="filters" id="filters"></div>
-
-<!-- TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-// URL de tu CSV publicado desde Google Sheets
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
-
-let voicebanks = [];
-let activeFilters = [];
-
-/* =========================
-   CSV PARSER
-========================= */
-function parseCSV(text){
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let insideQuotes = false;
-
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
-    if(c === '"'){ insideQuotes = !insideQuotes; }
-    else if(c === "," && !insideQuotes){ row.push(cell); cell = ""; }
-    else if((c === "\n" || c === "\r") && !insideQuotes){
-      if(cell || row.length){ row.push(cell); rows.push(row); row = []; cell = ""; }
-    } else { cell += c; }
+// Simulamos los datos que vendrían del CSV
+const voicebanks = [
+  {
+    name: "Otobe Sapphire",
+    type: "AI Voicebank",
+    tags: ["Female voice", "Japanese", "English", "Chinese", "VOCALOID:AI", "VOCALO CHANGER", "Lite Editor"],
+    image: "https://pub-92a6942c0cae495fbe8ae746307c2af1.r2.dev/otobe.png",
+    demo: "https://pub-92a6942c0cae495fbe8ae746307c2af1.r2.dev/otobe.mp3",
+    officialPage: "#",
+    isNew: true
   }
-  if(cell || row.length){ row.push(cell); rows.push(row); }
-  return rows;
-}
+];
 
-/* =========================
-   CARGAR SHEETS
-========================= */
-fetch(SHEET_URL)
-  .then(r => r.text())
-  .then(csv => {
-    const rows = parseCSV(csv);
-    rows.shift(); // eliminar encabezados
-
-    voicebanks = rows.map(r => ({
-      folio: r[1],
-      release: r[2],
-      name: r[3],
-      engine: r[4],
-      language: r[5],
-      additionalLanguages: r[6],
-      gender: r[7],
-      status: r[8],
-      availability: r[9],
-      profileImage: r[10],
-      demoAudio: r[11],
-      officialPage: r[12],
-      cloudImage: r[13],   // columna N
-      cloudAudio: r[14]    // columna O
-    })).filter(v => v.name);
-
-    update();
-  });
-
-/* =========================
-   FILTROS
-========================= */
-function renderFilters(){
-  const tags = new Set();
-  voicebanks.forEach(v=>{
-    [v.engine,v.language,v.gender,v.status,v.availability].forEach(t=>t && tags.add(t));
-  });
-  document.getElementById("filters").innerHTML = [...tags].map(t=>`
-    <span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t}')">${t}</span>
-  `).join("");
-}
-
-function toggleFilter(tag){
-  activeFilters.includes(tag) ? activeFilters = activeFilters.filter(t=>t!==tag) : activeFilters.push(tag);
-  update();
-}
-
-/* =========================
-   ACTUALIZAR
-========================= */
-function update(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = voicebanks.filter(v=>{
-    const matchName = v.name.toLowerCase().includes(search);
-    const matchTags = activeFilters.every(t =>
-      [v.engine,v.language,v.gender,v.status,v.availability].includes(t)
-    );
-    return matchName && matchTags;
-  });
-
-  filtered.sort((a,b) => new Date(b.release) - new Date(a.release));
-
-  renderCards(filtered);
-  renderFilters();
-}
-
-/* =========================
-   TARJETAS
-========================= */
+// Renderizar tarjetas
 function renderCards(list){
-  document.getElementById("cards").innerHTML = list.map(v=>`
+  document.getElementById("cards").innerHTML = list.map(v => `
     <div class="card">
-      ${v.cloudImage ? `<img src="${encodeURI(v.cloudImage)}" loading="lazy" alt="${v.name}">` : ''}
-      <h2>${v.name}</h2>
-
-      <div>
-        <span class="tag" onclick="toggleFilter('${v.engine}')">${v.engine}</span>
-        <span class="tag" onclick="toggleFilter('${v.language}')">${v.language}</span>
-        <span class="tag" onclick="toggleFilter('${v.gender}')">${v.gender}</span>
-        <span class="tag" onclick="toggleFilter('${v.status}')">${v.status}</span>
-        <span class="tag" onclick="toggleFilter('${v.availability}')">${v.availability}</span>
+      <div class="card-image">
+        <img src="${v.image}" alt="${v.name}">
+        ${v.isNew ? '<span class="badge">NEW</span>' : ''}
       </div>
-
-      <p>Additional Languages: ${v.additionalLanguages}</p>
-
-      ${v.cloudAudio ? `<div class="audio-box"><audio controls preload="none" src="${encodeURI(v.cloudAudio)}"></audio></div>` : ''}
-
-      ${v.officialPage ? `<a class="button" href="${v.officialPage}" target="_blank">Official Page</a>` : ''}
-      <p class="release-date">Release Date: ${v.release}</p>
+      <div class="card-content">
+        <h2>${v.name}</h2>
+        <p>${v.type}</p>
+        <div class="tags">
+          ${v.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+        </div>
+        <a class="button" href="${v.officialPage}" target="_blank">See product details</a>
+      </div>
     </div>
   `).join("");
 }
 
-document.getElementById("searchInput").addEventListener("input", update);
+renderCards(voicebanks);
 </script>
 
 </body>

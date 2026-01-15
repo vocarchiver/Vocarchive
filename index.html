@@ -9,7 +9,7 @@ body{
   background:#f4f4f4;
   padding:20px;
 }
-h1{text-align:center; margin-bottom:30px;}
+h1{text-align:center;}
 
 .search{
   max-width:400px;
@@ -21,27 +21,9 @@ h1{text-align:center; margin-bottom:30px;}
   font-size:16px;
 }
 
-.filters{
-  text-align:center;
-  margin-bottom:20px;
-}
-.filter-tag{
-  display:inline-block;
-  padding:6px 12px;
-  background:#ddd;
-  border-radius:14px;
-  font-size:13px;
-  margin:4px;
-  cursor:pointer;
-}
-.filter-tag.active{
-  background:black;
-  color:white;
-}
-
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(411px,1fr));
+  display:flex;
+  flex-wrap:wrap;
   gap:20px;
   justify-content:center;
 }
@@ -49,16 +31,13 @@ h1{text-align:center; margin-bottom:30px;}
 .card{
   width:411px;
   background:#fff;
-  border-radius:18px;
+  border-radius:10px;
   overflow:hidden;
-  box-shadow:0 6px 20px rgba(0,0,0,.12);
-  position:relative;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
   display:flex;
   flex-direction:column;
-  font-size:14px;
 }
 
-/* SECCIÓN SUPERIOR DE IMAGEN */
 .card-image-section{
   position:relative;
   background:#f5f5f5;
@@ -68,6 +47,11 @@ h1{text-align:center; margin-bottom:30px;}
   align-items:center;
   overflow:hidden;
 }
+
+.card-image-section a{
+  display:block;
+}
+
 .card-image-section img{
   width:250px;
   height:250px;
@@ -75,9 +59,11 @@ h1{text-align:center; margin-bottom:30px;}
   cursor:pointer;
   transition: transform 0.3s;
 }
+
 .card-image-section:hover img{
   transform: scale(1.05);
 }
+
 .badge{
   position:absolute;
   top:10px;
@@ -90,7 +76,6 @@ h1{text-align:center; margin-bottom:30px;}
   font-weight:bold;
 }
 
-/* BOTÓN DE AUDIO */
 .audio-btn {
   position:absolute;
   bottom:10px;
@@ -104,39 +89,40 @@ h1{text-align:center; margin-bottom:30px;}
 .audio-icon {
   width:23px;
   height:25px;
-  fill:#000; /* negro por defecto */
+  fill:#000;
   transition: fill 0.2s;
 }
 .audio-btn.playing .audio-icon {
-  fill:#00ffff; /* cian cuando se reproduce */
+  fill:#00ffff;
 }
 
-/* SECCIÓN DE CONTENIDO */
 .card-content{
   padding:15px;
 }
+
 .card-content h2{
-  margin:10px 0 5px;
-  font-size:18px;
-}
-.card-content .type{
-  font-weight:bold;
-  margin-bottom:5px;
-}
-.tags{
-  margin:10px 0;
-}
-.tag{
-  display:inline-block;
-  padding:4px 10px;
-  background:#eee;
-  border-radius:12px;
-  font-size:12px;
-  margin:2px;
-  cursor:pointer;
+  margin:5px 0;
+  font-size:20px;
 }
 
-/* BOTÓN DE PÁGINA OFICIAL */
+.card-content p{
+  margin:5px 0;
+  font-size:14px;
+}
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:5px;
+}
+
+.tag{
+  background:#eee;
+  padding:3px 8px;
+  border-radius:10px;
+  font-size:12px;
+}
 .button{
   display:inline-block;
   margin-top:10px;
@@ -145,11 +131,7 @@ h1{text-align:center; margin-bottom:30px;}
   background:black;
   color:white;
   text-decoration:none;
-}
-.release-date{
-  font-size:12px;
-  color:#666;
-  margin-top:5px;
+  font-size:14px;
 }
 </style>
 </head>
@@ -161,16 +143,13 @@ h1{text-align:center; margin-bottom:30px;}
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
-<div class="filters" id="filters"></div>
-
 <div class="grid" id="cards"></div>
 
 <script>
-// URL CSV de Google Sheets
+// 🔴 URL de tu CSV publicado desde Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
-let activeFilters = [];
 
 /* =========================
    CSV PARSER
@@ -213,82 +192,46 @@ fetch(SHEET_URL)
   .then(r => r.text())
   .then(csv => {
     const rows = parseCSV(csv);
-    rows.shift(); // quitar encabezados
+    rows.shift(); // eliminar encabezados
 
-    const today = new Date();
-
-    voicebanks = rows.map(r=>{
+    voicebanks = rows.map(r => {
       const releaseDate = new Date(r[2]);
-      const diffDays = (today - releaseDate)/(1000*60*60*24);
+      const today = new Date();
+      const isNew = (today - releaseDate) / (1000*60*60*24) <= 30; // NEW si <30 días
+
+      // Tags
+      const tags = [r[4], r[5]]; // Engine, Language(Official)
+      if(r[6]) tags.push(...r[6].split(',')); // Additional Languages
+      tags.push(r[7], r[8], r[9], r[10]); // Gender, Status, Availability, etc.
       return {
         folio: r[1],
         name: r[3],
-        type: r[4],
-        engine: r[4],
-        language: r[5],
-        additionalLanguages: r[6],
-        gender: r[7],
-        status: r[8],
-        availability: r[9],
         cloudImage: r[13],
         cloudAudio: r[14],
         url: r[12],
-        release: r[2],
-        isNew: diffDays <= 30
-      };
+        isNew,
+        tags: tags.filter(t=>t)
+      }
     }).filter(v => v.name);
 
-    update();
+    renderCards(voicebanks);
   });
 
 /* =========================
-   FILTROS
-========================= */
-function renderFilters(){
-  const tags = new Set();
-  voicebanks.forEach(v=>{
-    [v.engine,v.language,v.additionalLanguages,v.gender,v.status,v.availability].forEach(t=>{
-      if(t) tags.add(t);
-    });
-  });
-  document.getElementById("filters").innerHTML =
-    [...tags].map(t=>`<span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t}')">${t}</span>`).join("");
-}
-function toggleFilter(tag){
-  activeFilters.includes(tag) ? activeFilters = activeFilters.filter(t=>t!==tag) : activeFilters.push(tag);
-  update();
-}
-
-/* =========================
-   ACTUALIZAR
-========================= */
-function update(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = voicebanks.filter(v=>{
-    const matchName = v.name.toLowerCase().includes(search);
-    const matchTags = activeFilters.every(t =>
-      [v.engine,v.language,v.additionalLanguages,v.gender,v.status,v.availability].includes(t)
-    );
-    return matchName && matchTags;
-  });
-
-  renderCards(filtered);
-  renderFilters();
-}
-
-/* =========================
-   TARJETAS
+   RENDER CARDS
 ========================= */
 function renderCards(list){
-  document.getElementById("cards").innerHTML = list.map(v=>`
-    <div class="card" data-audio="${v.cloudAudio}">
+  const container = document.getElementById("cards");
+  container.innerHTML = list.map(v=>`
+    <div class="card">
       <div class="card-image-section">
-        <a href="${v.url}" target="_blank" style="display:block; width:100%; height:100%;">
+        <a href="${v.url}" target="_blank">
           <img src="${v.cloudImage}" alt="${v.name}">
-          ${v.isNew ? '<span class="badge">NEW</span>' : ''}
         </a>
+        ${v.isNew ? '<span class="badge">NEW</span>' : ''}
         ${v.cloudAudio ? `
-        <button class="audio-btn">
+        <button class="audio-btn" onclick="toggleAudio(this)">
+          <audio src="${v.cloudAudio}"></audio>
           <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M3 9v6h4l5 5V4L7 9H3z"/>
           </svg>
@@ -296,38 +239,31 @@ function renderCards(list){
       </div>
       <div class="card-content">
         <h2>${v.name}</h2>
-        <div class="type">${v.type}</div>
         <div class="tags">
-          ${[v.gender,v.language,v.additionalLanguages,v.engine,v.status,v.availability].filter(t=>t).map(t=>`<span class="tag">${t}</span>`).join('')}
+          ${v.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
         </div>
         <a class="button" href="${v.url}" target="_blank">See product details</a>
-        <p class="release-date">Release Date: ${v.release}</p>
       </div>
     </div>
   `).join("");
-
-  // Inicializar audio buttons
-  document.querySelectorAll('.card').forEach(card=>{
-    const btn = card.querySelector('.audio-btn');
-    if(!btn) return;
-    const audioSrc = card.dataset.audio;
-    const audio = new Audio(audioSrc);
-    audio.preload = "none";
-    btn.addEventListener('click', ()=>{
-      if(audio.paused){
-        audio.play();
-        btn.classList.add('playing');
-      } else {
-        audio.pause();
-        btn.classList.remove('playing');
-      }
-    });
-    audio.addEventListener('ended', ()=>btn.classList.remove('playing'));
-  });
 }
 
-document.getElementById("searchInput").addEventListener("input", update);
+/* =========================
+   AUDIO PLAY
+========================= */
+function toggleAudio(btn){
+  const audio = btn.querySelector('audio');
+  if(!audio) return;
+  if(audio.paused){
+    audio.play();
+    btn.classList.add('playing');
+    audio.onended = ()=>btn.classList.remove('playing');
+  } else {
+    audio.pause();
+    audio.currentTime = 0;
+    btn.classList.remove('playing');
+  }
+}
 </script>
-
 </body>
 </html>

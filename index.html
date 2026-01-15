@@ -9,8 +9,6 @@ body{
   font-family:Arial, sans-serif;
   background:#f4f4f4;
   padding:20px;
-  display:flex;
-  justify-content:center;
 }
 
 h1{text-align:center; width:100%; margin-bottom:30px;}
@@ -27,9 +25,9 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill, 411px);
+  grid-template-columns:repeat(auto-fit, minmax(411px, 1fr));
   gap:20px;
-  justify-content:center;
+  justify-content:center; /* centra las filas si sobra espacio */
 }
 
 /* ===== TARJETA ===== */

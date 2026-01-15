@@ -2,23 +2,23 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Vocarchive - Modern Cards</title>
+<title>Vocarchive - Fixed Cards</title>
 <style>
-/* RESET BÁSICO */
-* { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:20px; color:#333; }
 h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
-/* GRID */
+/* GRID con tarjetas centradas */
 .grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+  display:flex;
+  flex-wrap:wrap;
   gap:20px;
+  justify-content:center;
 }
 
 /* TARJETA */
 .card {
   background:#fff;
+  width:250px;              /* ancho fijo */
   border-radius:18px;
   box-shadow:0 8px 20px rgba(0,0,0,0.1);
   overflow:hidden;
@@ -31,9 +31,11 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 /* IMAGEN */
 .card-image {
   position:relative;
+  width:250px;
+  height:250px;             /* alto fijo */
 }
 .card-image img {
-  width:100%;
+  width:250px;
   height:250px;
   object-fit:cover;
 }
@@ -53,12 +55,12 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
 /* CONTENIDO */
 .card-content {
-  padding:15px;
+  padding:12px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
 }
-.card-content h2 { font-size:1.2rem; margin-bottom:5px; }
+.card-content h2 { font-size:1.1rem; margin-bottom:5px; }
 .card-content p { font-size:0.9rem; margin-bottom:8px; color:#555; }
 
 /* TAGS */
@@ -85,8 +87,20 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
   text-decoration:none;
   font-weight:bold;
   transition:background 0.2s;
+  text-align:center;
+  width:100%;
 }
 .button:hover { background:#444; }
+
+/* BUSCADOR */
+.search input{
+  width:100%;
+  max-width:400px;
+  padding:10px;
+  font-size:16px;
+  margin:0 auto 20px auto;
+  display:block;
+}
 </style>
 </head>
 <body>
@@ -94,124 +108,79 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 <h1>Vocarchive</h1>
 
 <!-- BUSCADOR -->
-<div class="search" style="max-width:400px;margin:0 auto 20px auto;">
-  <input type="text" id="searchInput" placeholder="Buscar voicebank..." style="width:100%;padding:10px;font-size:16px;">
+<div class="search">
+  <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
 <div class="grid" id="cards"></div>
 
 <script>
-// 🔴 URL de tu CSV publicado desde Google Sheets
+// URL de tu CSV publicado desde Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
-
-// Tiempo para considerar "nuevo" en días
-const NEW_DAYS = 14; 
+const NEW_DAYS = 14; // días para mostrar badge NEW
 
 let voicebanks = [];
-let activeFilters = [];
 
-/* =========================
-   CSV PARSER
-========================= */
+/* CSV PARSER */
 function parseCSV(text){
   const rows = [];
-  let row = [];
-  let cell = "";
-  let insideQuotes = false;
-
+  let row=[], cell="", insideQuotes=false;
   for(let i=0;i<text.length;i++){
-    const c = text[i];
-    if(c === '"') insideQuotes = !insideQuotes;
-    else if(c === "," && !insideQuotes){ row.push(cell); cell=""; }
-    else if((c === "\n" || c === "\r") && !insideQuotes){
-      if(cell || row.length){ row.push(cell); rows.push(row); row=[]; cell=""; }
-    } else { cell+=c; }
+    const c=text[i];
+    if(c=='"') insideQuotes=!insideQuotes;
+    else if(c==','&&!insideQuotes){row.push(cell);cell="";}
+    else if((c=='\n'||c=='\r')&&!insideQuotes){if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}} 
+    else{cell+=c;}
   }
-  if(cell || row.length){ row.push(cell); rows.push(row); }
+  if(cell||row.length){row.push(cell);rows.push(row);}
   return rows;
 }
 
-/* =========================
-   CARGAR SHEETS
-========================= */
-fetch(SHEET_URL)
-.then(r => r.text())
-.then(csv => {
-  const rows = parseCSV(csv);
+/* CARGAR SHEETS */
+fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
+  const rows=parseCSV(csv);
   rows.shift(); // eliminar encabezados
 
-  voicebanks = rows.map(r => {
-    const releaseDate = new Date(r[2]); // Release date (C)
-    const isNew = (new Date() - releaseDate) / (1000*60*60*24) <= NEW_DAYS; // Badge NEW
-
-    // Tags combinando columnas
-    const tags = [
-      r[4],              // Engine
-      r[5],              // Language (Official)
-      ...r[6].split(",").map(s=>s.trim()), // Additional Singable Languages
-      r[7],              // Gender
-      r[8],              // Status
-      r[9]               // Availability
-    ].filter(t => t);
-
+  voicebanks=rows.map(r=>{
+    const releaseDate=new Date(r[2]);
+    const isNew=(new Date()-releaseDate)/(1000*60*60*24)<=NEW_DAYS;
+    const tags=[r[4], r[5], ...r[6].split(",").map(s=>s.trim()), r[7], r[8], r[9]].filter(t=>t);
     return {
-      folio: r[1],
-      release: r[2],
-      name: r[3],
-      type: r[4]+" Voicebank",
-      image: r[13],
-      audio: r[14],
-      url: r[12],
-      tags: tags,
-      isNew: isNew
+      folio:r[1],
+      release:r[2],
+      name:r[3],
+      type:r[4]+" Voicebank",
+      image:r[13],
+      audio:r[14],
+      url:r[12],
+      tags:tags,
+      isNew:isNew
     };
-  }).filter(v => v.name);
+  }).filter(v=>v.name);
 
   update();
 });
 
-/* =========================
-   FILTROS
-========================= */
-function renderFilters(){
-  const tags = new Set();
-  voicebanks.forEach(v=>{
-    v.tags.forEach(t=>tags.add(t));
-  });
-  document.getElementById("filters")?.remove(); // si quieres agregar filtros luego
-}
-
-/* =========================
-   ACTUALIZAR Y BUSCAR
-========================= */
+/* FILTRAR Y ACTUALIZAR */
 function update(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = voicebanks.filter(v=>{
-    const matchName = v.name.toLowerCase().includes(search);
-    return matchName;
-  });
-
-  filtered.sort((a,b) => new Date(b.release) - new Date(a.release));
-
+  const search=document.getElementById("searchInput").value.toLowerCase();
+  const filtered=voicebanks.filter(v=>v.name.toLowerCase().includes(search));
+  filtered.sort((a,b)=>new Date(b.release)-new Date(a.release));
   renderCards(filtered);
 }
 
-/* =========================
-   RENDER TARJETAS
-========================= */
+/* RENDER TARJETAS */
 function renderCards(list){
-  document.getElementById("cards").innerHTML = list.map(v => `
+  document.getElementById("cards").innerHTML=list.map(v=>`
     <div class="card">
       <div class="card-image">
         <img src="${v.image}" alt="${v.name}">
-        ${v.isNew ? '<span class="badge">NEW</span>' : ''}
+        ${v.isNew?'<span class="badge">NEW</span>':''}
       </div>
       <div class="card-content">
         <h2>${v.name}</h2>
         <p>${v.type}</p>
-        <div class="tags">
-          ${v.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
-        </div>
+        <div class="tags">${v.tags.map(tag=>`<span class="tag">${tag}</span>`).join("")}</div>
         <a class="button" href="${v.url}" target="_blank">See product details</a>
       </div>
     </div>

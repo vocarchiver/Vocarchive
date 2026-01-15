@@ -78,6 +78,7 @@ h1{text-align:center;}
   color:white;
   text-decoration:none;
 }
+.release-date{font-size:12px; color:#555; margin-top:5px;}
 </style>
 </head>
 
@@ -155,9 +156,9 @@ fetch(SHEET_URL)
       gender: r[6],
       status: r[7],
       availability: r[8],
-      image: r[13],                  // Cloudflare image link
-      audio: r[14],                 // Cloudflare audio demo link
-      url: r[11]                     // Official page
+      image: r[13] ? r[13].trim() : "", // Cloudflare image link (col 13)
+      audio: r[14] ? r[14].trim() : "", // Cloudflare audio link (col 14)
+      url: r[11] ? r[11].trim() : ""    // Official page
     })).filter(v => v.name);
 
     update();
@@ -214,7 +215,7 @@ function update(){
 function renderCards(list){
   document.getElementById("cards").innerHTML = list.map(v=>`
     <div class="card">
-      <img src="${v.image}" loading="lazy" alt="${v.name}">
+      ${v.image ? `<img src="${v.image}" loading="lazy" alt="${v.name}">` : ""}
       <h2>${v.name}</h2>
 
       <div>
@@ -225,13 +226,11 @@ function renderCards(list){
         <span class="tag" onclick="toggleFilter('${v.availability}')">${v.availability}</span>
       </div>
 
-      <p>Additional Languages: ${v.additionalLanguages}</p>
+      ${v.additionalLanguages ? `<p>Additional Languages: ${v.additionalLanguages}</p>` : ""}
 
-      <div class="audio-box">
-        <audio controls preload="none" src="${v.audio}"></audio>
-      </div>
+      ${v.audio ? `<div class="audio-box"><audio controls preload="none" src="${v.audio}"></audio></div>` : ""}
 
-      <a class="button" href="${v.url}" target="_blank">Official Page</a>
+      ${v.url ? `<a class="button" href="${v.url}" target="_blank">Official Page</a>` : ""}
       <p class="release-date">Release Date: ${v.release}</p>
     </div>
   `).join("");

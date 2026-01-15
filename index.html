@@ -4,29 +4,19 @@
 <meta charset="UTF-8">
 <title>Vocarchive - Modern Cards</title>
 <style>
-/* =========================
-   RESET BÁSICO
-========================= */
+/* RESET BÁSICO */
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:20px; color:#333; }
-
-/* =========================
-   HEADER
-========================= */
 h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
-/* =========================
-   GRID
-========================= */
+/* GRID */
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
   gap:20px;
 }
 
-/* =========================
-   TARJETA
-========================= */
+/* TARJETA */
 .card {
   background:#fff;
   border-radius:18px;
@@ -38,9 +28,7 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 }
 .card:hover { transform: translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.15); }
 
-/* =========================
-   IMAGEN
-========================= */
+/* IMAGEN */
 .card-image {
   position:relative;
 }
@@ -63,26 +51,15 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
   font-weight:bold;
 }
 
-/* =========================
-   CONTENIDO
-========================= */
+/* CONTENIDO */
 .card-content {
   padding:15px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
 }
-
-.card-content h2 {
-  font-size:1.2rem;
-  margin-bottom:5px;
-}
-
-.card-content p {
-  font-size:0.9rem;
-  margin-bottom:8px;
-  color:#555;
-}
+.card-content h2 { font-size:1.2rem; margin-bottom:5px; }
+.card-content p { font-size:0.9rem; margin-bottom:8px; color:#555; }
 
 /* TAGS */
 .tags {
@@ -116,23 +93,112 @@ h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
 
 <h1>Vocarchive</h1>
 
+<!-- BUSCADOR -->
+<div class="search" style="max-width:400px;margin:0 auto 20px auto;">
+  <input type="text" id="searchInput" placeholder="Buscar voicebank..." style="width:100%;padding:10px;font-size:16px;">
+</div>
+
 <div class="grid" id="cards"></div>
 
 <script>
-// Simulamos los datos que vendrían del CSV
-const voicebanks = [
-  {
-    name: "Otobe Sapphire",
-    type: "AI Voicebank",
-    tags: ["Female voice", "Japanese", "English", "Chinese", "VOCALOID:AI", "VOCALO CHANGER", "Lite Editor"],
-    image: "https://pub-92a6942c0cae495fbe8ae746307c2af1.r2.dev/otobe.png",
-    demo: "https://pub-92a6942c0cae495fbe8ae746307c2af1.r2.dev/otobe.mp3",
-    officialPage: "#",
-    isNew: true
-  }
-];
+// 🔴 URL de tu CSV publicado desde Google Sheets
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-// Renderizar tarjetas
+// Tiempo para considerar "nuevo" en días
+const NEW_DAYS = 14; 
+
+let voicebanks = [];
+let activeFilters = [];
+
+/* =========================
+   CSV PARSER
+========================= */
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(c === '"') insideQuotes = !insideQuotes;
+    else if(c === "," && !insideQuotes){ row.push(cell); cell=""; }
+    else if((c === "\n" || c === "\r") && !insideQuotes){
+      if(cell || row.length){ row.push(cell); rows.push(row); row=[]; cell=""; }
+    } else { cell+=c; }
+  }
+  if(cell || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+
+/* =========================
+   CARGAR SHEETS
+========================= */
+fetch(SHEET_URL)
+.then(r => r.text())
+.then(csv => {
+  const rows = parseCSV(csv);
+  rows.shift(); // eliminar encabezados
+
+  voicebanks = rows.map(r => {
+    const releaseDate = new Date(r[2]); // Release date (C)
+    const isNew = (new Date() - releaseDate) / (1000*60*60*24) <= NEW_DAYS; // Badge NEW
+
+    // Tags combinando columnas
+    const tags = [
+      r[4],              // Engine
+      r[5],              // Language (Official)
+      ...r[6].split(",").map(s=>s.trim()), // Additional Singable Languages
+      r[7],              // Gender
+      r[8],              // Status
+      r[9]               // Availability
+    ].filter(t => t);
+
+    return {
+      folio: r[1],
+      release: r[2],
+      name: r[3],
+      type: r[4]+" Voicebank",
+      image: r[13],
+      audio: r[14],
+      url: r[12],
+      tags: tags,
+      isNew: isNew
+    };
+  }).filter(v => v.name);
+
+  update();
+});
+
+/* =========================
+   FILTROS
+========================= */
+function renderFilters(){
+  const tags = new Set();
+  voicebanks.forEach(v=>{
+    v.tags.forEach(t=>tags.add(t));
+  });
+  document.getElementById("filters")?.remove(); // si quieres agregar filtros luego
+}
+
+/* =========================
+   ACTUALIZAR Y BUSCAR
+========================= */
+function update(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = voicebanks.filter(v=>{
+    const matchName = v.name.toLowerCase().includes(search);
+    return matchName;
+  });
+
+  filtered.sort((a,b) => new Date(b.release) - new Date(a.release));
+
+  renderCards(filtered);
+}
+
+/* =========================
+   RENDER TARJETAS
+========================= */
 function renderCards(list){
   document.getElementById("cards").innerHTML = list.map(v => `
     <div class="card">
@@ -146,13 +212,13 @@ function renderCards(list){
         <div class="tags">
           ${v.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
         </div>
-        <a class="button" href="${v.officialPage}" target="_blank">See product details</a>
+        <a class="button" href="${v.url}" target="_blank">See product details</a>
       </div>
     </div>
   `).join("");
 }
 
-renderCards(voicebanks);
+document.getElementById("searchInput").addEventListener("input", update);
 </script>
 
 </body>

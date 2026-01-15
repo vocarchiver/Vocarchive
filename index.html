@@ -142,4 +142,120 @@ function parseCSV(text){
     }else if(c === "," && !insideQuotes){
       row.push(cell);
       cell = "";
-    }else if((c =
+    }else if((c === "\n" || c === "\r") && !insideQuotes){
+      if(cell || row.length){
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = "";
+      }
+    }else{
+      cell += c;
+    }
+  }
+  if(cell || row.length){
+    row.push(cell);
+    rows.push(row);
+  }
+  return rows;
+}
+
+/* =========================
+   CARGAR SHEETS
+========================= */
+fetch(SHEET_URL)
+  .then(r => r.text())
+  .then(csv => {
+    const rows = parseCSV(csv);
+    rows.shift(); // encabezados
+
+    voicebanks = rows.map(r => ({
+      name: r[1],
+      image: driveDirect(r[2]),
+      audio: driveDirect(r[3]),
+      engine: r[4],
+      language: r[5],
+      gender: r[6],
+      status: r[7],
+      availability: r[8],
+      url: r[9]
+    })).filter(v => v.name);
+
+    update();
+  });
+
+/* =========================
+   FILTROS
+========================= */
+function renderFilters(){
+  const tags = new Set();
+  voicebanks.forEach(v=>{
+    [v.engine,v.language,v.gender,v.status,v.availability]
+      .forEach(t=>t && tags.add(t));
+  });
+
+  document.getElementById("filters").innerHTML =
+    [...tags].map(t=>`
+      <span class="filter-tag ${activeFilters.includes(t)?"active":""}"
+      onclick="toggleFilter('${t}')">${t}</span>
+    `).join("");
+}
+
+function toggleFilter(tag){
+  activeFilters.includes(tag)
+    ? activeFilters = activeFilters.filter(t=>t!==tag)
+    : activeFilters.push(tag);
+  update();
+}
+
+/* =========================
+   ACTUALIZAR
+========================= */
+function update(){
+  const search =
+    document.getElementById("searchInput").value.toLowerCase();
+
+  const filtered = voicebanks.filter(v=>{
+    const matchName = v.name.toLowerCase().includes(search);
+    const matchTags = activeFilters.every(t =>
+      [v.engine,v.language,v.gender,v.status,v.availability].includes(t)
+    );
+    return matchName && matchTags;
+  });
+
+  renderCards(filtered);
+  renderFilters();
+}
+
+/* =========================
+   TARJETAS
+========================= */
+function renderCards(list){
+  document.getElementById("cards").innerHTML = list.map(v=>`
+    <div class="card">
+      <img src="${v.image}" loading="lazy">
+      <h2>${v.name}</h2>
+
+      <div>
+        <span class="tag" onclick="toggleFilter('${v.engine}')">${v.engine}</span>
+        <span class="tag" onclick="toggleFilter('${v.language}')">${v.language}</span>
+        <span class="tag" onclick="toggleFilter('${v.gender}')">${v.gender}</span>
+        <span class="tag" onclick="toggleFilter('${v.status}')">${v.status}</span>
+        <span class="tag" onclick="toggleFilter('${v.availability}')">${v.availability}</span>
+      </div>
+
+      <div class="audio-box">
+        <audio controls preload="none" src="${v.audio}"></audio>
+      </div>
+
+      <a class="button" href="${v.url}" target="_blank">Página oficial</a>
+    </div>
+  `).join("");
+}
+
+document.getElementById("searchInput")
+  .addEventListener("input", update);
+</script>
+
+</body>
+</html>

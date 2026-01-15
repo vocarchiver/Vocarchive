@@ -70,7 +70,6 @@ h1 { text-align: center; }
 .card-image-section:hover {
   background-size: 50% 70%;
 }
-
 .card-image-section a {
   display: flex;
   align-items: center;
@@ -78,7 +77,6 @@ h1 { text-align: center; }
   width: 100%;
   height: 100%;
 }
-
 .card-image-section img {
   width: 250px;
   height: 250px;
@@ -142,6 +140,7 @@ h1 { text-align: center; }
   color: #d6186c;
 }
 
+/* TAGS EN SEGUNDA SECCION */
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -154,6 +153,11 @@ h1 { text-align: center; }
   padding: 4px 10px;
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+.tag:hover {
+  background: #d6186c;
+  color: white;
 }
 
 /* BUTTON */
@@ -218,14 +222,18 @@ fetch(SHEET_URL)
     const now = new Date();
     voicebanks = rows.map(r=>{
       const releaseDate = new Date(r[2]);
-      const isNew = (now - releaseDate)/(1000*60*60*24) <= 30; // si es menor a 30 dias NEW badge
+      const isNew = (now - releaseDate)/(1000*60*60*24) <= 30; // NEW si < 30 días
 
-      // TAGS: Engine, Language, Additional languages, Gender, Status, Availability
+      // TAGS: Engine, Language, Additional Singable Languages, Gender, Status, Availability
       const tagColumns = [4,5,6,7,8,9]; 
       let tagsArr = [];
       tagColumns.forEach(idx=>{
         if(r[idx]){
-          tagsArr.push(...r[idx].split(',').map(s=>s.trim()).filter(Boolean));
+          // separar por comas y agregar como tags individuales
+          r[idx].split(',').forEach(s=>{
+            const t = s.trim();
+            if(t) tagsArr.push(t);
+          });
         }
       });
 
@@ -250,8 +258,13 @@ function renderFilters(){
   document.getElementById("filters").innerHTML =
     [...tags].map(t=>`<span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t}')">${t}</span>`).join("");
 }
+
 function toggleFilter(tag){
-  activeFilters.includes(tag)?activeFilters=activeFilters.filter(t=>t!==tag):activeFilters.push(tag);
+  if(activeFilters.includes(tag)){
+    activeFilters = activeFilters.filter(t=>t!==tag);
+  } else {
+    activeFilters.push(tag);
+  }
   update();
 }
 
@@ -288,7 +301,7 @@ function renderCards(list){
       <div class="card-info">
         <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
         <div class="tags">
-          ${v.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+          ${v.tags.map(t=>`<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`).join('')}
         </div>
         <a class="button" href="${v.url}" target="_blank">See product details</a>
         <p class="release-date">Release Date: ${v.releaseDate}</p>

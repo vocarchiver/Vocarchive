@@ -137,8 +137,8 @@ fetch(SHEET_URL)
       gender: r[6],
       status: r[7],
       availability: r[8],
-      image: driveImage(r[2]),
-      audio:driveAudio(r[3]),
+      image: driveDirect(r[2]),
+      audio: driveDirect(r[3]),
       url: r[9]
     })).filter(v => v.name);
 

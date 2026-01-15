@@ -6,56 +6,44 @@
 
 <style>
 body{
-  font-family:Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background:#f4f4f4;
   padding:20px;
 }
 
-h1{text-align:center; width:100%; margin-bottom:30px;}
-
-.search{
-  max-width:400px;
-  margin:0 auto 20px auto;
-}
-.search input{
-  width:100%;
-  padding:10px;
-  font-size:16px;
-}
+h1{text-align:center; margin-bottom:30px;}
 
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(411px, 1fr));
   gap:20px;
-  justify-content:center; /* centra las filas si sobra espacio */
+  justify-content:center;
 }
 
-/* ===== TARJETA ===== */
+/* TARJETA */
 .card{
   width:411px;
   background:#fff;
-  border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,.12);
+  border-radius:12px;
   overflow:hidden;
-  transition: transform 0.2s;
-}
-.card:hover{
-  transform: translateY(-3px);
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+  font-size:14px;
 }
 
-/* ===== SECCIÓN DE IMAGEN ===== */
+/* SECCION IMAGEN */
 .card-image-section{
   position:relative;
-  background:#f5f5f5;
+  width:100%;
   height:290px;
+  background:#f5f5f5;
   display:flex;
-  justify-content:center;
   align-items:center;
-  overflow:hidden;
+  justify-content:center;
+  transition: background 0.3s;
 }
 
-.card-image-section a{
-  display:block;
+.card-image-section:hover{
+  background:#e0e0e0;
 }
 
 .card-image-section img{
@@ -63,11 +51,6 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
   height:250px;
   object-fit:cover;
   cursor:pointer;
-  transition: transform 0.3s;
-}
-
-.card-image-section:hover img{
-  transform: scale(1.05);
 }
 
 /* BADGE NEW */
@@ -75,15 +58,15 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
   position:absolute;
   top:10px;
   left:10px;
-  background:#ff0000;
+  background:#d6186c;
   color:white;
+  padding:4px 8px;
   font-size:12px;
-  padding:3px 6px;
   border-radius:6px;
   font-weight:bold;
 }
 
-/* AUDIO BUTTON */
+/* BOTON AUDIO */
 .audio-btn{
   position:absolute;
   bottom:10px;
@@ -95,47 +78,40 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
   cursor:pointer;
   padding:0;
 }
+
 .audio-btn svg{
   width:23px;
   height:25px;
   fill:#000;
   transition:fill 0.2s;
 }
-.audio-icon {
-  width:23px;
-  height:25px;
-  fill:#000;
-  transition: fill 0.2s;
-}
+
 .audio-btn.playing svg{
-  fill:#00ffff; /* cyan cuando suena */
-}
-.audio-element{
-  display:none; /* no mostrar controles */
-}
-/* ===== SECCIÓN DE CONTENIDO ===== */
-.card-content{
-  padding-bottom:15px;
+  fill:#00ffff;
 }
 
-.card-content h2{
+.audio-element{
+  display:none;
+}
+
+/* SECCION DETALLES */
+.card-details{
+  padding:20px;
+}
+
+.card-details h2{
   font-size:22px;
-  color:#000;
-  margin-left:40px;
-  margin-top:30px;
-  margin-bottom:10px;
+  margin:0 0 10px 0;
   cursor:pointer;
+  color:#000;
   transition: color 0.2s;
 }
-.card-content h2:hover{
+
+.card-details h2:hover{
   color:#d6186c;
 }
 
 /* TAGS */
-.tags{
-  margin-left:40px;
-  margin-bottom:10px;
-}
 .tag{
   display:inline-block;
   padding:4px 10px;
@@ -143,12 +119,13 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
   border-radius:12px;
   font-size:12px;
   margin:2px;
+  cursor:pointer;
 }
 
-/* BUTTON */
+/* BOTON DETALLES */
 .button{
   display:inline-block;
-  margin-left:40px;
+  margin-top:10px;
   padding:8px 12px;
   border-radius:10px;
   background:black;
@@ -156,28 +133,28 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
   text-decoration:none;
   font-weight:bold;
 }
+
+.release-date{
+  font-size:12px;
+  color:#666;
+  margin-top:10px;
+}
 </style>
 </head>
-
 <body>
 
 <h1>Vocarchive</h1>
 
-<!-- BUSCADOR -->
-<div class="search">
-  <input type="text" id="searchInput" placeholder="Buscar voicebank...">
-</div>
-
-<!-- TARJETAS -->
+<!-- GRID TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-// CSV URL
+// URL del CSV publicado de Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
 
-/* CSV PARSER */
+// PARSER CSV
 function parseCSV(text){
   const rows = [];
   let row = [];
@@ -202,89 +179,94 @@ function parseCSV(text){
       cell += c;
     }
   }
-  if(cell || row.length){
-    row.push(cell);
-    rows.push(row);
-  }
+  if(cell || row.length) row.push(cell), rows.push(row);
   return rows;
 }
 
-/* CARGAR SHEETS */
+// CARGAR SHEETS
 fetch(SHEET_URL)
-.then(r => r.text())
-.then(csv => {
-  const rows = parseCSV(csv);
-  rows.shift(); // eliminar encabezados
+  .then(r => r.text())
+  .then(csv=>{
+    const rows = parseCSV(csv);
+    rows.shift(); // eliminar encabezados
 
-  voicebanks = rows.map(r=>{
-    const tags = [
-      r[4], // Engine
-      r[5], // Language Official
-      r[6], // Additional singable
-      r[7], // Gender
-      r[8], // Status
-      r[9]  // Availability
-    ].filter(t=>t);
-
-    const isNew = new Date(r[2]) > new Date(new Date().getTime() - 30*24*60*60*1000); // últimos 30 días
-    return {
+    voicebanks = rows.map(r=>({
+      folio: r[1],
+      release: r[2],
       name: r[3],
-      url: r[12],
+      engine: r[4],
+      language: r[5],
+      additionalLanguages: r[6],
+      gender: r[7],
+      status: r[8],
+      availability: r[9],
       cloudImage: r[13],
       cloudAudio: r[14],
-      tags,
-      isNew
-    }
-  }).filter(v=>v.name);
+      officialPage: r[12]
+    })).filter(v => v.name);
 
-  renderCards(voicebanks);
-});
+    renderCards();
+  });
 
-/* RENDER CARDS */
-function renderCards(list){
-  const container = document.getElementById("cards");
-  container.innerHTML = list.map(v=>`
+// RENDER CARDS
+function renderCards(){
+  const cardsContainer = document.getElementById("cards");
+  cardsContainer.innerHTML = voicebanks.map(v=>{
+    const isNew = (new Date() - new Date(v.release))/(1000*60*60*24) <= 30; // NEW si < 30 días
+    const tags = [
+      v.engine, v.language, v.gender, v.status, v.availability
+    ];
+    if(v.additionalLanguages) tags.push(...v.additionalLanguages.split(",")); 
+    const tagsHtml = tags.filter(t=>t).map(t=>`<span class="tag">${t.trim()}</span>`).join("");
+
+    return `
     <div class="card">
       <div class="card-image-section">
-        <a href="${v.url}" target="_blank">
+        <a href="${v.officialPage}" target="_blank" style="display:block; width:100%; height:100%;">
           <img src="${v.cloudImage}" alt="${v.name}">
+          ${isNew ? '<span class="badge">NEW</span>' : ''}
         </a>
-        ${v.isNew ? '<span class="badge">NEW</span>' : ''}
         ${v.cloudAudio ? `
+        <audio class="audio-element" src="${v.cloudAudio}"></audio>
         <button class="audio-btn">
-          <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M3 9v6h4l5 5V4L7 9H3z"/>
           </svg>
         </button>` : ''}
       </div>
-
-      <div class="card-content">
-        <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
-        <div class="tags">
-          ${v.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
-        </div>
-        <a class="button" href="${v.url}" target="_blank">See product details</a>
+      <div class="card-details">
+        <h2 onclick="window.open('${v.officialPage}', '_blank')">${v.name}</h2>
+        <div>${tagsHtml}</div>
+        <a class="button" href="${v.officialPage}" target="_blank">See product details</a>
+        <p class="release-date">Release Date: ${v.release}</p>
       </div>
     </div>
-  `).join("");
-
-  // Audio button functionality
-  const buttons = container.querySelectorAll(".audio-btn");
-  buttons.forEach(btn=>{
-    const audio = new Audio(btn.parentElement.querySelector("img").getAttribute("data-audio") || v.cloudAudio);
-    btn.addEventListener("click", ()=>{
-      if(!btn.classList.contains("playing")){
-        btn.classList.add("playing");
-        audio.play();
-        audio.onended = ()=> btn.classList.remove("playing");
-      } else {
-        btn.classList.remove("playing");
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    });
-  });
+    `;
+  }).join("");
 }
+
+// AUDIO PLAY/PAUSE
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('.audio-btn');
+  if(btn){
+    const audio = btn.parentElement.querySelector('audio');
+    if(!audio) return;
+
+    if(audio.paused){
+      audio.play();
+      btn.classList.add('playing');
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+    }
+
+    // Pausar otros audios
+    document.querySelectorAll('.audio-element').forEach(a=>{
+      if(a!==audio) a.pause();
+      a.parentElement.querySelector('.audio-btn')?.classList.remove('playing');
+    });
+  }
+});
 </script>
 
 </body>

@@ -2,205 +2,319 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Vocarchive - Vocaloid Style Cards</title>
+<title>Vocarchive</title>
 <style>
-body { font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:20px; color:#333; }
-h1 { text-align:center; margin-bottom:30px; font-size:2rem; color:#222; }
+body{
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 20px;
+}
+
+h1{text-align:center; margin-bottom:30px;}
+
+/* BUSCADOR */
+.search{
+  max-width:400px;
+  margin:0 auto 30px auto;
+}
+.search input{
+  width:100%;
+  padding:10px;
+  font-size:16px;
+}
 
 /* GRID */
-.grid {
-  display:flex;
-  flex-wrap:wrap;
+.grid{
+  display: flex;
+  flex-wrap: wrap;
   gap:20px;
   justify-content:center;
 }
 
-/* TARJETA */
-.card {
+/* CARD */
+.card{
   width:411px;
   background:#fff;
-  border-radius:18px;
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
   overflow:hidden;
-  box-shadow:0 8px 20px rgba(0,0,0,0.1);
-  transition:transform 0.2s, box-shadow 0.2s;
   display:flex;
   flex-direction:column;
+  font-size:14px;
 }
-.card:hover { transform: translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.15); }
 
-/* SECCIÓN SUPERIOR - IMAGEN */
-.card-image-section {
-  width:411px;
+/* SECCIÓN DE IMAGEN */
+.card-image-section{
+  position:relative;
   height:290px;
   background:#f5f5f5;
   display:flex;
   justify-content:center;
   align-items:center;
-  transition: all 0.3s ease;
-  position:relative;
+  overflow:hidden;
+  transition:background 0.3s;
 }
-.card:hover .card-image-section {
-  height:260px; /* se reduce el fondo al pasar el mouse */
+.card-image-section:hover{
+  background:#e0e0e0;
 }
-
-/* IMAGEN */
-.card-image-section img {
+.card-image-section img{
   width:250px;
   height:250px;
   object-fit:cover;
-  z-index:1;
-  border-radius:8px;
-}
-
-/* Badge NEW */
-.badge {
-  position:absolute;
-  top:10px;
-  left:10px;
-  background:#e74c3c;
-  color:white;
-  font-size:12px;
-  padding:3px 8px;
-  border-radius:12px;
-  font-weight:bold;
   z-index:2;
 }
 
-/* SECCIÓN INFERIOR - CONTENIDO */
-.card-content {
-  padding:16px;
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
+/* BADGE NEW */
+.badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:red;
+  color:white;
+  font-weight:bold;
+  padding:2px 6px;
+  border-radius:4px;
+  font-size:12px;
+  z-index:3;
 }
-.card-content h2 { font-size:1.2rem; margin-bottom:5px; }
-.card-content p { font-size:0.95rem; margin-bottom:10px; color:#555; }
+
+/* AUDIO DEMO */
+.audio-btn{
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:0;
+  z-index:3;
+}
+.audio-icon{
+  width:23px;
+  height:25px;
+  fill:#000;
+  transition: fill 0.2s;
+}
+.audio-btn.playing .audio-icon{
+  fill:#00ffff;
+}
+
+/* INFO SECTION */
+.card-info{
+  padding:15px;
+}
+.card-info h2{
+  margin:0 0 5px 0;
+  font-size:18px;
+}
+.card-info .type{
+  font-size:13px;
+  color:#555;
+  margin-bottom:10px;
+}
 
 /* TAGS */
-.tags {
+.tags{
   display:flex;
   flex-wrap:wrap;
   gap:6px;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
-.tag {
-  font-size:11px;
+.tag{
   background:#eee;
-  padding:4px 8px;
+  padding:4px 10px;
   border-radius:12px;
+  font-size:12px;
 }
 
-/* BOTÓN */
-.button {
+/* BUTTON */
+.button{
   display:inline-block;
-  padding:10px 16px;
-  border-radius:12px;
-  background:#222;
+  text-align:center;
+  width:100%;
+  padding:8px 0;
+  border-radius:6px;
+  background:black;
   color:white;
   text-decoration:none;
   font-weight:bold;
-  transition:background 0.2s;
-  text-align:center;
-  width:100%;
 }
-.button:hover { background:#444; }
-
-/* BUSCADOR */
-.search input{
-  width:100%;
-  max-width:400px;
-  padding:10px;
-  font-size:16px;
-  margin:0 auto 20px auto;
-  display:block;
+.release-date{
+  font-size:11px;
+  color:#777;
+  margin-top:5px;
 }
 </style>
 </head>
 <body>
-
 <h1>Vocarchive</h1>
 
+<!-- BUSCADOR -->
 <div class="search">
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
+<!-- GRID DE TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-// URL de tu CSV publicado desde Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
-const NEW_DAYS = 14; // días para badge NEW
-
 let voicebanks = [];
+let activeFilters = [];
 
-/* CSV PARSER */
+/* ========================= CSV PARSER ========================= */
 function parseCSV(text){
   const rows = [];
-  let row=[], cell="", insideQuotes=false;
+  let row = [];
+  let cell = "";
+  let insideQuotes = false;
+
   for(let i=0;i<text.length;i++){
-    const c=text[i];
-    if(c=='"') insideQuotes=!insideQuotes;
-    else if(c==','&&!insideQuotes){row.push(cell);cell="";}
-    else if((c=='\n'||c=='\r')&&!insideQuotes){if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}} 
-    else{cell+=c;}
+    const c = text[i];
+    if(c === '"'){
+      insideQuotes = !insideQuotes;
+    }else if(c === "," && !insideQuotes){
+      row.push(cell);
+      cell = "";
+    }else if((c === "\n" || c === "\r") && !insideQuotes){
+      if(cell || row.length){
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = "";
+      }
+    }else{
+      cell += c;
+    }
   }
-  if(cell||row.length){row.push(cell);rows.push(row);}
+  if(cell || row.length){
+    row.push(cell);
+    rows.push(row);
+  }
   return rows;
 }
 
-/* CARGAR SHEETS */
-fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
-  const rows=parseCSV(csv);
-  rows.shift(); // eliminar encabezados
+/* ========================= CARGAR SHEETS ========================= */
+fetch(SHEET_URL)
+  .then(r => r.text())
+  .then(csv => {
+    const rows = parseCSV(csv);
+    rows.shift(); // eliminar encabezados
 
-  voicebanks=rows.map(r=>{
-    const releaseDate=new Date(r[2]);
-    const isNew=(new Date()-releaseDate)/(1000*60*60*24)<=NEW_DAYS;
-    const tags=[r[4], r[5], ...r[6].split(",").map(s=>s.trim()), r[7], r[8], r[9]].filter(t=>t);
-    return {
-      folio:r[1],
-      release:r[2],
-      name:r[3],
-      type:r[4]+" Voicebank",
-      image:r[13],
-      audio:r[14],
-      url:r[12],
-      tags:tags,
-      isNew:isNew
-    };
-  }).filter(v=>v.name);
+    voicebanks = rows.map(r => ({
+      folio: r[1],
+      release: r[2],
+      name: r[3],
+      engine: r[4],
+      language: r[5],
+      additionalLanguages: r[6],
+      gender: r[7],
+      status: r[8],
+      availability: r[9],
+      profileImage: r[10],
+      demoAudio: r[11],
+      url: r[12],
+      cloudImage: r[13],
+      cloudAudio: r[14]
+    })).filter(v => v.name);
 
+    update();
+  });
+
+/* ========================= FILTROS ========================= */
+function renderFilters(){
+  const tags = new Set();
+  voicebanks.forEach(v=>{
+    [v.engine,v.language,v.additionalLanguages,v.gender,v.status,v.availability]
+      .forEach(t=>t && tags.add(t));
+  });
+  document.getElementById("filters").innerHTML =
+    [...tags].map(t=>`
+      <span class="tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t}')">${t}</span>
+    `).join("");
+}
+
+function toggleFilter(tag){
+  activeFilters.includes(tag)
+    ? activeFilters = activeFilters.filter(t=>t!==tag)
+    : activeFilters.push(tag);
   update();
-});
+}
 
-/* FILTRAR Y ACTUALIZAR */
+/* ========================= ACTUALIZAR ========================= */
 function update(){
-  const search=document.getElementById("searchInput").value.toLowerCase();
-  const filtered=voicebanks.filter(v=>v.name.toLowerCase().includes(search));
-  filtered.sort((a,b)=>new Date(b.release)-new Date(a.release));
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = voicebanks.filter(v=>{
+    const matchName = v.name.toLowerCase().includes(search);
+    const matchTags = activeFilters.every(t =>
+      [v.engine,v.language,v.additionalLanguages,v.gender,v.status,v.availability].includes(t)
+    );
+    return matchName && matchTags;
+  });
+
+  filtered.sort((a,b)=>new Date(b.release) - new Date(a.release));
   renderCards(filtered);
 }
 
-/* RENDER TARJETAS */
+/* ========================= RENDER CARDS ========================= */
 function renderCards(list){
-  document.getElementById("cards").innerHTML=list.map(v=>`
-    <div class="card">
-      <div class="card-image-section">
-        <img src="${v.image}" alt="${v.name}">
-        ${v.isNew?'<span class="badge">NEW</span>':''}
+  const today = new Date();
+  document.getElementById("cards").innerHTML = list.map(v=>{
+    // Badge NEW si publicado en últimos 30 días
+    const releaseDate = new Date(v.release);
+    const isNew = (today - releaseDate)/(1000*60*60*24) <= 30;
+
+    // Tags combinadas
+    const tags = [v.gender, v.language];
+    if(v.additionalLanguages) tags.push(...v.additionalLanguages.split(','));
+    [v.engine,v.status,v.availability].forEach(t=>{ if(t) tags.push(t); });
+
+    return `
+      <div class="card" data-audio="${v.cloudAudio}">
+        <div class="card-image-section">
+          <img src="${v.cloudImage}" alt="${v.name}">
+          ${isNew ? '<span class="badge">NEW</span>' : ''}
+          ${v.cloudAudio ? `
+          <button class="audio-btn">
+            <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+            </svg>
+          </button>` : ''}
+        </div>
+        <div class="card-info">
+          <h2>${v.name}</h2>
+          <div class="type">Type: AI Voicebank</div>
+          <div class="tags">${tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <a class="button" href="${v.url}" target="_blank">See product details</a>
+          <div class="release-date">Release: ${v.release}</div>
+        </div>
       </div>
-      <div class="card-content">
-        <h2>${v.name}</h2>
-        <p>${v.type}</p>
-        <div class="tags">${v.tags.map(tag=>`<span class="tag">${tag}</span>`).join("")}</div>
-        <a class="button" href="${v.url}" target="_blank">See product details</a>
-      </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
+
+  // AUDIO PLAY
+  document.querySelectorAll('.card').forEach(card=>{
+    const btn = card.querySelector('.audio-btn');
+    if(!btn) return;
+    const audioSrc = card.dataset.audio;
+    const audio = new Audio(audioSrc);
+    audio.preload = "none";
+
+    btn.addEventListener('click', ()=>{
+      if(audio.paused){
+        audio.play();
+        btn.classList.add('playing');
+      } else {
+        audio.pause();
+        btn.classList.remove('playing');
+      }
+    });
+
+    audio.addEventListener('ended', ()=>btn.classList.remove('playing'));
+  });
 }
 
 document.getElementById("searchInput").addEventListener("input", update);
 </script>
-
 </body>
 </html>

@@ -6,7 +6,7 @@
 
 <style>
 body{
-  font-family:Arial;
+  font-family:Arial, sans-serif;
   background:#f4f4f4;
   padding:20px;
 }
@@ -90,50 +90,21 @@ h1{text-align:center;}
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
-<!-- FILTROSa -->
+<!-- FILTROS -->
 <div class="filters" id="filters"></div>
 
 <!-- TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-// 🔴 TU CSV PUBLICADO
-const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
+// 🔴 URL de tu CSV publicado desde Google Sheets
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
 let activeFilters = [];
 
 /* =========================
-   GOOGLE DRIVE → DIRECT
-========================= */
-function driveDirect(url){
-  if(!url) return "";
-  const id = extractDriveId(url);
-  return id ? `https://lh3.googleusercontent.com/d/${id}` : url;
-}
-
-  function driveAudio(url){
-  if(!url) return "";
-  const id = extractDriveId(url);
-  return id ? `https://docs.google.com/uc?export=download&id=${id}` : url;
-}
-
-function extractDriveId(url){
-  const patterns = [
-    /id=([^&]+)/,
-    /\/d\/([^/]+)/,
-    /\/file\/d\/([^/]+)/
-  ];
-  for(const p of patterns){
-    const m = url.match(p);
-    if(m) return m[1];
-  }
-  return null;
-}
-
-/* =========================
-   CSV PARSER REAL
+   CSV PARSER
 ========================= */
 function parseCSV(text){
   const rows = [];
@@ -173,18 +144,20 @@ fetch(SHEET_URL)
   .then(r => r.text())
   .then(csv => {
     const rows = parseCSV(csv);
-    rows.shift(); // encabezados
+    rows.shift(); // eliminar encabezados
 
     voicebanks = rows.map(r => ({
-      name: r[1],
-      image: driveDirect(r[2]),
-      audio: driveAudio(r[3]),
-      engine: r[4],
-      language: r[5],
+      release: r[1],                // Release date
+      name: r[2],                   // Voice bank name
+      engine: r[3],                 // Engine
+      language: r[4],               // Official language
+      additionalLanguages: r[5],    // Additional singable languages
       gender: r[6],
       status: r[7],
       availability: r[8],
-      url: r[9]
+      image: r[9],                  // Cloudflare image link
+      audio: r[10],                 // Cloudflare audio demo link
+      url: r[11]                     // Official page
     })).filter(v => v.name);
 
     update();
@@ -218,8 +191,7 @@ function toggleFilter(tag){
    ACTUALIZAR
 ========================= */
 function update(){
-  const search =
-    document.getElementById("searchInput").value.toLowerCase();
+  const search = document.getElementById("searchInput").value.toLowerCase();
 
   const filtered = voicebanks.filter(v=>{
     const matchName = v.name.toLowerCase().includes(search);
@@ -228,6 +200,9 @@ function update(){
     );
     return matchName && matchTags;
   });
+
+  // 🔹 ORDENAR POR FECHA (más reciente primero)
+  filtered.sort((a,b) => new Date(b.release) - new Date(a.release));
 
   renderCards(filtered);
   renderFilters();
@@ -239,7 +214,7 @@ function update(){
 function renderCards(list){
   document.getElementById("cards").innerHTML = list.map(v=>`
     <div class="card">
-      <img src="${v.image}" loading="lazy">
+      <img src="${v.image}" loading="lazy" alt="${v.name}">
       <h2>${v.name}</h2>
 
       <div>
@@ -250,11 +225,14 @@ function renderCards(list){
         <span class="tag" onclick="toggleFilter('${v.availability}')">${v.availability}</span>
       </div>
 
+      <p>Additional Languages: ${v.additionalLanguages}</p>
+
       <div class="audio-box">
         <audio controls preload="none" src="${v.audio}"></audio>
       </div>
 
-      <a class="button" href="${v.url}" target="_blank">Página oficial</a>
+      <a class="button" href="${v.url}" target="_blank">Official Page</a>
+      <p class="release-date">Release Date: ${v.release}</p>
     </div>
   `).join("");
 }

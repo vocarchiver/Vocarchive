@@ -3,13 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Vocarchive</title>
+
 <style>
 body{
   font-family:Arial, sans-serif;
   background:#f4f4f4;
   padding:20px;
+  display:flex;
+  justify-content:center;
 }
-h1{text-align:center;}
+
+h1{text-align:center; width:100%; margin-bottom:30px;}
 
 .search{
   max-width:400px;
@@ -22,22 +26,26 @@ h1{text-align:center;}
 }
 
 .grid{
-  display:flex;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, 411px);
   gap:20px;
   justify-content:center;
 }
 
+/* ===== TARJETA ===== */
 .card{
   width:411px;
   background:#fff;
-  border-radius:10px;
+  border-radius:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
   overflow:hidden;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);
-  display:flex;
-  flex-direction:column;
+  transition: transform 0.2s;
+}
+.card:hover{
+  transform: translateY(-3px);
 }
 
+/* ===== SECCIÓN DE IMAGEN ===== */
 .card-image-section{
   position:relative;
   background:#f5f5f5;
@@ -64,6 +72,7 @@ h1{text-align:center;}
   transform: scale(1.05);
 }
 
+/* BADGE NEW */
 .badge{
   position:absolute;
   top:10px;
@@ -76,6 +85,7 @@ h1{text-align:center;}
   font-weight:bold;
 }
 
+/* AUDIO BUTTON */
 .audio-btn {
   position:absolute;
   bottom:10px;
@@ -96,64 +106,71 @@ h1{text-align:center;}
   fill:#00ffff;
 }
 
+/* ===== SECCIÓN DE CONTENIDO ===== */
 .card-content{
-  padding:15px;
+  padding-bottom:15px;
 }
 
 .card-content h2{
-  margin:5px 0;
-  font-size:20px;
+  font-size:22px;
+  color:#000;
+  margin-left:40px;
+  margin-top:30px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition: color 0.2s;
+}
+.card-content h2:hover{
+  color:#d6186c;
 }
 
-.card-content p{
-  margin:5px 0;
-  font-size:14px;
-}
-
+/* TAGS */
 .tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:5px;
-  margin-top:5px;
+  margin-left:40px;
+  margin-bottom:10px;
+}
+.tag{
+  display:inline-block;
+  padding:4px 10px;
+  background:#eee;
+  border-radius:12px;
+  font-size:12px;
+  margin:2px;
 }
 
-.tag{
-  background:#eee;
-  padding:3px 8px;
-  border-radius:10px;
-  font-size:12px;
-}
+/* BUTTON */
 .button{
   display:inline-block;
-  margin-top:10px;
+  margin-left:40px;
   padding:8px 12px;
   border-radius:10px;
   background:black;
   color:white;
   text-decoration:none;
-  font-size:14px;
+  font-weight:bold;
 }
 </style>
 </head>
+
 <body>
 
 <h1>Vocarchive</h1>
 
+<!-- BUSCADOR -->
 <div class="search">
   <input type="text" id="searchInput" placeholder="Buscar voicebank...">
 </div>
 
+<!-- TARJETAS -->
 <div class="grid" id="cards"></div>
 
 <script>
-// 🔴 URL de tu CSV publicado desde Google Sheets
+// CSV URL
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
 
-/* =========================
-   CSV PARSER
-========================= */
+/* CSV PARSER */
 function parseCSV(text){
   const rows = [];
   let row = [];
@@ -185,41 +202,38 @@ function parseCSV(text){
   return rows;
 }
 
-/* =========================
-   CARGAR SHEETS
-========================= */
+/* CARGAR SHEETS */
 fetch(SHEET_URL)
-  .then(r => r.text())
-  .then(csv => {
-    const rows = parseCSV(csv);
-    rows.shift(); // eliminar encabezados
+.then(r => r.text())
+.then(csv => {
+  const rows = parseCSV(csv);
+  rows.shift(); // eliminar encabezados
 
-    voicebanks = rows.map(r => {
-      const releaseDate = new Date(r[2]);
-      const today = new Date();
-      const isNew = (today - releaseDate) / (1000*60*60*24) <= 30; // NEW si <30 días
+  voicebanks = rows.map(r=>{
+    const tags = [
+      r[4], // Engine
+      r[5], // Language Official
+      r[6], // Additional singable
+      r[7], // Gender
+      r[8], // Status
+      r[9]  // Availability
+    ].filter(t=>t);
 
-      // Tags
-      const tags = [r[4], r[5]]; // Engine, Language(Official)
-      if(r[6]) tags.push(...r[6].split(',')); // Additional Languages
-      tags.push(r[7], r[8], r[9], r[10]); // Gender, Status, Availability, etc.
-      return {
-        folio: r[1],
-        name: r[3],
-        cloudImage: r[13],
-        cloudAudio: r[14],
-        url: r[12],
-        isNew,
-        tags: tags.filter(t=>t)
-      }
-    }).filter(v => v.name);
+    const isNew = new Date(r[2]) > new Date(new Date().getTime() - 30*24*60*60*1000); // últimos 30 días
+    return {
+      name: r[3],
+      url: r[12],
+      cloudImage: r[13],
+      cloudAudio: r[14],
+      tags,
+      isNew
+    }
+  }).filter(v=>v.name);
 
-    renderCards(voicebanks);
-  });
+  renderCards(voicebanks);
+});
 
-/* =========================
-   RENDER CARDS
-========================= */
+/* RENDER CARDS */
 function renderCards(list){
   const container = document.getElementById("cards");
   container.innerHTML = list.map(v=>`
@@ -230,15 +244,15 @@ function renderCards(list){
         </a>
         ${v.isNew ? '<span class="badge">NEW</span>' : ''}
         ${v.cloudAudio ? `
-        <button class="audio-btn" onclick="toggleAudio(this)">
-          <audio src="${v.cloudAudio}"></audio>
+        <button class="audio-btn">
           <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M3 9v6h4l5 5V4L7 9H3z"/>
           </svg>
         </button>` : ''}
       </div>
+
       <div class="card-content">
-        <h2>${v.name}</h2>
+        <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
         <div class="tags">
           ${v.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
         </div>
@@ -246,24 +260,25 @@ function renderCards(list){
       </div>
     </div>
   `).join("");
-}
 
-/* =========================
-   AUDIO PLAY
-========================= */
-function toggleAudio(btn){
-  const audio = btn.querySelector('audio');
-  if(!audio) return;
-  if(audio.paused){
-    audio.play();
-    btn.classList.add('playing');
-    audio.onended = ()=>btn.classList.remove('playing');
-  } else {
-    audio.pause();
-    audio.currentTime = 0;
-    btn.classList.remove('playing');
-  }
+  // Audio button functionality
+  const buttons = container.querySelectorAll(".audio-btn");
+  buttons.forEach(btn=>{
+    const audio = new Audio(btn.parentElement.querySelector("img").getAttribute("data-audio") || v.cloudAudio);
+    btn.addEventListener("click", ()=>{
+      if(!btn.classList.contains("playing")){
+        btn.classList.add("playing");
+        audio.play();
+        audio.onended = ()=> btn.classList.remove("playing");
+      } else {
+        btn.classList.remove("playing");
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+  });
 }
 </script>
+
 </body>
 </html>

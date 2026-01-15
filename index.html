@@ -148,17 +148,17 @@ fetch(SHEET_URL)
     rows.shift(); // eliminar encabezados
 
     voicebanks = rows.map(r => ({
-      release: r[1],                // Release date
-      name: r[2],                   // Voice bank name
-      engine: r[3],                 // Engine
-      language: r[4],               // Official language
-      additionalLanguages: r[5],    // Additional singable languages
+      release: r[1],
+      name: r[2],
+      engine: r[3],
+      language: r[4],
+      additionalLanguages: r[5],
       gender: r[6],
       status: r[7],
       availability: r[8],
-      image: r[13] ? r[13].trim() : "", // Cloudflare image link (col 13)
-      audio: r[14] ? r[14].trim() : "", // Cloudflare audio link (col 14)
-      url: r[11] ? r[11].trim() : ""    // Official page
+      image: r[12] ? r[12].trim() : "",
+      audio: r[13] ? r[13].trim() : "",
+      url: r[11] ? r[11].trim() : ""
     })).filter(v => v.name);
 
     update();
@@ -215,7 +215,7 @@ function update(){
 function renderCards(list){
   document.getElementById("cards").innerHTML = list.map(v=>`
     <div class="card">
-      ${v.image ? `<img src="${v.image}" loading="lazy" alt="${v.name}">` : ""}
+      ${v.image ? `<img src="${encodeURI(v.image)}" loading="lazy" alt="${v.name}">` : ""}
       <h2>${v.name}</h2>
 
       <div>
@@ -228,7 +228,7 @@ function renderCards(list){
 
       ${v.additionalLanguages ? `<p>Additional Languages: ${v.additionalLanguages}</p>` : ""}
 
-      ${v.audio ? `<div class="audio-box"><audio controls preload="none" src="${v.audio}"></audio></div>` : ""}
+      ${v.audio ? `<div class="audio-box"><audio controls preload="none" src="${encodeURI(v.audio)}"></audio></div>` : ""}
 
       ${v.url ? `<a class="button" href="${v.url}" target="_blank">Official Page</a>` : ""}
       <p class="release-date">Release Date: ${v.release}</p>

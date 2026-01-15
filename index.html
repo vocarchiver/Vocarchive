@@ -103,6 +103,32 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWq
 let voicebanks = [];
 let activeFilters = [];
 
+  // Convierte enlaces de Google Drive a enlaces directos
+function driveImage(url){
+  if(!url) return "";
+  const id = extractDriveId(url);
+  return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
+}
+
+function driveAudio(url){
+  if(!url) return "";
+  const id = extractDriveId(url);
+  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
+}
+
+function extractDriveId(url){
+  const patterns = [
+    /id=([^&]+)/,
+    /\/d\/([^/]+)/,
+    /\/file\/d\/([^/]+)/
+  ];
+  for(const p of patterns){
+    const match = url.match(p);
+    if(match) return match[1];
+  }
+  return null;
+}
+
 // Cargar datos desde Google Sheets
 fetch(SHEET_URL)
   .then(r => r.text())
@@ -117,8 +143,8 @@ fetch(SHEET_URL)
       gender: r[6],
       status: r[7],
       availability: r[8],
-      image: r[2],
-      audio: r[3],
+      image: driveImage(r[2]),
+      audio:driveImage(r[3]),
       url: r[9]
     })).filter(v => v.name);
 

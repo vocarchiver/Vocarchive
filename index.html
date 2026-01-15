@@ -84,15 +84,22 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
 }
 
 /* AUDIO BUTTON */
-.audio-btn {
+.audio-btn{
   position:absolute;
   bottom:10px;
   right:10px;
-  background:none;
+  width:23px;
+  height:25px;
   border:none;
+  background:none;
   cursor:pointer;
   padding:0;
-  z-index:3;
+}
+.audio-btn svg{
+  width:23px;
+  height:25px;
+  fill:#000;
+  transition:fill 0.2s;
 }
 .audio-icon {
   width:23px;
@@ -100,10 +107,12 @@ h1{text-align:center; width:100%; margin-bottom:30px;}
   fill:#000;
   transition: fill 0.2s;
 }
-.audio-btn.playing .audio-icon {
-  fill:#00ffff;
+.audio-btn.playing svg{
+  fill:#00ffff; /* cyan cuando suena */
 }
-
+.audio-element{
+  display:none; /* no mostrar controles */
+}
 /* ===== SECCIÓN DE CONTENIDO ===== */
 .card-content{
   padding-bottom:15px;

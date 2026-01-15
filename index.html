@@ -219,11 +219,15 @@ fetch(SHEET_URL)
     voicebanks = rows.map(r=>{
       const releaseDate = new Date(r[2]);
       const isNew = (now - releaseDate)/(1000*60*60*24) <= 30; // si es menor a 30 dias NEW badge
-      const tagsArr = [
-        r[4], r[5], r[6], r[7], r[8]
-      ];
-      // Additional singable languages
-      if(r[6]) tagsArr.push(...r[6].split(',').map(s=>s.trim()));
+
+      // TAGS: Engine, Language, Additional languages, Gender, Status, Availability
+      const tagColumns = [4,5,6,7,8,9]; 
+      let tagsArr = [];
+      tagColumns.forEach(idx=>{
+        if(r[idx]){
+          tagsArr.push(...r[idx].split(',').map(s=>s.trim()).filter(Boolean));
+        }
+      });
 
       return {
         name: r[3],
@@ -232,7 +236,7 @@ fetch(SHEET_URL)
         cloudAudio: r[14],
         releaseDate: r[2],
         isNew,
-        tags: tagsArr.filter(Boolean)
+        tags: tagsArr
       };
     }).filter(v=>v.name);
 

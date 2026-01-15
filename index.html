@@ -113,6 +113,12 @@ function driveDirect(url){
   return id ? `https://lh3.googleusercontent.com/d/${id}` : url;
 }
 
+  function driveAudio(url){
+  if(!url) return "";
+  const id = extractDriveId(url);
+  return id ? `https://docs.google.com/uc?export=download&id=${id}` : url;
+}
+
 function extractDriveId(url){
   const patterns = [
     /id=([^&]+)/,
@@ -172,7 +178,7 @@ fetch(SHEET_URL)
     voicebanks = rows.map(r => ({
       name: r[1],
       image: driveDirect(r[2]),
-      audio: driveDirect(r[3]),
+      audio: driveAudio(r[3]),
       engine: r[4],
       language: r[5],
       gender: r[6],

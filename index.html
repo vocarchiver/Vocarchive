@@ -103,17 +103,10 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWq
 let voicebanks = [];
 let activeFilters = [];
 
-  // Convierte enlaces de Google Drive a enlaces directos
-function driveImage(url){
+function driveDirect(url){
   if(!url) return "";
   const id = extractDriveId(url);
-  return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
-}
-
-function driveAudio(url){
-  if(!url) return "";
-  const id = extractDriveId(url);
-  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
+  return id ? `https://lh3.googleusercontent.com/d/${id}` : url;
 }
 
 function extractDriveId(url){
@@ -123,11 +116,12 @@ function extractDriveId(url){
     /\/file\/d\/([^/]+)/
   ];
   for(const p of patterns){
-    const match = url.match(p);
-    if(match) return match[1];
+    const m = url.match(p);
+    if(m) return m[1];
   }
   return null;
 }
+
 
 // Cargar datos desde Google Sheets
 fetch(SHEET_URL)

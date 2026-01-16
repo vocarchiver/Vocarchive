@@ -266,7 +266,7 @@ fetch(SHEET_URL)
       const isNew = (now - releaseDate)/(1000*60*60*24) <= 30; // NEW si < 30 días
 
       // TAGS: Engine, Language, Additional Singable Languages, Gender, Status, Availability
-      const tagColumns = [4,5,6,7,8,9]; 
+      const tagColumns = [4,5,6,7,8,9,15]; 
       let tagsArr = [];
       tagColumns.forEach(idx=>{
         if(r[idx]){

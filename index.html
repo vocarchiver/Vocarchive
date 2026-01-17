@@ -1,231 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Vocarchive</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  padding: 20px;
-  margin: 0;
-}
-h1 { text-align: center; }
-
-/* MENÚ SUPERIOR */
-.top-menu {
-  width: 100%;
-  background: #000;
-  padding: 10px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 5px rgba(0,0,0,.2);
-}
-.menu-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: flex-start;
-  gap: 20px;
-}
-.menu-item {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
-  transition: color 0.2s;
-}
-.menu-item:hover { color: #d6186c; }
-
-.search {
-  max-width: 400px;
-  margin: 20px auto;
-}
-.search input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-}
-
-.filters {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.filter-tag {
-  display: inline-block;
-  padding: 6px 12px;
-  background: #ddd;
-  border-radius: 14px;
-  font-size: 13px;
-  margin: 4px;
-  cursor: pointer;
-}
-.filter-tag.active {
-  background: black;
-  color: white;
-}
-
-/* GRID */
-.grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-/* TARJETA */
-.card {
-  width: 411px;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.12);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* SECCION IMAGEN */
-.card-image-section {
-  position: relative;
-  width: 100%;
-  height: 290px;
-  background: #f5f5f5;
-}
-.card-image-section a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-.card-image-section img {
-  width: 250px;
-  height: 250px;
-  object-fit: cover;
-  cursor: pointer;
-  border-radius: 4px;
-}
-.badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #d6186c;
-  color: white;
-  padding: 2px 6px;
-  font-size: 11px;
-  font-weight: bold;
-  border-radius: 4px;
-}
-
-/* BOTON AUDIO */
-.audio-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 23px;
-  height: 25px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-}
-.audio-btn svg {
-  width: 23px;
-  height: 25px;
-  fill: #000;
-  transition: fill 0.2s;
-}
-.audio-btn.playing svg { fill: #00ffff !important; }
-.audio-element { display: none; }
-
-/* SECCION INFO */
-.card-info {
-  padding: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.card-info h2 {
-  font-size: 22px;
-  margin: 0 0 10px 0;
-  cursor: pointer;
-  color: black;
-  transition: color 0.2s;
-}
-.card-info h2:hover { color: #d6186c; }
-
-/* TAGS */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-.tag {
-  background: #eee;
-  border-radius: 12px;
-  padding: 4px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.tag:hover {
-  background: #d6186c;
-  color: white;
-}
-
-/* BUTTON */
-.button {
-  display: block;
-  margin-top: auto;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: black;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-}
-.release-date {
-  font-size: 12px;
-  color: #555;
-  margin-top: 6px;
-}
-</style>
-</head>
-<body>
-
-<!-- MENÚ -->
-<nav class="top-menu">
-  <div class="menu-container">
-    <a href="index.html" class="menu-item">Home</a>
-    <a href="help.html" class="menu-item">Contribute</a>
-    <a href="guidelines.html" class="menu-item">Guidelines</a>
-    <a href="synths.html" class="menu-item">Synths</a>
-  </div>
-</nav>
-
-<h1>Vocarchive</h1>
-
-<div class="search">
-  <input type="text" id="searchInput" placeholder="Buscar voicebank...">
-</div>
-
-<div class="filters" id="filters"></div>
-<div class="grid" id="cards"></div>
-
 <script>
-// 🔴 CSV de Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
 let activeFilters = [];
+let currentPage = 1;
+const ITEMS_PER_PAGE = 9;
 
 /* CSV parser */
 function parseCSV(text){
   const rows = [];
   let row = [], cell = "", insideQuotes = false;
-
   for(let i=0;i<text.length;i++){
     const c = text[i];
     if(c === '"') insideQuotes = !insideQuotes;
@@ -251,7 +35,7 @@ fetch(SHEET_URL)
   .then(r => r.text())
   .then(csv => {
     const rows = parseCSV(csv);
-    rows.shift(); // quitar encabezados
+    rows.shift();
 
     const now = new Date();
 
@@ -266,7 +50,6 @@ fetch(SHEET_URL)
 
       const tagColumns = [4,5,6,7,8,9,15];
       let tagsArr = [];
-
       tagColumns.forEach(idx => {
         if(r[idx]){
           r[idx].split(',').forEach(s=>{
@@ -288,10 +71,6 @@ fetch(SHEET_URL)
     }).filter(v => v.name);
 
     update();
-  })
-  .catch(err=>{
-    console.error("Error cargando CSV:", err);
-    document.body.innerHTML = "<h2>Error cargando datos.</h2>";
   });
 
 /* FILTROS */
@@ -308,6 +87,7 @@ function toggleFilter(tag){
   activeFilters.includes(tag)
     ? activeFilters = activeFilters.filter(t=>t!==tag)
     : activeFilters.push(tag);
+  currentPage = 1;
   update();
 }
 
@@ -323,11 +103,15 @@ function update(){
   filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
   renderCards(filtered);
   renderFilters();
+  renderPagination(filtered.length);
 }
 
 /* RENDER CARDS */
 function renderCards(list){
-  document.getElementById("cards").innerHTML = list.map(v=>`
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageItems = list.slice(start, start + ITEMS_PER_PAGE);
+
+  document.getElementById("cards").innerHTML = pageItems.map(v=>`
     <div class="card">
       <div class="card-image-section">
         <a href="${v.url}" target="_blank">
@@ -380,8 +164,47 @@ function renderCards(list){
   });
 }
 
-document.getElementById("searchInput").addEventListener("input", update);
-</script>
+/* PAGINACIÓN */
+function renderPagination(totalItems){
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  if(totalPages <= 1){
+    document.getElementById("pagination")?.remove();
+    return;
+  }
 
-</body>
-</html>
+  let container = document.getElementById("pagination");
+  if(!container){
+    container = document.createElement("div");
+    container.id = "pagination";
+    container.style.textAlign = "center";
+    container.style.margin = "30px 0";
+    document.body.appendChild(container);
+  }
+
+  let html = "";
+
+  if(currentPage > 1){
+    html += `<button onclick="goToPage(${currentPage - 1})">« Prev</button>`;
+  }
+
+  for(let i=1;i<=totalPages;i++){
+    html += `<button class="${i===currentPage?'active-page':''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+
+  if(currentPage < totalPages){
+    html += `<button onclick="goToPage(${currentPage + 1})">Next »</button>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function goToPage(page){
+  currentPage = page;
+  update();
+}
+
+document.getElementById("searchInput").addEventListener("input", ()=>{
+  currentPage = 1;
+  update();
+});
+</script>

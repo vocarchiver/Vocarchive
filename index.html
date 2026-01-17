@@ -7,72 +7,11 @@
 body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;
-  padding: 20px;
   margin: 0;
+  padding: 20px;
 }
 h1 { text-align: center; }
 
-/* MENÚ SUPERIOR */
-.top-menu {
-  width: 100%;
-  background: #000;
-  padding: 10px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 5px rgba(0,0,0,.2);
-}
-
-.menu-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: flex-start;
-  gap: 20px;
-}
-
-.menu-item {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
-  transition: color 0.2s;
-}
-
-.menu-item:hover {
-  color: #d6186c;
-}
-
-
-.search {
-  max-width: 400px;
-  margin: 0 auto 20px auto;
-}
-.search input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-}
-
-.filters {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.filter-tag {
-  display: inline-block;
-  padding: 6px 12px;
-  background: #ddd;
-  border-radius: 14px;
-  font-size: 13px;
-  margin: 4px;
-  cursor: pointer;
-}
-.filter-tag.active {
-  background: black;
-  color: white;
-}
-
-/* GRID */
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -80,61 +19,90 @@ h1 { text-align: center; }
   justify-content: center;
 }
 
-/* TARJETA */
 .card {
-  width: 411px;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-/* SECCION IMAGEN */
-.card-image-section {
-  position: relative;
+.card img {
   width: 100%;
-  height: 290px;
-  background: #f5f5f5;
-}
-.card-image-section a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-.card-image-section img {
-  width: 250px;
-  height: 250px;
+  height: 200px;
   object-fit: cover;
-  cursor: pointer;
-  border-radius: 4px;
 }
 
-.badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #d6186c;
-  color: white;
-  padding: 2px 6px;
+.card-body {
+  padding: 12px;
+}
+
+.card-body h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  background: #eee;
+  border-radius: 10px;
+  padding: 4px 8px;
   font-size: 11px;
-  font-weight: bold;
-  border-radius: 4px;
 }
 
-/* BOTON AUDIO */
-.audio-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 23px;
-  height: 25px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
+audio {
+  width: 100%;
+  margin-top: 8px;
 }
-.a
+</style>
+</head>
+<body>
+
+<h1>Vocarchive</h1>
+<div class="grid" id="cards"></div>
+
+<script>
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
+
+fetch(SHEET_URL)
+  .then(res => res.text())
+  .then(csv => {
+    const rows = csv.split("\n").map(r => r.split(","));
+    rows.shift(); // quitar encabezados
+
+    const cardsHTML = rows.map(r => {
+      const name = r[3] || "Unnamed";
+      const image = r[13] || "";
+      const audio = r[14] || "";
+      const tags = [r[4], r[5], r[7], r[8]].filter(Boolean);
+
+      return `
+        <div class="card">
+          ${image ? `<img src="${image}">` : ""}
+          <div class="card-body">
+            <h2>${name}</h2>
+            <div class="tags">
+              ${tags.map(t => `<span class="tag">${t}</span>`).join("")}
+            </div>
+            ${audio ? `<audio controls src="${audio}"></audio>` : ""}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    document.getElementById("cards").innerHTML = cardsHTML;
+  })
+  .catch(err => {
+    console.error("ERROR:", err);
+    document.body.innerHTML = "<h2>Error cargando datos.</h2>";
+  });
+</script>
+
+</body>
+</html>

@@ -392,11 +392,14 @@ function renderCards(list){
 
       <div class="card-info">
         <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
-        <div class="tags">
-          ${v.tags.map(t => `
-            <span class="tag" onclick="toggleFilter('${t.replace(/'/g,"\\'")}')">${t}</span>
-          `).join("")}
-        </div>
+<div class="tags">
+  ${v.engine ? `<span class="tag" onclick="toggleFilter('${v.engine.replace(/'/g,"\\'")}')">${v.engine}</span>` : ''}
+  ${v.engine && v.tags.length ? '<span class="tag">|</span>' : ''}
+  ${v.tags.filter(t => t !== v.engine).map(t => `
+    <span class="tag" onclick="toggleFilter('${t.replace(/'/g,"\\'")}')">${t}</span>
+  `).join("")}
+</div>
+
         <a class="button" href="${v.url}" target="_blank">See product details</a>
         <p class="release-date">Release Date: ${v.releaseDate || "Unknown"}</p>
       </div>

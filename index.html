@@ -222,12 +222,166 @@ let voicebanks = [];
 let activeFilters = [];
 
 /* CSV parser */
-function parseCSV(text) {
+function parseCSV(text){
   const rows = [];
   let row = [], cell = "", insideQuotes = false;
 
-  for (let i = 0; i < text.length; i++) {
+  for(let i=0;i<text.length;i++){
     const c = text[i];
+    if(c === '"') insideQuotes = !insideQuotes;
+    else if(c === ',' && !insideQuotes){
+      row.push(cell); cell = "";
+    }
+    else if((c === "\n" || c === "\r") && !insideQuotes){
+      if(cell || row.length){
+        row.push(cell); rows.push(row);
+        row = []; cell = "";
+      }
+    }
+    else cell += c;
+  }
+  if(cell || row.length){
+    row.push(cell); rows.push(row);
+  }
+  return rows;
+}
 
-    if (c === '"') insideQuotes = !insideQuotes;
-    else if (c ===
+/* CARGAR SHEET */
+fetch(SHEET_URL)
+  .then(r => r.text())
+  .then(csv => {
+    const rows = parseCSV(csv);
+    rows.shift(); // quitar encabezados
+
+    const now = new Date();
+
+    voicebanks = rows.map(r => {
+      const name = r[3] || r[1] || r[0] || "Unknown Voicebank";
+      const image = r[13] || r[2] || "";
+      const audio = r[14] || r[3] || "";
+      const url = r[12] || r[9] || "#";
+      const releaseDate = r[2] || "";
+      const releaseDateObj = new Date(releaseDate);
+      const isNew = !isNaN(releaseDateObj) && (now - releaseDateObj) / (1000*60*60*24) <= 30;
+
+      const tagColumns = [4,5,6,7,8,9,15];
+      let tagsArr = [];
+
+      tagColumns.forEach(idx => {
+        if(r[idx]){
+          r[idx].split(',').forEach(s=>{
+            const t = s.trim();
+            if(t) tagsArr.push(t);
+          });
+        }
+      });
+
+      return {
+        name,
+        url,
+        cloudImage: image,
+        cloudAudio: audio,
+        releaseDate,
+        isNew,
+        tags: tagsArr
+      };
+    }).filter(v => v.name);
+
+    update();
+  })
+  .catch(err=>{
+    console.error("Error cargando CSV:", err);
+    document.body.innerHTML = "<h2>Error cargando datos.</h2>";
+  });
+
+/* FILTROS */
+function renderFilters(){
+  const tags = new Set();
+  voicebanks.forEach(v=>v.tags.forEach(t=>tags.add(t)));
+  document.getElementById("filters").innerHTML =
+    [...tags].map(t =>
+      `<span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t.replace(/'/g,"\\'")}')">${t}</span>`
+    ).join("");
+}
+
+function toggleFilter(tag){
+  activeFilters.includes(tag)
+    ? activeFilters = activeFilters.filter(t=>t!==tag)
+    : activeFilters.push(tag);
+  update();
+}
+
+/* ACTUALIZAR GRID */
+function update(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = voicebanks.filter(v=>{
+    const matchName = v.name.toLowerCase().includes(search);
+    const matchTags = activeFilters.every(t=>v.tags.includes(t));
+    return matchName && matchTags;
+  });
+
+  filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
+  renderCards(filtered);
+  renderFilters();
+}
+
+/* RENDER CARDS */
+function renderCards(list){
+  document.getElementById("cards").innerHTML = list.map(v=>`
+    <div class="card">
+      <div class="card-image-section">
+        <a href="${v.url}" target="_blank">
+          <img src="${v.cloudImage}" alt="${v.name}">
+          ${v.isNew?'<span class="badge">NEW</span>':''}
+        </a>
+
+        ${v.cloudAudio ? `
+          <audio class="audio-element" src="${v.cloudAudio}"></audio>
+          <button class="audio-btn" aria-label="Play demo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+            </svg>
+          </button>
+        ` : ''}
+      </div>
+
+      <div class="card-info">
+        <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
+        <div class="tags">
+          ${v.tags.map(t=>`
+            <span class="tag" onclick="toggleFilter('${t.replace(/'/g,"\\'")}')">${t}</span>
+          `).join("")}
+        </div>
+        <a class="button" href="${v.url}" target="_blank">See product details</a>
+        <p class="release-date">Release Date: ${v.releaseDate || "Unknown"}</p>
+      </div>
+    </div>
+  `).join("");
+
+  // Audio control
+  document.querySelectorAll('.audio-btn').forEach(btn=>{
+    const audio = btn.parentElement.querySelector('audio');
+    btn.onclick = ()=>{
+      if(audio.paused){
+        audio.play();
+        btn.classList.add('playing');
+      } else {
+        audio.pause();
+        btn.classList.remove('playing');
+      }
+      document.querySelectorAll('.audio-element').forEach(a=>{
+        if(a!==audio){
+          a.pause();
+          const b = a.parentElement.querySelector('.audio-btn');
+          if(b) b.classList.remove('playing');
+        }
+      });
+    };
+  });
+}
+
+document.getElementById("searchInput").addEventListener("input", update);
+</script>
+
+</body>
+</html>

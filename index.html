@@ -163,7 +163,7 @@ h1 { text-align: center; }
 }
 .card-info h2 {
   font-size: 22px;
-  margin: 0 0 10px 0;
+  margin: 0 0 6px 0;
   cursor: pointer;
   color: black;
   transition: color 0.2s;
@@ -172,7 +172,17 @@ h1 { text-align: center; }
   color: #d6186c;
 }
 
-/* TAGS EN SEGUNDA SECCION */
+/* LINEA PRINCIPAL (Engine | Language) */
+.meta-line {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+.meta-line .engine {
+  font-weight: bold;
+}
+
+/* TAGS */
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -208,6 +218,27 @@ h1 { text-align: center; }
   color: #555;
   margin-top: 6px;
 }
+
+/* PAGINACIÓN */
+.pagination {
+  text-align: center;
+  margin-top: 30px;
+}
+.page-btn {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 4px;
+  border-radius: 8px;
+  background: #ddd;
+  cursor: pointer;
+}
+.page-btn.active {
+  background: black;
+  color: white;
+}
+.page-btn:hover {
+  background: #bbb;
+}
 </style>
 </head>
 <body>
@@ -217,7 +248,7 @@ h1 { text-align: center; }
   <div class="menu-container">
     <a href="index.html" class="menu-item">Home</a>
     <a href="help.html" class="menu-item">Contribute</a>
-    <a href="guidelines.html">Guidelines</a>
+    <a href="guidelines.html" class="menu-item">Guidelines</a>
     <a href="synths.html" class="menu-item">Synths</a>
   </div>
 </nav>
@@ -232,12 +263,16 @@ h1 { text-align: center; }
 
 <div class="grid" id="cards"></div>
 
+<div class="pagination" id="pagination"></div>
+
 <script>
 // 🔴 CSV de Google Sheets
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
 let voicebanks = [];
 let activeFilters = [];
+let currentPage = 1;
+const ITEMS_PER_PAGE = 9;
 
 /* CSV parser */
 function parseCSV(text){
@@ -271,7 +306,6 @@ fetch(SHEET_URL)
       let tagsArr = [];
       tagColumns.forEach(idx=>{
         if(r[idx]){
-          // separar por comas y agregar como tags individuales
           r[idx].split(',').forEach(s=>{
             const t = s.trim();
             if(t) tagsArr.push(t);
@@ -286,6 +320,8 @@ fetch(SHEET_URL)
         cloudAudio: r[14],
         releaseDate: r[2],
         isNew,
+        engine: r[4],
+        language: r[5],
         tags: tagsArr
       };
     }).filter(v=>v.name);
@@ -307,6 +343,7 @@ function toggleFilter(tag){
   } else {
     activeFilters.push(tag);
   }
+  currentPage = 1;
   update();
 }
 
@@ -321,11 +358,15 @@ function update(){
   filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
   renderCards(filtered);
   renderFilters();
+  renderPagination(filtered);
 }
 
 /* RENDER CARDS */
 function renderCards(list){
-  document.getElementById("cards").innerHTML = list.map(v=>`
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageItems = list.slice(start, start + ITEMS_PER_PAGE);
+
+  document.getElementById("cards").innerHTML = pageItems.map(v=>`
     <div class="card">
       <div class="card-image-section">
         <a href="${v.url}" target="_blank">
@@ -342,34 +383,14 @@ function renderCards(list){
       </div>
       <div class="card-info">
         <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
+
+        <div class="meta-line">
+          <span class="engine">${v.engine}</span> | <span>${v.language}</span>
+        </div>
+
         <div class="tags">
           ${v.tags.map(t=>`<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`).join('')}
         </div>
+
         <a class="button" href="${v.url}" target="_blank">See product details</a>
-        <p class="release-date">Release Date: ${v.releaseDate}</p>
-      </div>
-    </div>
-  `).join("");
-
-  // Audio JS
-  document.querySelectorAll('.audio-btn').forEach(btn=>{
-    const audio = btn.parentElement.querySelector('audio');
-    btn.onclick = ()=>{
-      if(audio.paused){
-        audio.play(); btn.classList.add('playing');
-      } else {
-        audio.pause(); btn.classList.remove('playing');
-      }
-      // Pausar otros
-      document.querySelectorAll('.audio-element').forEach(a=>{
-        if(a!==audio){ a.pause(); a.parentElement.querySelector('.audio-btn')?.classList.remove('playing'); }
-      });
-    };
-  });
-}
-
-document.getElementById("searchInput").addEventListener("input", update);
-</script>
-
-</body>
-</html>
+        <p class="release-date">Release Date: ${v.releaseD

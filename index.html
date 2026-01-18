@@ -88,54 +88,53 @@ h1 {
   color: black;
 }
 
-/* TARJETAS */
+/* CARD FIX */
 .card {
   background: linear-gradient(180deg, #0f1626, #0b1020);
   border-radius: 18px;
-  box-shadow: 0 0 25px rgba(0,229,255,.08);
+  overflow: hidden;
+  border: 1px solid rgba(0,229,255,.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,.6);
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
-/* IMAGEN */
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0,229,255,.25);
+}
+
+/* IMAGE SECTION FIX */
 .card-image-section {
-  background: #050914;
+  height: 290px;
+  background: radial-gradient(circle at top, #101a2f, #050914);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* BADGE NEW */
-.badge {
-  background: linear-gradient(45deg, var(--accent-cyan), var(--accent-pink));
-  color: black;
-  font-weight: bold;
+/* IMAGE SIZE FIX */
+.card-image-section img {
+  width: 230px;
+  height: 230px;
+  object-fit: contain;
 }
 
-/* AUDIO */
-.audio-btn svg {
-  fill: #9aa7c7;
+/* INFO PANEL FIX */
+.card-info {
+  background: #0c1324;
+  border-top: 1px solid rgba(255,255,255,.05);
 }
 
-.audio-btn.playing svg {
-  fill: var(--accent-cyan) !important;
-  filter: drop-shadow(0 0 6px rgba(0,229,255,.9));
-}
-
-/* INFO */
+/* TITLE FIX */
 .card-info h2 {
-  color: white;
+  line-height: 1.2;
 }
 
-.card-info h2:hover {
-  color: var(--accent-cyan);
+/* TAG AREA FIX */
+.tags {
+  min-height: 28px;
 }
 
-/* TAGS */
-.tag {
-  background: #172038;
-  color: #b8c9ff;
-}
-
-.tag:hover {
-  background: var(--accent-pink);
-  color: white;
-}
 
 /* BOTÓN */
 .button {

@@ -16,9 +16,7 @@
   --text-muted:#8aa0b8;
 }
 
-/* =========================
-   HEADER LOGO
-========================= */
+/* HEADER */
 
 .site-header {
   width: 100%;
@@ -40,19 +38,11 @@
 
 .site-logo {
   height: 60px;
-  max-width: 100%;
-  object-fit: contain;
   cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.site-logo:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 0 12px rgba(0, 200, 255, 0.5));
-}
-
-  
 /* BASE */
+
 body {
   margin:0;
   padding:20px;
@@ -61,19 +51,11 @@ body {
   color:var(--text-main);
 }
 
-h1 {
-  text-align:center;
-  color:var(--accent-cyan);
-  text-shadow:0 0 12px rgba(0,229,255,.4);
-}
-
 /* MENU */
+
 .top-menu {
-  position:sticky;
-  top:0;
   background:linear-gradient(to right,#02050a,#0a1324);
   padding:12px;
-  z-index:50;
 }
 
 .menu-container {
@@ -94,9 +76,10 @@ h1 {
 }
 
 /* SEARCH */
+
 .search {
   max-width:400px;
-  margin:20px auto;
+  margin:20px auto 10px;
 }
 
 .search input {
@@ -108,9 +91,12 @@ h1 {
   color:white;
 }
 
-/* FILTERS */
+/* TAG FILTER BAR */
+
 .filters {
   text-align:center;
+  max-width:1200px;
+  margin:0 auto 20px;
 }
 
 .filter-tag {
@@ -121,6 +107,7 @@ h1 {
   border-radius:14px;
   margin:4px;
   cursor:pointer;
+  font-size:13px;
 }
 
 .filter-tag.active {
@@ -129,30 +116,26 @@ h1 {
 }
 
 /* GRID */
+
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
   gap:24px;
   margin-top:20px;
-  padding-bottom:40px;
 }
 
 /* CARD */
+
 .card {
   background:linear-gradient(180deg,#0f1626,#0b1020);
   border-radius:18px;
   overflow:hidden;
   border:1px solid rgba(0,229,255,.15);
   box-shadow:0 8px 20px rgba(0,0,0,.6);
-  transition:.2s;
 }
 
-.card:hover {
-  transform:translateY(-4px);
-  box-shadow:0 12px 30px rgba(0,229,255,.25);
-}
+/* IMAGE */
 
-/* IMAGE SECTION */
 .card-image-section {
   height:310px;
   padding:20px 80px;
@@ -169,7 +152,8 @@ h1 {
   object-fit:contain;
 }
 
-/* NEW BADGE */
+/* BADGE */
+
 .badge {
   position:absolute;
   top:12px;
@@ -179,10 +163,10 @@ h1 {
   font-size:11px;
   padding:5px 10px;
   border-radius:10px;
-  font-weight:bold;
 }
 
-/* PLAY BUTTON */
+/* AUDIO */
+
 .audio-btn {
   position:absolute;
   bottom:12px;
@@ -200,7 +184,6 @@ h1 {
 
 .audio-btn svg {
   width:20px;
-  height:20px;
   fill:black;
 }
 
@@ -208,7 +191,8 @@ h1 {
   box-shadow:0 0 15px rgba(0,229,255,.8);
 }
 
-/* INFO PANEL */
+/* INFO */
+
 .card-info {
   padding:18px 20px;
   display:grid;
@@ -218,41 +202,34 @@ h1 {
   background:#0c1324;
 }
 
-/* TITLE */
 .card-info h2 {
   grid-column:span 2;
   font-size:18px;
-  height:31px;
   overflow:hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
 }
 
-/* ENGINE TAG */
+/* ENGINE */
+
 .tag.engine {
-  grid-column:1;
-  grid-row:2;
   width:101px;
   height:85px;
   background:linear-gradient(45deg,#00e5ff,#ff2f92);
   color:black;
   border-radius:10px;
   font-size:11px;
-  font-weight:bold;
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
 /* TAGS */
+
 .tags {
-  grid-column:2;
-  grid-row:2;
   display:flex;
   flex-wrap:wrap;
   gap:10px;
-  max-height:85px;
-  overflow:hidden;
 }
 
 .tag {
@@ -263,14 +240,8 @@ h1 {
   border-radius:12px;
 }
 
-/* DATE */
-.release-date {
-  grid-column:span 2;
-  font-size:12px;
-  color:var(--text-muted);
-}
-
 /* BUTTON */
+
 .button {
   grid-column:span 2;
   height:51px;
@@ -279,134 +250,26 @@ h1 {
   justify-content:center;
   border-radius:12px;
   background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  text-decoration:none;
+  color:black;
   font-weight:bold;
-  color:black;
+  text-decoration:none;
 }
 
-/* PAGINATION */
-#pagination {
-  text-align:center;
-  margin:25px;
-}
+/* MOBILE */
 
-#pagination button {
-  background:#172038;
-  color:white;
-  border:none;
-  padding:6px 12px;
-  margin:4px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-#pagination .active-page {
-  background:var(--accent-cyan);
-  color:black;
-}
-
-/* MOBILE FIX */
 @media (max-width:768px){
-
-  .grid{
-    grid-template-columns:100% !important;
-  }
-
-  .card-image-section{
-    padding:20px;
-    height:auto;
-  }
-
-  .card-image-section img{
-    width:200px;
-    height:200px;
-  }
-
-  .card-info{
-    padding:14px 16px;
-  }
-
-/* ===========================
-   FILTER ACCORDION PANEL
-=========================== */
-
-.filter-panel {
-  max-width: 1200px;
-  margin: 15px auto 20px;
-  padding: 0 16px;
-}
-
-.filter-group {
-  background: #0b1324;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(0,229,255,.12);
-}
-
-.filter-header {
-  padding: 12px 14px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: #77d7ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.filter-header::after {
-  content: "▸";
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-.filter-group.open .filter-header::after {
-  transform: rotate(90deg);
-}
-
-.filter-body {
-  display: none;
-  padding: 10px 12px 14px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.filter-group.open .filter-body {
-  display: flex;
-}
-
-/* TAG BUTTON */
-
-.filter-btn {
-  background: rgba(0,180,255,.12);
-  border: 1px solid rgba(0,180,255,.3);
-  color: #ccefff;
-  padding: 6px 12px;
-  border-radius: 14px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.filter-btn.active {
-  background: #00b4ff;
-  color: #00131f;
-  font-weight: 600;
-}
-  
+  .grid{grid-template-columns:100%}
 }
 </style>
 </head>
 
 <body>
-  <header class="site-header">
+
+<header class="site-header">
   <div class="header-container">
-    <img src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true"
-         alt="Vocarchive Logo"
-         class="site-logo">
+    <img src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true" class="site-logo">
   </div>
 </header>
-
 
 <nav class="top-menu">
   <div class="menu-container">
@@ -417,50 +280,12 @@ h1 {
   </div>
 </nav>
 
-<h1>Vocarchive</h1>
-
 <div class="search">
   <input id="searchInput" placeholder="Search voicebank...">
 </div>
 
-<div class="filter-panel">
-
-  <div class="filter-group" data-category="gender">
-    <div class="filter-header">Gender Tags</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="officialLang">
-    <div class="filter-header">Language (Official)</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="extraLang">
-    <div class="filter-header">Additional Singable Languages</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="status">
-    <div class="filter-header">Status</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="availability">
-    <div class="filter-header">Availability</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="type">
-    <div class="filter-header">Type of Voicebank</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="engine">
-    <div class="filter-header">Engine</div>
-    <div class="filter-body"></div>
-  </div>
-
-</div>
+<!-- TAG BAR -->
+<div id="filters" class="filters"></div>
 
 <div id="cards" class="grid"></div>
 <div id="pagination"></div>
@@ -479,8 +304,7 @@ function parseCSV(text){
     else if(c==','&&!q){row.push(cell);cell="";}
     else if((c=='\n'||c=='\r')&&!q){
       if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}
-    }
-    else cell+=c;
+    } else cell+=c;
   }
   if(cell||row.length){row.push(cell);rows.push(row);}
   return rows;
@@ -488,13 +312,10 @@ function parseCSV(text){
 
 fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
   const rows=parseCSV(csv); rows.shift();
-  const now=new Date();
 
   voicebanks=rows.map(r=>{
     const engine=r[4]||"";
     const releaseDate=r[2]||"";
-    const d=new Date(releaseDate);
-    const isNew=!isNaN(d)&&(now-d)/86400000<=30;
 
     const tagCols=[5,6,7,8,9,15];
     let tags=[];
@@ -509,7 +330,6 @@ fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
       url:r[12],
       cloudImage:r[13],
       cloudAudio:r[14],
-      isNew,
       tags
     };
   });
@@ -517,12 +337,15 @@ fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
   update();
 });
 
-/* FILTERS */
+/* FILTER TAGS */
+
 function renderFilters(){
   const set=new Set();
   voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
+
   filters.innerHTML=[...set].map(t=>
-    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}" onclick="toggleFilter('${t}')">${t}</span>`
+    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
+      onclick="toggleFilter('${t}')">${t}</span>`
   ).join("");
 }
 
@@ -530,13 +353,16 @@ function toggleFilter(t){
   activeFilters.includes(t)
     ? activeFilters=activeFilters.filter(x=>x!=t)
     : activeFilters.push(t);
+
   currentPage=1;
   update();
 }
 
 /* UPDATE */
+
 function update(){
   const s=searchInput.value.toLowerCase();
+
   const filtered=voicebanks.filter(v=>
     v.name.toLowerCase().includes(s) &&
     activeFilters.every(t=>v.tags.includes(t))
@@ -546,27 +372,18 @@ function update(){
 
   renderCards(filtered);
   renderFilters();
-  renderPagination(filtered.length);
 }
 
 /* CARDS */
+
 function renderCards(list){
+
   const slice=list.slice((currentPage-1)*ITEMS_PER_PAGE,currentPage*ITEMS_PER_PAGE);
 
   cards.innerHTML=slice.map(v=>`
   <div class="card">
     <div class="card-image-section">
       <img src="${v.cloudImage}">
-      ${v.isNew?'<span class="badge">NEW</span>':''}
-
-      ${v.cloudAudio?`
-      <audio src="${v.cloudAudio}"></audio>
-      <button class="audio-btn">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 9v6h4l5 5V4L7 9z"/>
-        </svg>
-      </button>`:''}
-
     </div>
 
     <div class="card-info">
@@ -577,54 +394,10 @@ function renderCards(list){
         ${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}
       </div>
 
-      <p class="release-date">Release Date: ${v.releaseDate||"Unknown"}</p>
-
       <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
     </div>
   </div>`).join("");
-
-  document.querySelectorAll(".audio-btn").forEach(btn=>{
-    const audio=btn.previousElementSibling;
-    const icon=btn.querySelector("path");
-
-    btn.onclick=()=>{
-      document.querySelectorAll("audio").forEach(a=>{
-        if(a!==audio){ a.pause(); a.currentTime=0; }
-      });
-
-      document.querySelectorAll(".audio-btn").forEach(b=>{
-        b.classList.remove("playing");
-        b.querySelector("path").setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-      });
-
-      if(audio.paused){
-        audio.play();
-        btn.classList.add("playing");
-        icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
-      } else {
-        audio.pause();
-        audio.currentTime=0;
-        icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-      }
-
-      audio.onended=()=>{
-        btn.classList.remove("playing");
-        icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-      };
-    };
-  });
 }
-
-/* PAGINATION */
-function renderPagination(total){
-  const pages=Math.ceil(total/ITEMS_PER_PAGE);
-  pagination.innerHTML="";
-  for(let i=1;i<=pages;i++){
-    pagination.innerHTML+=`<button class="${i==currentPage?'active-page':''}" onclick="go(${i})">${i}</button>`;
-  }
-}
-
-function go(p){ currentPage=p; update(); }
 
 searchInput.addEventListener("input",()=>{
   currentPage=1;

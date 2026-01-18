@@ -1,409 +1,60 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+document.querySelectorAll(".audio-btn").forEach(btn=>{
 
-<title>Vocarchive</title>
+  const audio = btn.previousElementSibling;
+  const icon = btn.querySelector(".audio-icon path");
+  const circle = btn.querySelector(".audio-progress circle");
 
-<style>
-:root {
-  --bg-main:#05080f;
-  --bg-panel:#0c1324;
-  --accent-cyan:#00e5ff;
-  --accent-pink:#ff2f92;
-  --text-main:#e9f1ff;
-  --text-muted:#8aa0b8;
-}
+  const circumference = 157;
+  circle.style.strokeDasharray = circumference;
+  circle.style.strokeDashoffset = circumference;
 
-/* HEADER */
+  btn.onclick = () => {
 
-.site-header {
-  width: 100%;
-  background: linear-gradient(180deg, #050b14, #0a1220);
-  border-bottom: 1px solid rgba(0, 180, 255, 0.15);
-  position: sticky;
-  top: 0;
-  z-index: 999;
-}
-
-.header-container {
-  max-width: 1300px;
-  margin: auto;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.site-logo {
-  height: 60px;
-  cursor: pointer;
-}
-
-/* BASE */
-
-body {
-  margin:0;
-  padding:20px;
-  font-family:Arial,sans-serif;
-  background:radial-gradient(circle at top,#101a2f,#05080f);
-  color:var(--text-main);
-}
-
-/* MENU */
-
-.top-menu {
-  background:linear-gradient(to right,#02050a,#0a1324);
-  padding:12px;
-}
-
-.menu-container {
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  gap:25px;
-}
-
-.menu-item {
-  text-decoration:none;
-  color:white;
-  font-weight:bold;
-}
-
-.menu-item:hover {
-  color:var(--accent-cyan);
-}
-
-/* SEARCH */
-
-.search {
-  max-width:400px;
-  margin:20px auto 10px;
-}
-
-.search input {
-  width:100%;
-  padding:10px;
-  border-radius:12px;
-  border:1px solid #1f2c45;
-  background:var(--bg-panel);
-  color:white;
-}
-
-/* TAG FILTER BAR */
-
-.filters {
-  text-align:center;
-  max-width:1200px;
-  margin:0 auto 20px;
-}
-
-.filter-tag {
-  display:inline-block;
-  background:#182238;
-  color:var(--text-muted);
-  padding:6px 12px;
-  border-radius:14px;
-  margin:4px;
-  cursor:pointer;
-  font-size:13px;
-}
-
-.filter-tag.active {
-  background:var(--accent-cyan);
-  color:black;
-}
-
-/* GRID */
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
-  gap:24px;
-  margin-top:20px;
-}
-
-/* CARD */
-
-.card {
-  background:linear-gradient(180deg,#0f1626,#0b1020);
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid rgba(0,229,255,.15);
-  box-shadow:0 8px 20px rgba(0,0,0,.6);
-}
-
-/* IMAGE */
-
-.card-image-section {
-  height:310px;
-  padding:20px 80px;
-  background:radial-gradient(circle at top,#101a2f,#050914);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-}
-
-.card-image-section img {
-  width:250px;
-  height:250px;
-  object-fit:contain;
-}
-
-/* BADGE */
-
-.badge {
-  position:absolute;
-  top:12px;
-  right:12px;
-  background:#ff2f92;
-  color:white;
-  font-size:11px;
-  padding:5px 10px;
-  border-radius:10px;
-}
-
-/* AUDIO */
-
-.audio-btn {
-  position:absolute;
-  bottom:12px;
-  right:12px;
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  border:none;
-  cursor:pointer;
-  background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.audio-btn svg {
-  width:20px;
-  fill:black;
-}
-
-.audio-btn.playing {
-  box-shadow:0 0 15px rgba(0,229,255,.8);
-}
-
-/* INFO */
-
-.card-info {
-  padding:18px 20px;
-  display:grid;
-  grid-template-columns:115px 1fr;
-  column-gap:16px;
-  row-gap:12px;
-  background:#0c1324;
-}
-
-.card-info h2 {
-  grid-column:span 2;
-  font-size:18px;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
-/* ENGINE */
-
-.tag.engine {
-  width:101px;
-  height:85px;
-  background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  color:black;
-  border-radius:10px;
-  font-size:11px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* TAGS */
-
-.tags {
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.tag {
-  background:#182238;
-  color:#9fb5d0;
-  font-size:12px;
-  padding:4px 10px;
-  border-radius:12px;
-}
-
-/* BUTTON */
-
-.button {
-  grid-column:span 2;
-  height:51px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:12px;
-  background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  color:black;
-  font-weight:bold;
-  text-decoration:none;
-}
-
-/* MOBILE */
-
-@media (max-width:768px){
-  .grid{grid-template-columns:100%}
-}
-</style>
-</head>
-
-<body>
-
-<header class="site-header">
-  <div class="header-container">
-    <img src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true" class="site-logo">
-  </div>
-</header>
-
-<nav class="top-menu">
-  <div class="menu-container">
-    <a class="menu-item" href="index.html">Home</a>
-    <a class="menu-item" href="help.html">Contribute</a>
-    <a class="menu-item" href="guidelines.html">Guidelines</a>
-    <a class="menu-item" href="synths.html">Synths</a>
-  </div>
-</nav>
-
-<div class="search">
-  <input id="searchInput" placeholder="Search voicebank...">
-</div>
-
-<!-- TAG BAR -->
-<div id="filters" class="filters"></div>
-
-<div id="cards" class="grid"></div>
-<div id="pagination"></div>
-
-<script>
-const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
-
-let voicebanks=[],activeFilters=[],currentPage=1;
-const ITEMS_PER_PAGE=9;
-
-function parseCSV(text){
-  text=text.replace(/^\uFEFF/,'');
-  const rows=[]; let row=[],cell="",q=false;
-  for(let c of text){
-    if(c=='"') q=!q;
-    else if(c==','&&!q){row.push(cell);cell="";}
-    else if((c=='\n'||c=='\r')&&!q){
-      if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}
-    } else cell+=c;
-  }
-  if(cell||row.length){row.push(cell);rows.push(row);}
-  return rows;
-}
-
-fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
-  const rows=parseCSV(csv); rows.shift();
-
-  voicebanks=rows.map(r=>{
-    const engine=r[4]||"";
-    const releaseDate=r[2]||"";
-
-    const tagCols=[5,6,7,8,9,15];
-    let tags=[];
-    tagCols.forEach(i=>{
-      if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
+    // Stop others
+    document.querySelectorAll("audio").forEach(a=>{
+      if(a !== audio){
+        a.pause();
+        a.currentTime = 0;
+      }
     });
 
-    return{
-      name:r[3]||"Unknown",
-      engine,
-      releaseDate,
-      url:r[12],
-      cloudImage:r[13],
-      cloudAudio:r[14],
-      tags
+    document.querySelectorAll(".audio-icon path").forEach(i=>{
+      i.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+    });
+
+    document.querySelectorAll(".audio-progress circle").forEach(c=>{
+      c.style.strokeDashoffset = circumference;
+    });
+
+    if(audio.paused){
+
+      audio.play();
+      icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
+
+    } else {
+
+      audio.pause();
+      audio.currentTime = 0;
+      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+      circle.style.strokeDashoffset = circumference;
+
+    }
+
+    audio.ontimeupdate = () => {
+
+      const progress = audio.currentTime / audio.duration;
+      circle.style.strokeDashoffset =
+        circumference - (progress * circumference);
+
     };
-  });
 
-  update();
+    audio.onended = () => {
+
+      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+      circle.style.strokeDashoffset = circumference;
+
+    };
+
+  };
+
 });
-
-/* FILTER TAGS */
-
-function renderFilters(){
-  const set=new Set();
-  voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
-
-  filters.innerHTML=[...set].map(t=>
-    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
-      onclick="toggleFilter('${t}')">${t}</span>`
-  ).join("");
-}
-
-function toggleFilter(t){
-  activeFilters.includes(t)
-    ? activeFilters=activeFilters.filter(x=>x!=t)
-    : activeFilters.push(t);
-
-  currentPage=1;
-  update();
-}
-
-/* UPDATE */
-
-function update(){
-  const s=searchInput.value.toLowerCase();
-
-  const filtered=voicebanks.filter(v=>
-    v.name.toLowerCase().includes(s) &&
-    activeFilters.every(t=>v.tags.includes(t))
-  );
-
-  filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
-
-  renderCards(filtered);
-  renderFilters();
-}
-
-/* CARDS */
-
-function renderCards(list){
-
-  const slice=list.slice((currentPage-1)*ITEMS_PER_PAGE,currentPage*ITEMS_PER_PAGE);
-
-  cards.innerHTML=slice.map(v=>`
-  <div class="card">
-    <div class="card-image-section">
-      <img src="${v.cloudImage}">
-    </div>
-
-    <div class="card-info">
-      <h2>${v.name}</h2>
-      ${v.engine?`<span class="tag engine">${v.engine}</span>`:''}
-
-      <div class="tags">
-        ${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}
-      </div>
-
-      <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
-    </div>
-  </div>`).join("");
-}
-
-searchInput.addEventListener("input",()=>{
-  currentPage=1;
-  update();
-});
-</script>
-
-</body>
-</html>

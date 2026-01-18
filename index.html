@@ -326,6 +326,74 @@ h1 {
     padding:14px 16px;
   }
 
+/* ===========================
+   FILTER ACCORDION PANEL
+=========================== */
+
+.filter-panel {
+  max-width: 1200px;
+  margin: 15px auto 20px;
+  padding: 0 16px;
+}
+
+.filter-group {
+  background: #0b1324;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0,229,255,.12);
+}
+
+.filter-header {
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #77d7ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-header::after {
+  content: "▸";
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.filter-group.open .filter-header::after {
+  transform: rotate(90deg);
+}
+
+.filter-body {
+  display: none;
+  padding: 10px 12px 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-group.open .filter-body {
+  display: flex;
+}
+
+/* TAG BUTTON */
+
+.filter-btn {
+  background: rgba(0,180,255,.12);
+  border: 1px solid rgba(0,180,255,.3);
+  color: #ccefff;
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background: #00b4ff;
+  color: #00131f;
+  font-weight: 600;
+}
+  
 }
 </style>
 </head>
@@ -355,7 +423,45 @@ h1 {
   <input id="searchInput" placeholder="Search voicebank...">
 </div>
 
-<div id="filters" class="filters"></div>
+<div class="filter-panel">
+
+  <div class="filter-group" data-category="gender">
+    <div class="filter-header">Gender Tags</div>
+    <div class="filter-body"></div>
+  </div>
+
+  <div class="filter-group" data-category="officialLang">
+    <div class="filter-header">Language (Official)</div>
+    <div class="filter-body"></div>
+  </div>
+
+  <div class="filter-group" data-category="extraLang">
+    <div class="filter-header">Additional Singable Languages</div>
+    <div class="filter-body"></div>
+  </div>
+
+  <div class="filter-group" data-category="status">
+    <div class="filter-header">Status</div>
+    <div class="filter-body"></div>
+  </div>
+
+  <div class="filter-group" data-category="availability">
+    <div class="filter-header">Availability</div>
+    <div class="filter-body"></div>
+  </div>
+
+  <div class="filter-group" data-category="type">
+    <div class="filter-header">Type of Voicebank</div>
+    <div class="filter-body"></div>
+  </div>
+
+  <div class="filter-group" data-category="engine">
+    <div class="filter-header">Engine</div>
+    <div class="filter-body"></div>
+  </div>
+
+</div>
+
 <div id="cards" class="grid"></div>
 <div id="pagination"></div>
 

@@ -155,9 +155,12 @@ h1 {
   padding: 18px 20px;
   display: grid;
   grid-template-columns: 40px 1fr;
-  gap: 12px;
+  grid-template-rows: auto auto auto auto;
+  column-gap: 16px;
+  row-gap: 12px;
   background: #0c1324;
 }
+
 
 .card-info h2 {
   grid-column: span 2;
@@ -166,8 +169,8 @@ h1 {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  cursor: pointer;
 }
+
 
 /* TAGS */
 .tags {
@@ -191,14 +194,21 @@ h1 {
 }
 
 .tag.engine {
-  width: 101px;
-  height: 85px;
-  padding: 0;
+  grid-row: 2;
+  grid-column: 1;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(45deg,#00e5ff,#ff2f92);
+  color: black;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
 }
+
 
 /* DATE */
 .release-date {

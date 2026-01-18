@@ -159,18 +159,6 @@ body {
   object-fit:contain;
 }
 
-/* NEW BADGE */
-
-.badge {
-  position:absolute;
-  top:12px;
-  right:12px;
-  background:#ff2f92;
-  padding:5px 10px;
-  font-size:11px;
-  border-radius:10px;
-}
-
 /* AUDIO */
 
 .audio-btn {
@@ -188,11 +176,10 @@ body {
   justify-content:center;
 }
 
-.audio-btn svg.audio-icon {
+.audio-icon {
   width:20px;
   height:20px;
   fill:#00e5ff;
-  position:relative;
   z-index:2;
 }
 
@@ -237,6 +224,7 @@ body {
   color:black;
   font-size:11px;
   font-weight:bold;
+  cursor:pointer;
 }
 
 .tags {
@@ -252,7 +240,6 @@ body {
   border-radius:12px;
   font-size:12px;
   cursor:pointer;
-  transition:.2s;
 }
 
 .tag:hover {
@@ -277,6 +264,28 @@ body {
   color:black;
   text-decoration:none;
   font-weight:bold;
+}
+
+/* PAGINATION */
+
+#pagination {
+  text-align:center;
+  margin:25px 0;
+}
+
+#pagination button {
+  background:#172038;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  margin:4px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+#pagination .active-page {
+  background:#00e5ff;
+  color:black;
 }
 
 /* MOBILE */
@@ -315,10 +324,15 @@ src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-l
 
 <div id="cards" class="grid"></div>
 
+<div id="pagination"></div>
+
 <script>
 const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-let voicebanks=[],activeFilters=[];
+let voicebanks=[],activeFilters=[],currentPage=1;
+const ITEMS_PER_PAGE=9;
+
+/* CSV */
 
 function parseCSV(text){
 text=text.replace(/^\uFEFF/,'');
@@ -334,12 +348,14 @@ if(cell||row.length){row.push(cell);rows.push(row);}
 return rows;
 }
 
+/* LOAD */
+
 fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
 const rows=parseCSV(csv);rows.shift();
 
 voicebanks=rows.map(r=>{
 let tags=[];
-[4,5,6,7,8,9,15].forEach(i=>{
+[5,6,7,8,9,15].forEach(i=>{
 if(r[i])r[i].split(',').forEach(t=>tags.push(t.trim()));
 });
 
@@ -364,6 +380,7 @@ activeFilters.includes(tag)?
 activeFilters=activeFilters.filter(t=>t!==tag):
 activeFilters.push(tag);
 
+currentPage=1;
 update();
 }
 
@@ -383,7 +400,7 @@ onclick="toggleFilter('${t}')">${t}</span>`).join("");
 function update(){
 const s=searchInput.value.toLowerCase();
 
-const filtered=voicebanks.filter(v=>
+let filtered=voicebanks.filter(v=>
 v.name.toLowerCase().includes(s) &&
 activeFilters.every(t=>v.tags.includes(t))
 );
@@ -392,13 +409,16 @@ filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
 
 renderCards(filtered);
 renderFilters();
+renderPagination(filtered.length);
 }
 
 /* CARDS */
 
 function renderCards(list){
 
-cards.innerHTML=list.map(v=>`
+const slice=list.slice((currentPage-1)*ITEMS_PER_PAGE,currentPage*ITEMS_PER_PAGE);
+
+cards.innerHTML=slice.map(v=>`
 
 <div class="card">
 
@@ -443,12 +463,17 @@ ${v.tags.filter(t=>t!=v.engine).map(t=>
 
 `).join("");
 
-/* AUDIO CONTROL */
+setupAudio();
+}
+
+/* AUDIO */
+
+function setupAudio(){
 
 document.querySelectorAll(".audio-btn").forEach(btn=>{
 
 const audio=btn.previousElementSibling;
-const icon=btn.querySelector("path");
+const icon=btn.querySelector(".audio-icon path");
 const circle=btn.querySelector("circle");
 const circumference=157;
 
@@ -486,7 +511,28 @@ circle.style.strokeDashoffset=circumference;
 });
 }
 
-searchInput.addEventListener("input",update);
+/* PAGINATION */
+
+function renderPagination(total){
+const pages=Math.ceil(total/ITEMS_PER_PAGE);
+pagination.innerHTML="";
+
+for(let i=1;i<=pages;i++){
+pagination.innerHTML+=`
+<button class="${i==currentPage?'active-page':''}"
+onclick="go(${i})">${i}</button>`;
+}
+}
+
+function go(p){
+currentPage=p;
+update();
+}
+
+searchInput.addEventListener("input",()=>{
+currentPage=1;
+update();
+});
 </script>
 
 </body>

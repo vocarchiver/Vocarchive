@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Vocarchive</title>
+
 <style>
 :root {
   --bg-main: #0b0f16;
@@ -22,13 +23,7 @@ body {
   color: var(--text-main);
 }
 
-  .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 24px;
-  margin-top: 25px;
-}
-
+/* HEADER */
 h1 {
   text-align: center;
   letter-spacing: 1px;
@@ -36,7 +31,7 @@ h1 {
   text-shadow: 0 0 12px rgba(0,229,255,.4);
 }
 
-/* MENÚ SUPERIOR */
+/* MENU */
 .top-menu {
   width: 100%;
   background: linear-gradient(to right, #02050a, #0a1324);
@@ -47,47 +42,53 @@ h1 {
   box-shadow: 0 0 15px rgba(0,229,255,.2);
 }
 
+.menu-container {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
 .menu-item {
   color: var(--text-main);
   text-decoration: none;
   font-weight: bold;
-  font-size: 16px;
-  transition: color 0.2s, text-shadow 0.2s;
 }
 
 .menu-item:hover {
   color: var(--accent-cyan);
-  text-shadow: 0 0 8px rgba(0,229,255,.8);
 }
 
 /* SEARCH */
+.search {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+}
+
 .search input {
+  width: 320px;
+  padding: 10px 16px;
   background: var(--bg-panel);
   border: 1px solid #1f2c45;
   border-radius: 12px;
   color: white;
 }
 
-.search input:focus {
-  outline: none;
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 10px rgba(0,229,255,.3);
+/* FILTERS */
+.filters {
+  text-align: center;
+  margin-bottom: 15px;
 }
 
-/* FILTROS */
 .filter-tag {
   background: #182238;
   color: var(--text-muted);
   border-radius: 14px;
+  padding: 6px 12px;
   font-size: 13px;
   margin: 4px;
+  display: inline-block;
   cursor: pointer;
-  transition: 0.2s;
-}
-
-.filter-tag:hover {
-  background: var(--accent-pink);
-  color: white;
 }
 
 .filter-tag.active {
@@ -95,14 +96,22 @@ h1 {
   color: black;
 }
 
-/* CARD FIX */
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+/* CARD */
 .card {
   background: linear-gradient(180deg, #0f1626, #0b1020);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(0,229,255,.15);
   box-shadow: 0 8px 20px rgba(0,0,0,.6);
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: .2s;
 }
 
 .card:hover {
@@ -110,7 +119,7 @@ h1 {
   box-shadow: 0 12px 35px rgba(0,229,255,.25);
 }
 
-/* IMAGE SECTION FIX */
+/* IMAGE AREA */
 .card-image-section {
   height: 310px;
   padding: 20px 80px;
@@ -121,25 +130,13 @@ h1 {
   position: relative;
 }
 
-
-/* IMAGE SIZE FIX */
 .card-image-section img {
   width: 250px;
   height: 250px;
   object-fit: contain;
-  border-radius: 6px;
 }
 
-/* INFO PANEL FIX */
-.card-info {
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  grid-column-gap: 16px;
-  row-gap: 12px;
-  background: #0c1324;
-}
-
+/* BADGE */
 .badge {
   position: absolute;
   top: 12px;
@@ -153,24 +150,40 @@ h1 {
   box-shadow: 0 0 10px rgba(255,47,146,.6);
 }
 
-/* TITLE FIX */
+/* INFO */
+.card-info {
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  background: #0c1324;
+}
+
 .card-info h2 {
   grid-column: span 2;
-  font-size: 20px;
+  font-size: 18px;
   height: 31px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: white;
+  cursor: pointer;
 }
 
-/* TAG AREA FIX */
+/* TAGS */
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   max-height: 85px;
   overflow: hidden;
+}
+
+.tag {
+  background: #182238;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  cursor: pointer;
 }
 
 .tag.engine {
@@ -180,17 +193,17 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
   font-weight: bold;
 }
 
+/* DATE */
 .release-date {
   grid-column: span 2;
   font-size: 12px;
-  color: #8aa0b8;
+  color: var(--text-muted);
 }
 
-/* BOTÓN */
+/* BUTTON */
 .button {
   grid-column: span 2;
   height: 51px;
@@ -203,36 +216,32 @@ h1 {
   border-radius: 12px;
   text-decoration: none;
 }
-  
-.button:hover {
-  filter: brightness(1.15);
+
+/* PAGINATION */
+#pagination {
+  text-align: center;
+  margin: 25px 0;
 }
 
-/* FECHA */
-.release-date {
-  color: var(--text-muted);
-}
-
-/* PAGINACIÓN */
 #pagination button {
   background: #172038;
   color: white;
-}
-
-#pagination button:hover {
-  background: var(--accent-pink);
+  border: none;
+  padding: 8px 12px;
+  margin: 3px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 #pagination .active-page {
   background: var(--accent-cyan);
   color: black;
 }
-
 </style>
 </head>
+
 <body>
 
-<!-- MENÚ -->
 <nav class="top-menu">
   <div class="menu-container">
     <a href="index.html" class="menu-item">Home</a>
@@ -245,7 +254,7 @@ h1 {
 <h1>Vocarchive</h1>
 
 <div class="search">
-  <input type="text" id="searchInput" placeholder="Buscar voicebank...">
+  <input type="text" id="searchInput" placeholder="Search voicebank...">
 </div>
 
 <div class="filters" id="filters"></div>
@@ -262,211 +271,151 @@ let activeFilters = [];
 let currentPage = 1;
 const ITEMS_PER_PAGE = 9;
 
-/* CSV parser */
+/* CSV */
 function parseCSV(text){
   const rows = [];
   let row = [], cell = "", insideQuotes = false;
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
+
+  for(let c of text){
     if(c === '"') insideQuotes = !insideQuotes;
     else if(c === ',' && !insideQuotes){
-      row.push(cell); cell = "";
+      row.push(cell); cell="";
     }
     else if((c === "\n" || c === "\r") && !insideQuotes){
       if(cell || row.length){
-        row.push(cell); rows.push(row);
-        row = []; cell = "";
+        row.push(cell);
+        rows.push(row);
+        row=[]; cell="";
       }
     }
     else cell += c;
   }
   if(cell || row.length){
-    row.push(cell); rows.push(row);
+    row.push(cell);
+    rows.push(row);
   }
   return rows;
 }
 
-/* CARGAR SHEET */
+/* LOAD */
 fetch(SHEET_URL)
-  .then(r => r.text())
-  .then(csv => {
-    csv = csv.replace(/^\uFEFF/, '');
-const rows = parseCSV(csv);
-    rows.shift();
+.then(r=>r.text())
+.then(csv=>{
+  csv = csv.replace(/^\uFEFF/, '');
+  const rows = parseCSV(csv);
+  rows.shift();
 
-    const now = new Date();
+  const now = new Date();
 
-    voicebanks = rows.map(r => {
-      const engine = r[4] || "";
-      const name = r[3] || r[1] || r[0] || "Unknown Voicebank";
-      const image = r[13] || "";
-      const audio = r[14] || "";
-      const url = r[12] || "#";
-      const releaseDate = r[2] || "";
-      const releaseDateObj = new Date(releaseDate);
-      const isNew = !isNaN(releaseDateObj) && (now - releaseDateObj) / (1000*60*60*24) <= 30;
+  voicebanks = rows.map(r=>{
+    const name = r[3] || "Unknown";
+    const engine = r[1] || "";
+    const cloudImage = r[13] || "";
+    const cloudAudio = r[14] || "";
+    const url = r[12] || "#";
+    const releaseDate = r[2] || "";
 
-      const tagColumns = [4,5,6,7,8,9,15];
-      let tagsArr = [];
-      tagColumns.forEach(idx => {
-        if(r[idx]){
-          r[idx].split(',').forEach(s=>{
-            const t = s.trim();
-            if(t) tagsArr.push(t);
-          });
-        }
+    const dateObj = new Date(releaseDate);
+    const isNew = !isNaN(dateObj) && (now-dateObj)/(1000*60*60*24) <= 30;
+
+    const tagCols = [4,5,6,7,8,9,15];
+    let tags=[];
+
+    tagCols.forEach(i=>{
+      if(r[i]) r[i].split(",").forEach(t=>{
+        t=t.trim();
+        if(t) tags.push(t);
       });
+    });
 
-      return {
-  name,
-  url,
-  cloudImage,
-  cloudAudio,
-  releaseDate,
-  isNew,
-  engine,
-  tags: tagsArr
-};
-    }).filter(v => v.name);
-
-    update();
-  })
-  .catch(err => {
-    console.error("Error cargando la hoja:", err);
-    document.getElementById("cards").innerHTML = "<p>Error cargando datos.</p>";
+    return {name,engine,cloudImage,cloudAudio,url,releaseDate,isNew,tags};
   });
 
-/* FILTROS */
+  update();
+});
+
+/* FILTERS */
 function renderFilters(){
-  const tags = new Set();
-  voicebanks.forEach(v=>v.tags.forEach(t=>tags.add(t)));
-  document.getElementById("filters").innerHTML =
-    [...tags].map(t =>
-      `<span class="filter-tag ${activeFilters.includes(t)?"active":""}" onclick="toggleFilter('${t.replace(/'/g,"\\'")}')">${t}</span>`
-    ).join("");
+  const set=new Set();
+  voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
+
+  filters.innerHTML=[...set].map(t=>
+    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}" onclick="toggleFilter('${t}')">${t}</span>`
+  ).join("");
 }
 
 function toggleFilter(tag){
-  if(activeFilters.includes(tag)){
-    activeFilters = activeFilters.filter(t=>t!==tag);
-  } else {
-    activeFilters.push(tag);
-  }
-  currentPage = 1;
+  activeFilters.includes(tag)
+  ? activeFilters=activeFilters.filter(t=>t!==tag)
+  : activeFilters.push(tag);
+
+  currentPage=1;
   update();
 }
 
-/* ACTUALIZAR GRID */
+/* UPDATE */
 function update(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = voicebanks.filter(v=>{
-    const matchName = v.name.toLowerCase().includes(search);
-    const matchTags = activeFilters.every(t=>v.tags.includes(t));
-    return matchName && matchTags;
+  const search=searchInput.value.toLowerCase();
+
+  let filtered=voicebanks.filter(v=>{
+    return v.name.toLowerCase().includes(search) &&
+           activeFilters.every(t=>v.tags.includes(t));
   });
 
   filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
+
   renderCards(filtered);
   renderFilters();
   renderPagination(filtered.length);
 }
 
-/* RENDER CARDS */
+/* CARDS */
 function renderCards(list){
-  const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pageItems = list.slice(start, start + ITEMS_PER_PAGE);
+  const start=(currentPage-1)*ITEMS_PER_PAGE;
+  const page=list.slice(start,start+ITEMS_PER_PAGE);
 
-  document.getElementById("cards").innerHTML = pageItems.map(v => `
-    <div class="card">
-      <div class="card-image-section">
-        <a href="${v.url}" target="_blank">
-          <img src="${v.cloudImage}" alt="${v.name}">
-          ${v.isNew ? '<span class="badge">NEW</span>' : ''}
-        </a>
+  cards.innerHTML=page.map(v=>`
+<div class="card">
+  <div class="card-image-section">
+    <a href="${v.url}" target="_blank">
+      <img src="${v.cloudImage}">
+      ${v.isNew?'<span class="badge">NEW</span>':''}
+    </a>
+  </div>
 
-        ${v.cloudAudio ? `
-          <audio class="audio-element" src="${v.cloudAudio}"></audio>
-          <button class="audio-btn" aria-label="Play demo">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path d="M3 9v6h4l5 5V4L7 9H3z"/>
-            </svg>
-          </button>
-        ` : ''}
-      </div>
+  <div class="card-info">
+    <h2 onclick="window.open('${v.url}')">${v.name}</h2>
 
-      <div class="card-info">
-        <h2 onclick="window.open('${v.url}','_blank')">${v.name}</h2>
-<div class="tags">
-  ${v.engine ? `<span class="tag" onclick="toggleFilter('${v.engine.replace(/'/g,"\\'")}')">${v.engine}</span>` : ''}
-  ${v.engine && v.tags.length ? '<span class="tag">|</span>' : ''}
-  ${v.tags.filter(t => t !== v.engine).map(t => `
-    <span class="tag" onclick="toggleFilter('${t.replace(/'/g,"\\'")}')">${t}</span>
-  `).join("")}
-</div>
+    ${v.engine?`<span class="tag engine">${v.engine}</span>`:""}
 
-        <a class="button" href="${v.url}" target="_blank">See product details</a>
-        <p class="release-date">Release Date: ${v.releaseDate || "Unknown"}</p>
-      </div>
+    <div class="tags">
+      ${v.tags.map(t=>`<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`).join("")}
     </div>
-  `).join("");
 
-  document.querySelectorAll('.audio-btn').forEach(btn=>{
-    const audio = btn.parentElement.querySelector('audio');
-    btn.onclick = ()=>{
-      if(audio.paused){
-        audio.play();
-        btn.classList.add('playing');
-      } else {
-        audio.pause();
-        btn.classList.remove('playing');
-      }
-      document.querySelectorAll('.audio-element').forEach(a=>{
-        if(a!==audio){
-          a.pause();
-          const b = a.parentElement.querySelector('.audio-btn');
-          if(b) b.classList.remove('playing');
-        }
-      });
-    };
-  });
+    <p class="release-date">Release Date: ${v.releaseDate||"Unknown"}</p>
+
+    <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
+  </div>
+</div>
+`).join("");
 }
 
-/* PAGINACIÓN */
-function renderPagination(totalItems){
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const container = document.getElementById("pagination");
+/* PAGINATION */
+function renderPagination(total){
+  const pages=Math.ceil(total/ITEMS_PER_PAGE);
+  pagination.innerHTML="";
 
-  if(totalPages <= 1){
-    container.innerHTML = "";
-    return;
+  for(let i=1;i<=pages;i++){
+    pagination.innerHTML+=`<button class="${i===currentPage?'active-page':''}" onclick="goToPage(${i})">${i}</button>`;
   }
-
-  let html = "";
-
-  if(currentPage > 1){
-    html += `<button onclick="goToPage(${currentPage - 1})">« Prev</button>`;
-  }
-
-  for(let i=1;i<=totalPages;i++){
-    html += `<button class="${i===currentPage?'active-page':''}" onclick="goToPage(${i})">${i}</button>`;
-  }
-
-  if(currentPage < totalPages){
-    html += `<button onclick="goToPage(${currentPage + 1})">Next »</button>`;
-  }
-
-  container.innerHTML = html;
 }
 
-function goToPage(page){
-  currentPage = page;
+function goToPage(p){
+  currentPage=p;
   update();
 }
 
-document.getElementById("searchInput").addEventListener("input", ()=>{
-  currentPage = 1;
-  update();
-});
+searchInput.addEventListener("input",()=>{currentPage=1;update();});
 </script>
 
 </body>

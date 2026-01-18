@@ -389,15 +389,41 @@ function renderCards(list){
     </div>
   </div>`).join("");
 
-  document.querySelectorAll(".audio-btn").forEach(btn=>{
-    const audio=btn.previousElementSibling;
-    btn.onclick=()=>{
-      document.querySelectorAll("audio").forEach(a=>{if(a!=audio){a.pause();}});
-      document.querySelectorAll(".audio-btn").forEach(b=>b.classList.remove("playing"));
-      if(audio.paused){audio.play();btn.classList.add("playing");}
-      else{audio.pause();btn.classList.remove("playing");}
-    };
-  });
+document.querySelectorAll(".audio-btn").forEach(btn=>{
+  const audio=btn.previousElementSibling;
+  const icon=btn.querySelector("svg path");
+
+  btn.onclick=()=>{
+    document.querySelectorAll("audio").forEach(a=>{
+      if(a!=audio){
+        a.pause();
+        a.currentTime=0;
+      }
+    });
+
+    document.querySelectorAll(".audio-btn").forEach(b=>{
+      b.classList.remove("playing");
+      b.querySelector("svg path").setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+    });
+
+    if(audio.paused){
+      audio.play();
+      btn.classList.add("playing");
+      icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z"); // pause icon
+    } else {
+      audio.pause();
+      audio.currentTime=0;
+      btn.classList.remove("playing");
+      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+    }
+
+    audio.onended=()=>{
+      btn.classList.remove("playing");
+      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+    }
+  };
+});
+
 }
 
 /* PAGINATION */

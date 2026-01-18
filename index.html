@@ -267,17 +267,31 @@ h1 {
   color:black;
 }
 
-@media(max-width:600px){
-  .card-image-section{
-    padding:20px 20px;
+@media (max-width: 768px) {
+
+  /* GRID A UNA COLUMNA */
+  .grid {
+    grid-template-columns: 1fr;
   }
 
-  .grid{
-    grid-template-columns:1fr;
+  /* Ajustar padding imagen */
+  .card-image-section {
+    padding: 20px;
+    height: auto;
   }
+
+  /* Imagen un poco más flexible */
+  .card-image-section img {
+    width: 200px;
+    height: 200px;
+  }
+
+  /* Reducir espacio interior */
+  .card-info {
+    padding: 14px 16px;
+  }
+
 }
-
-  
 </style>
 </head>
 

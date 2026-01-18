@@ -6,250 +6,265 @@
 
 <style>
 :root {
-  --bg-main: #0b0f16;
-  --bg-panel: #121826;
-  --accent-cyan: #00e5ff;
-  --accent-pink: #ff2f92;
-  --text-main: #e9f1ff;
-  --text-muted: #8aa0b8;
+  --bg-main:#05080f;
+  --bg-panel:#0c1324;
+  --accent-cyan:#00e5ff;
+  --accent-pink:#ff2f92;
+  --text-main:#e9f1ff;
+  --text-muted:#8aa0b8;
 }
 
-/* BODY */
+/* BASE */
 body {
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #101a2f, #05080f);
-  padding: 20px;
-  margin: 0;
-  color: var(--text-main);
+  margin:0;
+  padding:20px;
+  font-family:Arial,sans-serif;
+  background:radial-gradient(circle at top,#101a2f,#05080f);
+  color:var(--text-main);
 }
 
-/* HEADER */
 h1 {
-  text-align: center;
-  letter-spacing: 1px;
-  color: var(--accent-cyan);
-  text-shadow: 0 0 12px rgba(0,229,255,.4);
+  text-align:center;
+  color:var(--accent-cyan);
+  text-shadow:0 0 12px rgba(0,229,255,.4);
 }
 
 /* MENU */
 .top-menu {
-  width: 100%;
-  background: linear-gradient(to right, #02050a, #0a1324);
-  padding: 12px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 0 15px rgba(0,229,255,.2);
+  position:sticky;
+  top:0;
+  background:linear-gradient(to right,#02050a,#0a1324);
+  padding:12px;
+  z-index:50;
 }
 
 .menu-container {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  gap:25px;
 }
 
 .menu-item {
-  color: var(--text-main);
-  text-decoration: none;
-  font-weight: bold;
+  text-decoration:none;
+  color:white;
+  font-weight:bold;
 }
 
 .menu-item:hover {
-  color: var(--accent-cyan);
+  color:var(--accent-cyan);
 }
 
 /* SEARCH */
 .search {
-  display: flex;
-  justify-content: center;
-  margin: 15px 0;
+  max-width:400px;
+  margin:20px auto;
 }
 
 .search input {
-  width: 320px;
-  padding: 10px 16px;
-  background: var(--bg-panel);
-  border: 1px solid #1f2c45;
-  border-radius: 12px;
-  color: white;
+  width:100%;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid #1f2c45;
+  background:var(--bg-panel);
+  color:white;
 }
 
 /* FILTERS */
 .filters {
-  text-align: center;
-  margin-bottom: 15px;
+  text-align:center;
 }
 
 .filter-tag {
-  background: #182238;
-  color: var(--text-muted);
-  border-radius: 14px;
-  padding: 6px 12px;
-  font-size: 13px;
-  margin: 4px;
-  display: inline-block;
-  cursor: pointer;
+  display:inline-block;
+  background:#182238;
+  color:var(--text-muted);
+  padding:6px 12px;
+  border-radius:14px;
+  margin:4px;
+  cursor:pointer;
 }
 
 .filter-tag.active {
-  background: var(--accent-cyan);
-  color: black;
+  background:var(--accent-cyan);
+  color:black;
 }
 
 /* GRID */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 24px;
-  margin-top: 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+  gap:24px;
+  margin-top:20px;
 }
 
 /* CARD */
 .card {
-  background: linear-gradient(180deg, #0f1626, #0b1020);
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid rgba(0,229,255,.15);
-  box-shadow: 0 8px 20px rgba(0,0,0,.6);
-  transition: .2s;
+  background:linear-gradient(180deg,#0f1626,#0b1020);
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(0,229,255,.15);
+  box-shadow:0 8px 20px rgba(0,0,0,.6);
+  transition:.2s;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0,229,255,.25);
+  transform:translateY(-4px);
+  box-shadow:0 12px 30px rgba(0,229,255,.25);
 }
 
-/* IMAGE AREA */
+/* IMAGE SECTION */
 .card-image-section {
-  height: 310px;
-  padding: 20px 80px;
-  background: radial-gradient(circle at top, #101a2f, #050914);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  height:310px;
+  padding:20px 80px;
+  background:radial-gradient(circle at top,#101a2f,#050914);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
 }
 
 .card-image-section img {
-  width: 250px;
-  height: 250px;
-  object-fit: contain;
+  width:250px;
+  height:250px;
+  object-fit:contain;
 }
 
-/* BADGE */
+/* NEW BADGE */
 .badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #ff2f92;
-  color: white;
-  font-size: 11px;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(255,47,146,.6);
+  position:absolute;
+  top:12px;
+  right:12px;
+  background:#ff2f92;
+  color:white;
+  font-size:11px;
+  padding:5px 10px;
+  border-radius:10px;
+  font-weight:bold;
 }
 
-/* INFO */
+/* PLAY BUTTON */
+.audio-btn {
+  position:absolute;
+  bottom:12px;
+  right:12px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(45deg,#00e5ff,#ff2f92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.audio-btn svg {
+  width:20px;
+  height:20px;
+  fill:black;
+}
+
+.audio-btn.playing {
+  box-shadow:0 0 15px rgba(0,229,255,.8);
+}
+
+/* INFO PANEL */
 .card-info {
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  grid-template-rows: auto auto auto auto;
-  column-gap: 16px;
-  row-gap: 12px;
-  background: #0c1324;
+  padding:18px 20px;
+  display:grid;
+  grid-template-columns:40px 1fr;
+  column-gap:16px;
+  row-gap:12px;
+  background:#0c1324;
 }
 
-
+/* TITLE */
 .card-info h2 {
-  grid-column: span 2;
-  font-size: 18px;
-  height: 31px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  grid-column:span 2;
+  font-size:18px;
+  height:31px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
+/* ENGINE TAG */
+.tag.engine {
+  grid-column:1;
+  grid-row:2;
+  width:40px;
+  height:40px;
+  background:linear-gradient(45deg,#00e5ff,#ff2f92);
+  color:black;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
 /* TAGS */
 .tags {
-  grid-column: 2;
-  grid-row: 2;
-
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-
-  max-height: 85px;
-  overflow: hidden;
+  grid-column:2;
+  grid-row:2;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  max-height:85px;
+  overflow:hidden;
 }
 
 .tag {
-  background: #182238;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  cursor: pointer;
+  background:#182238;
+  color:#9fb5d0;
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:12px;
+  cursor:pointer;
 }
-
-.tag.engine {
-  grid-row: 2;
-  grid-column: 1;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(45deg,#00e5ff,#ff2f92);
-  color: black;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: bold;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 
 /* DATE */
 .release-date {
-  grid-column: span 2;
-  font-size: 12px;
-  color: var(--text-muted);
+  grid-column:span 2;
+  font-size:12px;
+  color:var(--text-muted);
 }
 
 /* BUTTON */
 .button {
-  grid-column: span 2;
-  height: 51px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(45deg, #00e5ff, #ff2f92);
-  color: black;
-  font-weight: bold;
-  border-radius: 12px;
-  text-decoration: none;
+  grid-column:span 2;
+  height:51px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:linear-gradient(45deg,#00e5ff,#ff2f92);
+  text-decoration:none;
+  font-weight:bold;
+  color:black;
 }
 
 /* PAGINATION */
 #pagination {
-  text-align: center;
-  margin: 25px 0;
+  text-align:center;
+  margin:25px;
 }
 
 #pagination button {
-  background: #172038;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  margin: 3px;
-  border-radius: 8px;
-  cursor: pointer;
+  background:#172038;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  margin:4px;
+  border-radius:8px;
+  cursor:pointer;
 }
 
 #pagination .active-page {
-  background: var(--accent-cyan);
-  color: black;
+  background:var(--accent-cyan);
+  color:black;
 }
 </style>
 </head>
@@ -258,91 +273,70 @@ h1 {
 
 <nav class="top-menu">
   <div class="menu-container">
-    <a href="index.html" class="menu-item">Home</a>
-    <a href="help.html" class="menu-item">Contribute</a>
-    <a href="guidelines.html" class="menu-item">Guidelines</a>
-    <a href="synths.html" class="menu-item">Synths</a>
+    <a class="menu-item" href="index.html">Home</a>
+    <a class="menu-item" href="help.html">Contribute</a>
+    <a class="menu-item" href="guidelines.html">Guidelines</a>
+    <a class="menu-item" href="synths.html">Synths</a>
   </div>
 </nav>
 
 <h1>Vocarchive</h1>
 
 <div class="search">
-  <input type="text" id="searchInput" placeholder="Search voicebank...">
+  <input id="searchInput" placeholder="Search voicebank...">
 </div>
 
-<div class="filters" id="filters"></div>
+<div id="filters" class="filters"></div>
 
-<div class="grid" id="cards"></div>
+<div id="cards" class="grid"></div>
 
 <div id="pagination"></div>
 
 <script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
+const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-let voicebanks = [];
-let activeFilters = [];
-let currentPage = 1;
-const ITEMS_PER_PAGE = 9;
+let voicebanks=[],activeFilters=[],currentPage=1;
+const ITEMS_PER_PAGE=9;
 
-/* CSV */
 function parseCSV(text){
-  const rows = [];
-  let row = [], cell = "", insideQuotes = false;
-
+  text=text.replace(/^\uFEFF/,'');
+  const rows=[]; let row=[],cell="",q=false;
   for(let c of text){
-    if(c === '"') insideQuotes = !insideQuotes;
-    else if(c === ',' && !insideQuotes){
-      row.push(cell); cell="";
-    }
-    else if((c === "\n" || c === "\r") && !insideQuotes){
-      if(cell || row.length){
-        row.push(cell);
-        rows.push(row);
-        row=[]; cell="";
-      }
-    }
-    else cell += c;
+    if(c=='"') q=!q;
+    else if(c==','&&!q){row.push(cell);cell="";}
+    else if((c=='\n'||c=='\r')&&!q){if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}}
+    else cell+=c;
   }
-  if(cell || row.length){
-    row.push(cell);
-    rows.push(row);
-  }
+  if(cell||row.length){row.push(cell);rows.push(row);}
   return rows;
 }
 
-/* LOAD */
-fetch(SHEET_URL)
-.then(r=>r.text())
-.then(csv=>{
-  csv = csv.replace(/^\uFEFF/, '');
-  const rows = parseCSV(csv);
-  rows.shift();
+fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
+  const rows=parseCSV(csv); rows.shift();
+  const now=new Date();
 
-  const now = new Date();
+  voicebanks=rows.map(r=>{
+    const engine=r[1]||"";
+    const releaseDate=r[2]||"";
+    const d=new Date(releaseDate);
+    const isNew=!isNaN(d)&&(now-d)/86400000<=30;
 
-  voicebanks = rows.map(r=>{
-    const name = r[3] || "Unknown";
-    const engine = r[4] || "";
-    const cloudImage = r[13] || "";
-    const cloudAudio = r[14] || "";
-    const url = r[12] || "#";
-    const releaseDate = r[2] || "";
-
-    const dateObj = new Date(releaseDate);
-    const isNew = !isNaN(dateObj) && (now-dateObj)/(1000*60*60*24) <= 30;
-
-    const tagCols = [4,5,6,7,8,9,15];
+    const tagCols=[4,5,6,7,8,9,15];
     let tags=[];
-
     tagCols.forEach(i=>{
-      if(r[i]) r[i].split(",").forEach(t=>{
-        t=t.trim();
-        if(t) tags.push(t);
-      });
+      if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
     });
 
-    return {name,engine,cloudImage,cloudAudio,url,releaseDate,isNew,tags};
+    return{
+      name:r[3]||"Unknown",
+      engine,
+      releaseDate,
+      url:r[12],
+      cloudImage:r[13],
+      cloudAudio:r[14],
+      isNew,
+      tags
+    };
   });
 
   update();
@@ -352,83 +346,70 @@ fetch(SHEET_URL)
 function renderFilters(){
   const set=new Set();
   voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
-
   filters.innerHTML=[...set].map(t=>
     `<span class="filter-tag ${activeFilters.includes(t)?'active':''}" onclick="toggleFilter('${t}')">${t}</span>`
   ).join("");
 }
 
-function toggleFilter(tag){
-  activeFilters.includes(tag)
-  ? activeFilters=activeFilters.filter(t=>t!==tag)
-  : activeFilters.push(tag);
-
-  currentPage=1;
-  update();
+function toggleFilter(t){
+  activeFilters.includes(t)?activeFilters=activeFilters.filter(x=>x!=t):activeFilters.push(t);
+  currentPage=1; update();
 }
 
 /* UPDATE */
 function update(){
-  const search=searchInput.value.toLowerCase();
-
-  let filtered=voicebanks.filter(v=>{
-    return v.name.toLowerCase().includes(search) &&
-           activeFilters.every(t=>v.tags.includes(t));
-  });
-
+  const s=searchInput.value.toLowerCase();
+  const filtered=voicebanks.filter(v=>v.name.toLowerCase().includes(s)&&activeFilters.every(t=>v.tags.includes(t)));
   filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
-
-  renderCards(filtered);
-  renderFilters();
-  renderPagination(filtered.length);
+  renderCards(filtered); renderFilters(); renderPagination(filtered.length);
 }
 
 /* CARDS */
 function renderCards(list){
-  const start=(currentPage-1)*ITEMS_PER_PAGE;
-  const page=list.slice(start,start+ITEMS_PER_PAGE);
+  const slice=list.slice((currentPage-1)*ITEMS_PER_PAGE,currentPage*ITEMS_PER_PAGE);
 
-  cards.innerHTML=page.map(v=>`
-<div class="card">
-  <div class="card-image-section">
-    <a href="${v.url}" target="_blank">
+  cards.innerHTML=slice.map(v=>`
+  <div class="card">
+    <div class="card-image-section">
       <img src="${v.cloudImage}">
       ${v.isNew?'<span class="badge">NEW</span>':''}
-    </a>
-  </div>
-
-  <div class="card-info">
-    <h2 onclick="window.open('${v.url}')">${v.name}</h2>
-
-    ${v.engine?`<span class="tag engine">${v.engine}</span>`:""}
-
-    <div class="tags">
-      ${v.tags.map(t=>`<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`).join("")}
+      ${v.cloudAudio?`
+      <audio src="${v.cloudAudio}"></audio>
+      <button class="audio-btn">
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9z"/></svg>
+      </button>`:''}
     </div>
 
-    <p class="release-date">Release Date: ${v.releaseDate||"Unknown"}</p>
+    <div class="card-info">
+      <h2>${v.name}</h2>
+      ${v.engine?`<span class="tag engine">${v.engine}</span>`:''}
+      <div class="tags">${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+      <p class="release-date">Release Date: ${v.releaseDate||"Unknown"}</p>
+      <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
+    </div>
+  </div>`).join("");
 
-    <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
-  </div>
-</div>
-`).join("");
+  document.querySelectorAll(".audio-btn").forEach(btn=>{
+    const audio=btn.previousElementSibling;
+    btn.onclick=()=>{
+      document.querySelectorAll("audio").forEach(a=>{if(a!=audio){a.pause();}});
+      document.querySelectorAll(".audio-btn").forEach(b=>b.classList.remove("playing"));
+      if(audio.paused){audio.play();btn.classList.add("playing");}
+      else{audio.pause();btn.classList.remove("playing");}
+    };
+  });
 }
 
 /* PAGINATION */
 function renderPagination(total){
   const pages=Math.ceil(total/ITEMS_PER_PAGE);
   pagination.innerHTML="";
-
   for(let i=1;i<=pages;i++){
-    pagination.innerHTML+=`<button class="${i===currentPage?'active-page':''}" onclick="goToPage(${i})">${i}</button>`;
+    pagination.innerHTML+=`<button class="${i==currentPage?'active-page':''}" onclick="go(${i})">${i}</button>`;
   }
 }
 
-function goToPage(p){
-  currentPage=p;
-  update();
-}
-
+function go(p){currentPage=p;update();}
 searchInput.addEventListener("input",()=>{currentPage=1;update();});
 </script>
 

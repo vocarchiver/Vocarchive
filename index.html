@@ -193,8 +193,8 @@ h1 {
 .tag.engine {
   grid-column:1;
   grid-row:2;
-  width:40px;
-  height:40px;
+  width:101px;
+  height:85px;
   background:linear-gradient(45deg,#00e5ff,#ff2f92);
   color:black;
   border-radius:10px;
@@ -316,12 +316,12 @@ fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
   const now=new Date();
 
   voicebanks=rows.map(r=>{
-    const engine=r[1]||"";
+    const engine=r[4]||"";
     const releaseDate=r[2]||"";
     const d=new Date(releaseDate);
     const isNew=!isNaN(d)&&(now-d)/86400000<=30;
 
-    const tagCols=[4,5,6,7,8,9,15];
+    const tagCols=[5,6,7,8,9,15];
     let tags=[];
     tagCols.forEach(i=>{
       if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));

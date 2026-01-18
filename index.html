@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Vocarchive</title>
 
 <style>
@@ -96,6 +98,7 @@ h1 {
   grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
   gap:24px;
   margin-top:20px;
+  padding-bottom:40px;
 }
 
 /* CARD */
@@ -222,7 +225,6 @@ h1 {
   font-size:12px;
   padding:4px 10px;
   border-radius:12px;
-  cursor:pointer;
 }
 
 /* DATE */
@@ -267,28 +269,25 @@ h1 {
   color:black;
 }
 
-@media (max-width: 768px) {
+/* MOBILE FIX */
+@media (max-width:768px){
 
-  /* GRID A UNA COLUMNA */
-  .grid {
-    grid-template-columns: 1fr;
+  .grid{
+    grid-template-columns:100% !important;
   }
 
-  /* Ajustar padding imagen */
-  .card-image-section {
-    padding: 20px;
-    height: auto;
+  .card-image-section{
+    padding:20px;
+    height:auto;
   }
 
-  /* Imagen un poco más flexible */
-  .card-image-section img {
-    width: 200px;
-    height: 200px;
+  .card-image-section img{
+    width:200px;
+    height:200px;
   }
 
-  /* Reducir espacio interior */
-  .card-info {
-    padding: 14px 16px;
+  .card-info{
+    padding:14px 16px;
   }
 
 }
@@ -313,9 +312,7 @@ h1 {
 </div>
 
 <div id="filters" class="filters"></div>
-
 <div id="cards" class="grid"></div>
-
 <div id="pagination"></div>
 
 <script>
@@ -330,7 +327,9 @@ function parseCSV(text){
   for(let c of text){
     if(c=='"') q=!q;
     else if(c==','&&!q){row.push(cell);cell="";}
-    else if((c=='\n'||c=='\r')&&!q){if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}}
+    else if((c=='\n'||c=='\r')&&!q){
+      if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}
+    }
     else cell+=c;
   }
   if(cell||row.length){row.push(cell);rows.push(row);}
@@ -378,16 +377,26 @@ function renderFilters(){
 }
 
 function toggleFilter(t){
-  activeFilters.includes(t)?activeFilters=activeFilters.filter(x=>x!=t):activeFilters.push(t);
-  currentPage=1; update();
+  activeFilters.includes(t)
+    ? activeFilters=activeFilters.filter(x=>x!=t)
+    : activeFilters.push(t);
+  currentPage=1;
+  update();
 }
 
 /* UPDATE */
 function update(){
   const s=searchInput.value.toLowerCase();
-  const filtered=voicebanks.filter(v=>v.name.toLowerCase().includes(s)&&activeFilters.every(t=>v.tags.includes(t)));
+  const filtered=voicebanks.filter(v=>
+    v.name.toLowerCase().includes(s) &&
+    activeFilters.every(t=>v.tags.includes(t))
+  );
+
   filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
-  renderCards(filtered); renderFilters(); renderPagination(filtered.length);
+
+  renderCards(filtered);
+  renderFilters();
+  renderPagination(filtered.length);
 }
 
 /* CARDS */
@@ -399,57 +408,61 @@ function renderCards(list){
     <div class="card-image-section">
       <img src="${v.cloudImage}">
       ${v.isNew?'<span class="badge">NEW</span>':''}
+
       ${v.cloudAudio?`
       <audio src="${v.cloudAudio}"></audio>
       <button class="audio-btn">
-        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9z"/></svg>
+        <svg viewBox="0 0 24 24">
+          <path d="M3 9v6h4l5 5V4L7 9z"/>
+        </svg>
       </button>`:''}
+
     </div>
 
     <div class="card-info">
       <h2>${v.name}</h2>
       ${v.engine?`<span class="tag engine">${v.engine}</span>`:''}
-      <div class="tags">${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+
+      <div class="tags">
+        ${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}
+      </div>
+
       <p class="release-date">Release Date: ${v.releaseDate||"Unknown"}</p>
+
       <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
     </div>
   </div>`).join("");
 
-document.querySelectorAll(".audio-btn").forEach(btn=>{
-  const audio=btn.previousElementSibling;
-  const icon=btn.querySelector("svg path");
+  document.querySelectorAll(".audio-btn").forEach(btn=>{
+    const audio=btn.previousElementSibling;
+    const icon=btn.querySelector("path");
 
-  btn.onclick=()=>{
-    document.querySelectorAll("audio").forEach(a=>{
-      if(a!=audio){
-        a.pause();
-        a.currentTime=0;
+    btn.onclick=()=>{
+      document.querySelectorAll("audio").forEach(a=>{
+        if(a!==audio){ a.pause(); a.currentTime=0; }
+      });
+
+      document.querySelectorAll(".audio-btn").forEach(b=>{
+        b.classList.remove("playing");
+        b.querySelector("path").setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+      });
+
+      if(audio.paused){
+        audio.play();
+        btn.classList.add("playing");
+        icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
+      } else {
+        audio.pause();
+        audio.currentTime=0;
+        icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
       }
-    });
 
-    document.querySelectorAll(".audio-btn").forEach(b=>{
-      b.classList.remove("playing");
-      b.querySelector("svg path").setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-    });
-
-    if(audio.paused){
-      audio.play();
-      btn.classList.add("playing");
-      icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z"); // pause icon
-    } else {
-      audio.pause();
-      audio.currentTime=0;
-      btn.classList.remove("playing");
-      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-    }
-
-    audio.onended=()=>{
-      btn.classList.remove("playing");
-      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-    }
-  };
-});
-
+      audio.onended=()=>{
+        btn.classList.remove("playing");
+        icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+      };
+    };
+  });
 }
 
 /* PAGINATION */
@@ -461,8 +474,12 @@ function renderPagination(total){
   }
 }
 
-function go(p){currentPage=p;update();}
-searchInput.addEventListener("input",()=>{currentPage=1;update();});
+function go(p){ currentPage=p; update(); }
+
+searchInput.addEventListener("input",()=>{
+  currentPage=1;
+  update();
+});
 </script>
 
 </body>

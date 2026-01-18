@@ -16,6 +16,42 @@
   --text-muted:#8aa0b8;
 }
 
+/* =========================
+   HEADER LOGO
+========================= */
+
+.site-header {
+  width: 100%;
+  background: linear-gradient(180deg, #050b14, #0a1220);
+  border-bottom: 1px solid rgba(0, 180, 255, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.header-container {
+  max-width: 1300px;
+  margin: auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-logo {
+  height: 60px;
+  max-width: 100%;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.site-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 12px rgba(0, 200, 255, 0.5));
+}
+
+  
 /* BASE */
 body {
   margin:0;
@@ -295,6 +331,14 @@ h1 {
 </head>
 
 <body>
+  <header class="site-header">
+  <div class="header-container">
+    <img src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo.png?raw=true"
+         alt="Vocarchive Logo"
+         class="site-logo">
+  </div>
+</header>
+
 
 <nav class="top-menu">
   <div class="menu-container">

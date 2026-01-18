@@ -3,462 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Vocarchive</title>
 
 <style>
-:root {
-  --bg-main:#05080f;
-  --bg-panel:#0c1324;
-  --accent-cyan:#00e5ff;
-  --accent-pink:#ff2f92;
-  --text-main:#e9f1ff;
-  --text-muted:#8aa0b8;
+:root{
+--bg-main:#05080f;
+--bg-panel:#0c1324;
+--accent-cyan:#00e5ff;
+--accent-pink:#ff2f92;
+--text-main:#e9f1ff;
+--text-muted:#8aa0b8;
 }
 
-/* =========================
-   HEADER LOGO
-========================= */
+/* ================= HEADER ================= */
 
-.site-header {
-  width: 100%;
-  background: linear-gradient(180deg, #050b14, #0a1220);
-  border-bottom: 1px solid rgba(0, 180, 255, 0.15);
-  position: sticky;
-  top: 0;
-  z-index: 999;
+.site-header{
+background:linear-gradient(180deg,#050b14,#0a1220);
+border-bottom:1px solid rgba(0,180,255,.15);
+position:sticky;
+top:0;
+z-index:999;
 }
 
-.header-container {
-  max-width: 1300px;
-  margin: auto;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.header-container{
+max-width:1300px;
+margin:auto;
+padding:12px;
+display:flex;
+justify-content:center;
 }
 
-.site-logo {
-  height: 60px;
-  max-width: 100%;
-  object-fit: contain;
-  cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
+.site-logo{
+height:60px;
+cursor:pointer;
+transition:.2s;
 }
 
-.site-logo:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 0 12px rgba(0, 200, 255, 0.5));
+.site-logo:hover{
+transform:scale(1.05);
+filter:drop-shadow(0 0 12px rgba(0,200,255,.5));
 }
 
-  
-/* BASE */
-body {
-  margin:0;
-  padding:20px;
-  font-family:Arial,sans-serif;
-  background:radial-gradient(circle at top,#101a2f,#05080f);
-  color:var(--text-main);
+/* ================= BASE ================= */
+
+body{
+margin:0;
+padding:20px;
+font-family:Arial,sans-serif;
+background:radial-gradient(circle at top,#101a2f,#05080f);
+color:var(--text-main);
 }
 
-h1 {
-  text-align:center;
-  color:var(--accent-cyan);
-  text-shadow:0 0 12px rgba(0,229,255,.4);
+h1{
+text-align:center;
+color:var(--accent-cyan);
 }
 
-/* MENU */
-.top-menu {
-  position:sticky;
-  top:0;
-  background:linear-gradient(to right,#02050a,#0a1324);
-  padding:12px;
-  z-index:50;
+/* ================= SEARCH ================= */
+
+.search{
+max-width:420px;
+margin:20px auto;
 }
 
-.menu-container {
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  gap:25px;
+.search input{
+width:100%;
+padding:10px;
+border-radius:12px;
+border:1px solid #1f2c45;
+background:#0c1324;
+color:white;
 }
 
-.menu-item {
-  text-decoration:none;
-  color:white;
-  font-weight:bold;
+/* ================= FILTER PANEL ================= */
+
+.filter-panel{
+max-width:1200px;
+margin:10px auto 20px;
+padding:0 10px;
 }
 
-.menu-item:hover {
-  color:var(--accent-cyan);
+.filter-group{
+background:#0b1324;
+border-radius:12px;
+margin-bottom:10px;
+border:1px solid rgba(0,229,255,.12);
+overflow:hidden;
 }
 
-/* SEARCH */
-.search {
-  max-width:400px;
-  margin:20px auto;
+.filter-header{
+padding:12px 14px;
+cursor:pointer;
+color:#77d7ff;
+font-weight:600;
+display:flex;
+justify-content:space-between;
 }
 
-.search input {
-  width:100%;
-  padding:10px;
-  border-radius:12px;
-  border:1px solid #1f2c45;
-  background:var(--bg-panel);
-  color:white;
+.filter-header::after{
+content:"▸";
+transition:.2s;
 }
 
-/* FILTERS */
-.filters {
-  text-align:center;
+.filter-group.open .filter-header::after{
+transform:rotate(90deg);
 }
 
-.filter-tag {
-  display:inline-block;
-  background:#182238;
-  color:var(--text-muted);
-  padding:6px 12px;
-  border-radius:14px;
-  margin:4px;
-  cursor:pointer;
+.filter-body{
+display:none;
+padding:10px;
+gap:8px;
+flex-wrap:wrap;
 }
 
-.filter-tag.active {
-  background:var(--accent-cyan);
-  color:black;
+.filter-group.open .filter-body{
+display:flex;
 }
 
-/* GRID */
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
-  gap:24px;
-  margin-top:20px;
-  padding-bottom:40px;
+.filter-btn{
+background:rgba(0,180,255,.12);
+border:1px solid rgba(0,180,255,.3);
+color:#ccefff;
+padding:6px 12px;
+border-radius:14px;
+font-size:12px;
+cursor:pointer;
 }
 
-/* CARD */
-.card {
-  background:linear-gradient(180deg,#0f1626,#0b1020);
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid rgba(0,229,255,.15);
-  box-shadow:0 8px 20px rgba(0,0,0,.6);
-  transition:.2s;
+.filter-btn.active{
+background:#00b4ff;
+color:#00131f;
+font-weight:bold;
 }
 
-.card:hover {
-  transform:translateY(-4px);
-  box-shadow:0 12px 30px rgba(0,229,255,.25);
+/* ================= GRID ================= */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+gap:24px;
+margin-top:20px;
+padding-bottom:40px;
 }
 
-/* IMAGE SECTION */
-.card-image-section {
-  height:310px;
-  padding:20px 80px;
-  background:radial-gradient(circle at top,#101a2f,#050914);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+/* ================= CARD ================= */
+
+.card{
+background:linear-gradient(180deg,#0f1626,#0b1020);
+border-radius:18px;
+overflow:hidden;
+border:1px solid rgba(0,229,255,.15);
+box-shadow:0 8px 20px rgba(0,0,0,.6);
+transition:.2s;
 }
 
-.card-image-section img {
-  width:250px;
-  height:250px;
-  object-fit:contain;
+.card:hover{
+transform:translateY(-4px);
+box-shadow:0 12px 30px rgba(0,229,255,.25);
 }
 
-/* NEW BADGE */
-.badge {
-  position:absolute;
-  top:12px;
-  right:12px;
-  background:#ff2f92;
-  color:white;
-  font-size:11px;
-  padding:5px 10px;
-  border-radius:10px;
-  font-weight:bold;
+/* IMAGE */
+
+.card-image-section{
+height:310px;
+padding:20px 80px;
+background:radial-gradient(circle at top,#101a2f,#050914);
+display:flex;
+justify-content:center;
+align-items:center;
+position:relative;
 }
 
-/* PLAY BUTTON */
-.audio-btn {
-  position:absolute;
-  bottom:12px;
-  right:12px;
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  border:none;
-  cursor:pointer;
-  background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.card-image-section img{
+width:250px;
+height:250px;
+object-fit:contain;
 }
 
-.audio-btn svg {
-  width:20px;
-  height:20px;
-  fill:black;
+/* BADGE */
+
+.badge{
+position:absolute;
+top:12px;
+right:12px;
+background:#ff2f92;
+color:white;
+font-size:11px;
+padding:5px 10px;
+border-radius:10px;
 }
 
-.audio-btn.playing {
-  box-shadow:0 0 15px rgba(0,229,255,.8);
+/* AUDIO */
+
+.audio-btn{
+position:absolute;
+bottom:12px;
+right:12px;
+width:44px;
+height:44px;
+border-radius:50%;
+border:none;
+cursor:pointer;
+background:linear-gradient(45deg,#00e5ff,#ff2f92);
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
-/* INFO PANEL */
-.card-info {
-  padding:18px 20px;
-  display:grid;
-  grid-template-columns:115px 1fr;
-  column-gap:16px;
-  row-gap:12px;
-  background:#0c1324;
+.audio-btn svg{
+width:20px;
+fill:black;
 }
 
-/* TITLE */
-.card-info h2 {
-  grid-column:span 2;
-  font-size:18px;
-  height:31px;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
+.audio-btn.playing{
+box-shadow:0 0 15px rgba(0,229,255,.8);
 }
 
-/* ENGINE TAG */
-.tag.engine {
-  grid-column:1;
-  grid-row:2;
-  width:101px;
-  height:85px;
-  background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  color:black;
-  border-radius:10px;
-  font-size:11px;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+/* INFO */
+
+.card-info{
+padding:18px;
+display:grid;
+grid-template-columns:115px 1fr;
+gap:12px;
+background:#0c1324;
 }
 
-/* TAGS */
-.tags {
-  grid-column:2;
-  grid-row:2;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  max-height:85px;
-  overflow:hidden;
+.card-info h2{
+grid-column:span 2;
+font-size:18px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
 }
 
-.tag {
-  background:#182238;
-  color:#9fb5d0;
-  font-size:12px;
-  padding:4px 10px;
-  border-radius:12px;
+.tag.engine{
+background:linear-gradient(45deg,#00e5ff,#ff2f92);
+color:black;
+border-radius:10px;
+font-size:11px;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
-/* DATE */
-.release-date {
-  grid-column:span 2;
-  font-size:12px;
-  color:var(--text-muted);
+.tags{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+max-height:85px;
+overflow:hidden;
 }
 
-/* BUTTON */
-.button {
-  grid-column:span 2;
-  height:51px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:12px;
-  background:linear-gradient(45deg,#00e5ff,#ff2f92);
-  text-decoration:none;
-  font-weight:bold;
-  color:black;
+.tag{
+background:#182238;
+color:#9fb5d0;
+font-size:12px;
+padding:4px 10px;
+border-radius:12px;
 }
 
-/* PAGINATION */
-#pagination {
-  text-align:center;
-  margin:25px;
+.release-date{
+grid-column:span 2;
+font-size:12px;
+color:#8aa0b8;
 }
 
-#pagination button {
-  background:#172038;
-  color:white;
-  border:none;
-  padding:6px 12px;
-  margin:4px;
-  border-radius:8px;
-  cursor:pointer;
+.button{
+grid-column:span 2;
+height:48px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:12px;
+background:linear-gradient(45deg,#00e5ff,#ff2f92);
+text-decoration:none;
+font-weight:bold;
+color:black;
 }
 
-#pagination .active-page {
-  background:var(--accent-cyan);
-  color:black;
+/* ================= PAGINATION ================= */
+
+#pagination{
+text-align:center;
+margin:25px;
 }
 
-/* MOBILE FIX */
-@media (max-width:768px){
-
-  .grid{
-    grid-template-columns:100% !important;
-  }
-
-  .card-image-section{
-    padding:20px;
-    height:auto;
-  }
-
-  .card-image-section img{
-    width:200px;
-    height:200px;
-  }
-
-  .card-info{
-    padding:14px 16px;
-  }
-
-/* ===========================
-   FILTER ACCORDION PANEL
-=========================== */
-
-.filter-panel {
-  max-width: 1200px;
-  margin: 15px auto 20px;
-  padding: 0 16px;
+#pagination button{
+background:#172038;
+color:white;
+border:none;
+padding:6px 12px;
+margin:4px;
+border-radius:8px;
+cursor:pointer;
 }
 
-.filter-group {
-  background: #0b1324;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(0,229,255,.12);
+#pagination .active-page{
+background:#00e5ff;
+color:black;
 }
 
-.filter-header {
-  padding: 12px 14px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: #77d7ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+.grid{
+grid-template-columns:1fr;
 }
 
-.filter-header::after {
-  content: "▸";
-  font-size: 14px;
-  transition: 0.2s;
+.card-image-section{
+padding:20px;
+height:auto;
 }
 
-.filter-group.open .filter-header::after {
-  transform: rotate(90deg);
+.card-image-section img{
+width:200px;
+height:200px;
 }
 
-.filter-body {
-  display: none;
-  padding: 10px 12px 14px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.filter-group.open .filter-body {
-  display: flex;
-}
-
-/* TAG BUTTON */
-
-.filter-btn {
-  background: rgba(0,180,255,.12);
-  border: 1px solid rgba(0,180,255,.3);
-  color: #ccefff;
-  padding: 6px 12px;
-  border-radius: 14px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.filter-btn.active {
-  background: #00b4ff;
-  color: #00131f;
-  font-weight: 600;
-}
-  
 }
 </style>
 </head>
 
 <body>
-  <header class="site-header">
-  <div class="header-container">
-    <img src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true"
-         alt="Vocarchive Logo"
-         class="site-logo">
-  </div>
+
+<header class="site-header">
+<div class="header-container">
+<img src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true" class="site-logo">
+</div>
 </header>
-
-
-<nav class="top-menu">
-  <div class="menu-container">
-    <a class="menu-item" href="index.html">Home</a>
-    <a class="menu-item" href="help.html">Contribute</a>
-    <a class="menu-item" href="guidelines.html">Guidelines</a>
-    <a class="menu-item" href="synths.html">Synths</a>
-  </div>
-</nav>
 
 <h1>Vocarchive</h1>
 
 <div class="search">
-  <input id="searchInput" placeholder="Search voicebank...">
+<input id="searchInput" placeholder="Search voicebank...">
 </div>
 
 <div class="filter-panel">
 
-  <div class="filter-group" data-category="gender">
-    <div class="filter-header">Gender Tags</div>
-    <div class="filter-body"></div>
-  </div>
+<div class="filter-group" data-category="engine">
+<div class="filter-header">Engine</div>
+<div class="filter-body"></div>
+</div>
 
-  <div class="filter-group" data-category="officialLang">
-    <div class="filter-header">Language (Official)</div>
-    <div class="filter-body"></div>
-  </div>
+<div class="filter-group" data-category="status">
+<div class="filter-header">Status</div>
+<div class="filter-body"></div>
+</div>
 
-  <div class="filter-group" data-category="extraLang">
-    <div class="filter-header">Additional Singable Languages</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="status">
-    <div class="filter-header">Status</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="availability">
-    <div class="filter-header">Availability</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="type">
-    <div class="filter-header">Type of Voicebank</div>
-    <div class="filter-body"></div>
-  </div>
-
-  <div class="filter-group" data-category="engine">
-    <div class="filter-header">Engine</div>
-    <div class="filter-body"></div>
-  </div>
+<div class="filter-group" data-category="type">
+<div class="filter-header">Type</div>
+<div class="filter-body"></div>
+</div>
 
 </div>
 
@@ -468,168 +366,228 @@ h1 {
 <script>
 const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-let voicebanks=[],activeFilters=[],currentPage=1;
-const ITEMS_PER_PAGE=9;
+let voicebanks=[];
+let currentPage=1;
+const ITEMS=9;
 
-function parseCSV(text){
-  text=text.replace(/^\uFEFF/,'');
-  const rows=[]; let row=[],cell="",q=false;
-  for(let c of text){
-    if(c=='"') q=!q;
-    else if(c==','&&!q){row.push(cell);cell="";}
-    else if((c=='\n'||c=='\r')&&!q){
-      if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}
-    }
-    else cell+=c;
-  }
-  if(cell||row.length){row.push(cell);rows.push(row);}
-  return rows;
+let categoryFilters={
+engine:[],
+status:[],
+type:[]
+};
+
+/* CSV PARSER */
+
+function parseCSV(t){
+t=t.replace(/^\uFEFF/,'');
+let r=[],row=[],c="",q=false;
+for(let ch of t){
+if(ch=='"') q=!q;
+else if(ch==','&&!q){row.push(c);c="";}
+else if((ch=='\n'||ch=='\r')&&!q){if(c||row.length){row.push(c);r.push(row);row=[];c="";}}
+else c+=ch;
 }
+if(c||row.length){row.push(c);r.push(row);}
+return r;
+}
+
+/* LOAD */
 
 fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
-  const rows=parseCSV(csv); rows.shift();
-  const now=new Date();
 
-  voicebanks=rows.map(r=>{
-    const engine=r[4]||"";
-    const releaseDate=r[2]||"";
-    const d=new Date(releaseDate);
-    const isNew=!isNaN(d)&&(now-d)/86400000<=30;
+const rows=parseCSV(csv);
+rows.shift();
 
-    const tagCols=[5,6,7,8,9,15];
-    let tags=[];
-    tagCols.forEach(i=>{
-      if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
-    });
+voicebanks=rows.map(r=>{
 
-    return{
-      name:r[3]||"Unknown",
-      engine,
-      releaseDate,
-      url:r[12],
-      cloudImage:r[13],
-      cloudAudio:r[14],
-      isNew,
-      tags
-    };
-  });
-
-  update();
+let tags=[];
+[5,6,7,8,9,15].forEach(i=>{
+if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
 });
 
-/* FILTERS */
+return{
+name:r[3]||"",
+engine:r[4]||"",
+release:r[2],
+url:r[12],
+img:r[13],
+audio:r[14],
+tags
+};
+
+});
+
+update();
+
+});
+
+/* FILTER RENDER */
+
 function renderFilters(){
-  const set=new Set();
-  voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
-  filters.innerHTML=[...set].map(t=>
-    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}" onclick="toggleFilter('${t}')">${t}</span>`
-  ).join("");
+
+const map={engine:new Set(),status:new Set(),type:new Set()};
+
+voicebanks.forEach(v=>{
+v.tags.forEach(t=>{
+if(t.toLowerCase().includes("vocaloid")) map.engine.add(t);
+else if(["active","discontinued","beta"].includes(t.toLowerCase())) map.status.add(t);
+else map.type.add(t);
+});
+});
+
+document.querySelectorAll(".filter-group").forEach(g=>{
+const cat=g.dataset.category;
+const body=g.querySelector(".filter-body");
+
+body.innerHTML=[...map[cat]].map(t=>`
+<button class="filter-btn ${categoryFilters[cat].includes(t)?'active':''}"
+onclick="toggleFilter('${cat}','${t}')">${t}</button>`).join("");
+
+});
+
 }
 
-function toggleFilter(t){
-  activeFilters.includes(t)
-    ? activeFilters=activeFilters.filter(x=>x!=t)
-    : activeFilters.push(t);
-  currentPage=1;
-  update();
+/* TOGGLE */
+
+function toggleFilter(cat,val){
+
+const arr=categoryFilters[cat];
+
+if(arr.includes(val)){
+categoryFilters[cat]=arr.filter(x=>x!==val);
+}else{
+arr.push(val);
+}
+
+currentPage=1;
+update();
+
 }
 
 /* UPDATE */
+
 function update(){
-  const s=searchInput.value.toLowerCase();
-  const filtered=voicebanks.filter(v=>
-    v.name.toLowerCase().includes(s) &&
-    activeFilters.every(t=>v.tags.includes(t))
-  );
 
-  filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
+const s=searchInput.value.toLowerCase();
 
-  renderCards(filtered);
-  renderFilters();
-  renderPagination(filtered.length);
+const filtered=voicebanks.filter(v=>{
+
+const search=v.name.toLowerCase().includes(s);
+
+const catOk=Object.values(categoryFilters).every(arr=>
+arr.every(t=>v.tags.includes(t))
+);
+
+return search && catOk;
+
+});
+
+renderCards(filtered);
+renderFilters();
+renderPagination(filtered.length);
+
 }
 
 /* CARDS */
+
 function renderCards(list){
-  const slice=list.slice((currentPage-1)*ITEMS_PER_PAGE,currentPage*ITEMS_PER_PAGE);
 
-  cards.innerHTML=slice.map(v=>`
-  <div class="card">
-    <div class="card-image-section">
-      <img src="${v.cloudImage}">
-      ${v.isNew?'<span class="badge">NEW</span>':''}
+const slice=list.slice((currentPage-1)*ITEMS,currentPage*ITEMS);
 
-      ${v.cloudAudio?`
-      <audio src="${v.cloudAudio}"></audio>
-      <button class="audio-btn">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 9v6h4l5 5V4L7 9z"/>
-        </svg>
-      </button>`:''}
+cards.innerHTML=slice.map(v=>`
 
-    </div>
+<div class="card">
 
-    <div class="card-info">
-      <h2>${v.name}</h2>
-      ${v.engine?`<span class="tag engine">${v.engine}</span>`:''}
+<div class="card-image-section">
+<img src="${v.img}">
+${v.audio?`
+<audio src="${v.audio}"></audio>
+<button class="audio-btn">
+<svg viewBox="0 0 24 24">
+<path d="M3 9v6h4l5 5V4L7 9z"/>
+</svg>
+</button>`:''}
+</div>
 
-      <div class="tags">
-        ${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}
-      </div>
+<div class="card-info">
+<h2>${v.name}</h2>
+<span class="tag engine">${v.engine}</span>
 
-      <p class="release-date">Release Date: ${v.releaseDate||"Unknown"}</p>
+<div class="tags">
+${v.tags.filter(t=>t!=v.engine).map(t=>`<span class="tag">${t}</span>`).join("")}
+</div>
 
-      <a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
-    </div>
-  </div>`).join("");
+<p class="release-date">${v.release||""}</p>
 
-  document.querySelectorAll(".audio-btn").forEach(btn=>{
-    const audio=btn.previousElementSibling;
-    const icon=btn.querySelector("path");
+<a class="button" href="${v.url}" target="_blank">SEE DETAILS</a>
 
-    btn.onclick=()=>{
-      document.querySelectorAll("audio").forEach(a=>{
-        if(a!==audio){ a.pause(); a.currentTime=0; }
-      });
+</div>
 
-      document.querySelectorAll(".audio-btn").forEach(b=>{
-        b.classList.remove("playing");
-        b.querySelector("path").setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-      });
+</div>
 
-      if(audio.paused){
-        audio.play();
-        btn.classList.add("playing");
-        icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
-      } else {
-        audio.pause();
-        audio.currentTime=0;
-        icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-      }
+`).join("");
 
-      audio.onended=()=>{
-        btn.classList.remove("playing");
-        icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-      };
-    };
-  });
+document.querySelectorAll(".audio-btn").forEach(btn=>{
+
+const audio=btn.previousElementSibling;
+const icon=btn.querySelector("path");
+
+btn.onclick=()=>{
+
+document.querySelectorAll("audio").forEach(a=>{
+if(a!==audio){a.pause();a.currentTime=0;}
+});
+
+if(audio.paused){
+audio.play();
+btn.classList.add("playing");
+icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
+}else{
+audio.pause();
+audio.currentTime=0;
+btn.classList.remove("playing");
+icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+}
+
+audio.onended=()=>{
+btn.classList.remove("playing");
+icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+};
+
+};
+
+});
+
 }
 
 /* PAGINATION */
+
 function renderPagination(total){
-  const pages=Math.ceil(total/ITEMS_PER_PAGE);
-  pagination.innerHTML="";
-  for(let i=1;i<=pages;i++){
-    pagination.innerHTML+=`<button class="${i==currentPage?'active-page':''}" onclick="go(${i})">${i}</button>`;
-  }
+
+const pages=Math.ceil(total/ITEMS);
+pagination.innerHTML="";
+
+for(let i=1;i<=pages;i++){
+pagination.innerHTML+=`<button class="${i==currentPage?'active-page':''}" onclick="go(${i})">${i}</button>`;
 }
 
-function go(p){ currentPage=p; update(); }
+}
 
-searchInput.addEventListener("input",()=>{
-  currentPage=1;
-  update();
+function go(p){
+currentPage=p;
+update();
+}
+
+searchInput.addEventListener("input",()=>{currentPage=1;update();});
+
+/* ACCORDION */
+
+document.addEventListener("click",e=>{
+if(e.target.classList.contains("filter-header")){
+e.target.parentElement.classList.toggle("open");
+}
 });
+
 </script>
 
 </body>

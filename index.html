@@ -27,6 +27,48 @@ body {
   color:var(--text);
 }
 
+/* ===== TOP MENU ===== */
+
+.top-menu {
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(5,7,12,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid #111826;
+}
+
+.menu-container {
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 20px;
+}
+
+.menu-left {
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menu-logo {
+  height:34px;
+}
+
+.menu-item {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+  transition:.2s;
+}
+
+.menu-item:hover {
+  color:var(--accent);
+}
+
 /* ===== HEADER ===== */
 
 .site-header {
@@ -58,19 +100,21 @@ body {
 /* ===== FILTER TAGS ===== */
 
 .filters {
-  text-align:center;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:6px;
   margin-bottom:18px;
 }
 
 .filter-tag {
-  display:inline-block;
   background:var(--soft);
   color:var(--muted);
   padding:6px 12px;
   border-radius:12px;
-  margin:4px;
   cursor:pointer;
   font-size:12px;
+  white-space:nowrap;
 }
 
 .filter-tag.active {
@@ -247,6 +291,11 @@ body {
     width:130px;
     font-size:10px;
   }
+
+  .menu-container {
+    flex-direction:column;
+    gap:8px;
+  }
 }
 
 </style>
@@ -254,13 +303,26 @@ body {
 
 <body>
 
+<!-- ===== TOP MENU ===== -->
+<nav class="top-menu">
+  <div class="menu-container">
+    <div class="menu-left">
+      <img class="menu-logo" src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="help.html" class="menu-item">Contribute</a>
+      <a href="guidelines.html" class="menu-item">Guidelines</a>
+      <a href="synths.html" class="menu-item">Synths</a>
+    </div>
+  </div>
+</nav>
+
 <header class="site-header">
-<img class="site-logo"
-src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+  <img class="site-logo"
+  src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
 </header>
 
 <div class="search">
-<input id="searchInput" placeholder="Search voicebank...">
+  <input id="searchInput" placeholder="Search voicebank...">
 </div>
 
 <div id="filters" class="filters"></div>
@@ -322,18 +384,33 @@ fetch(SHEET_URL)
 
  voicebanks=rows.map(r=>{
 
- let tags=[];
+ const tagMap={
+  gender:[],
+  language:[],
+  additional:[],
+  engine:[],
+  status:[],
+  availability:[]
+ };
 
- [4,5,6,7,8,9,15].forEach(i=>{
-  if(r[i]){
-    r[i].split(',').forEach(t=>{
-      if(t.trim()) tags.push(t.trim());
-    });
-  }
- });
+ if(r[7]) r[7].split(',').forEach(t=>tagMap.gender.push(t.trim()));
+ if(r[4]) r[4].split(',').forEach(t=>tagMap.engine.push(t.trim()));
+ if(r[5]) r[5].split(',').forEach(t=>tagMap.language.push(t.trim()));
+ if(r[6]) r[6].split(',').forEach(t=>tagMap.additional.push(t.trim()));
+ if(r[8]) r[8].split(',').forEach(t=>tagMap.status.push(t.trim()));
+ if(r[9]) r[9].split(',').forEach(t=>tagMap.availability.push(t.trim()));
 
  const release=new Date(r[2]);
  const isNew=!isNaN(release)&&(now-release)/86400000<=30;
+
+ const allTags=[...new Set([
+  ...tagMap.gender,
+  ...tagMap.language,
+  ...tagMap.additional,
+  ...tagMap.engine,
+  ...tagMap.status,
+  ...tagMap.availability
+ ])];
 
  return{
   name:r[3],
@@ -342,7 +419,8 @@ fetch(SHEET_URL)
   cloudImage:r[13],
   cloudAudio:r[14],
   url:r[12],
-  tags:[...new Set(tags)],
+  tags:allTags,
+  tagGroups:tagMap,
   isNew
  };
 
@@ -363,17 +441,42 @@ function toggleFilter(tag){
  update();
 }
 
-/* ===== FILTER BAR ===== */
+/* ===== FILTER BAR (ORDERED GROUPS) ===== */
 
 function renderFilters(){
 
- const set=new Set();
- voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
+ const groups={
+  gender:new Set(),
+  language:new Set(),
+  additional:new Set(),
+  engine:new Set(),
+  status:new Set(),
+  availability:new Set()
+ };
 
- filters.innerHTML=[...set].sort().map(t=>
- `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
- onclick="toggleFilter('${t}')">${t}</span>`
- ).join("");
+ voicebanks.forEach(v=>{
+  Object.keys(groups).forEach(k=>{
+    v.tagGroups[k].forEach(t=>groups[k].add(t));
+  });
+ });
+
+ const order=["gender","language","additional","engine","status","availability"];
+
+ const labels={
+  gender:"Gender",
+  language:"Language",
+  additional:"Additional",
+  engine:"Engine",
+  status:"Status",
+  availability:"Availability"
+ };
+
+ filters.innerHTML=order.map(key=>`
+   ${[...groups[key]].sort().map(t=>`
+     <span class="filter-tag ${activeFilters.includes(t)?'active':''}"
+     onclick="toggleFilter('${t}')">${t}</span>
+   `).join("")}
+ `).join("");
 
 }
 

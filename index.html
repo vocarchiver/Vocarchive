@@ -1,160 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Vocarchive</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vocarchive</title>
 
 <style>
 
-/* ================= THEME ================= */
-
 :root {
-  --bg: #0d0f12;
-  --card: #171a1f;
-  --soft: #22262d;
-  --text: #ffffff;
-  --muted: #9ca3af;
-  --accent: #4cff85;
-  --radius: 14px;
+  --bg:#0b0e13;
+  --panel:#121720;
+  --soft:#1a2230;
+  --accent:#00e5ff;
+  --text:#e7ecf5;
+  --muted:#8fa2bb;
 }
 
-* {
-  box-sizing: border-box;
-  font-family: Inter, system-ui, sans-serif;
-}
+/* ===== BASE ===== */
 
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
+  margin:0;
+  padding:20px;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:radial-gradient(circle at top,#0f1520,#080b11);
+  color:var(--text);
 }
 
-/* ================= LAYOUT ================= */
+/* ===== HEADER ===== */
 
-.container {
-  max-width: 1400px;
-  margin: auto;
-  padding: 28px;
+.site-header {
+  text-align:center;
+  padding:12px 0;
 }
+
+.site-logo {
+  height:56px;
+}
+
+/* ===== SEARCH ===== */
+
+.search {
+  max-width:420px;
+  margin:20px auto 14px;
+}
+
+.search input {
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #1f293a;
+  background:var(--panel);
+  color:white;
+  font-size:14px;
+}
+
+/* ===== FILTER TAGS ===== */
+
+.filters {
+  text-align:center;
+  margin-bottom:18px;
+}
+
+.filter-tag {
+  display:inline-block;
+  background:var(--soft);
+  color:var(--muted);
+  padding:6px 12px;
+  border-radius:12px;
+  margin:4px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.filter-tag.active {
+  background:var(--accent);
+  color:#000;
+}
+
+/* ===== GRID ===== */
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 18px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+  gap:18px;
 }
 
-/* ================= CARD ================= */
+/* ===== CARD ===== */
 
 .card {
-  position: relative;
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: all .15s ease;
+  background:linear-gradient(180deg,#121720,#0d121b);
+  border-radius:14px;
+  padding:14px;
+  display:flex;
+  gap:14px;
+  align-items:center;
+  position:relative;
+  border:1px solid rgba(0,229,255,.08);
+  transition:.2s;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  background: #1c2026;
+  transform:translateY(-3px);
+  border-color:rgba(0,229,255,.25);
 }
 
-/* ================= IMAGE ================= */
+/* ===== NEW RIBBON ===== */
+
+.ribbon {
+  position:absolute;
+  top:10px;
+  left:-35px;
+  transform:rotate(-45deg);
+  background:#ff2f92;
+  color:white;
+  padding:4px 40px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+/* ===== IMAGE ===== */
 
 .thumb {
-  width: 70px;
-  height: 70px;
-  border-radius: 12px;
-  object-fit: cover;
-  cursor: pointer;
+  width:64px;
+  height:64px;
+  object-fit:contain;
+  border-radius:10px;
+  background:#0b0f17;
+  cursor:pointer;
 }
 
-/* ================= INFO ================= */
+/* ===== INFO ===== */
 
 .info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
 }
 
 .title {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size:15px;
+  font-weight:600;
 }
 
 .vendor {
-  font-size: .8rem;
-  color: var(--muted);
+  font-size:12px;
+  color:var(--muted);
 }
 
-/* ================= TAGS ================= */
-
 .tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
 }
 
 .tag {
-  font-size: .65rem;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--soft);
-  color: var(--muted);
+  background:var(--soft);
+  padding:4px 8px;
+  border-radius:10px;
+  font-size:11px;
+  color:#b6c6dd;
+  cursor:pointer;
 }
 
-/* ================= PLAY BUTTON ================= */
-
-.play {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--soft);
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 15px;
-  display: grid;
-  place-items: center;
+.tag:hover {
+  background:var(--accent);
+  color:black;
 }
 
-.play:hover {
-  background: #2b3039;
+/* ===== AUDIO BUTTON ===== */
+
+.audio-btn {
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  background:#0f1623;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  position:relative;
 }
 
-/* ================= NEW BADGE ================= */
-
-.badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: var(--accent);
-  color: #000;
-  font-size: .65rem;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 6px;
+.audio-icon {
+  fill:var(--accent);
+  width:18px;
+  height:18px;
+  z-index:2;
 }
 
-/* ================= MOBILE ================= */
+.audio-progress {
+  position:absolute;
+  width:44px;
+  height:44px;
+  transform:rotate(-90deg);
+}
 
-@media(max-width: 520px) {
+.audio-progress circle {
+  fill:none;
+  stroke:var(--accent);
+  stroke-width:3;
+  stroke-dasharray:138;
+  stroke-dashoffset:138;
+}
 
-  .card {
-    flex-direction: column;
-    text-align: center;
-  }
+/* ===== MOBILE ===== */
 
-  .thumb {
-    width: 90px;
-    height: 90px;
-  }
-
+@media(max-width:600px){
+  .grid { grid-template-columns:100%; }
 }
 
 </style>
@@ -162,134 +217,237 @@ body {
 
 <body>
 
-<div class="container">
-  <div id="grid" class="grid"></div>
+<header class="site-header">
+<img class="site-logo"
+src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+</header>
+
+<div class="search">
+<input id="searchInput" placeholder="Search voicebank...">
 </div>
+
+<div id="filters" class="filters"></div>
+
+<div id="cards" class="grid"></div>
 
 <script>
 
-/* ================= DATA ================= */
-/* Simula tu CSV (puedes conectar luego) */
+/* ===== SHEET ===== */
 
-const data = [
+const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-{
-  name: "Otomachi UNA",
-  vendor: "INTERNET Co., Ltd.",
-  image: "https://i.imgur.com/jvWZJ1x.png",
-  demo: "demo1.mp3",
-  official: "https://www.ssw.co.jp/products/vocaloid/otomachi/",
-  date: "2025-12-20",
-  tags: ["Female","Japanese","VOCALOID6","Commercial"]
-},
+let voicebanks=[],activeFilters=[];
 
-{
-  name: "Felicia",
-  vendor: "Dreamtonics",
-  image: "https://i.imgur.com/M0f8Zbl.png",
-  demo: "demo2.mp3",
-  official: "https://dreamtonics.com/",
-  date: "2024-02-01",
-  tags: ["Female","English","SynthV","Commercial"]
+/* ===== CSV PARSER ===== */
+
+function parseCSV(text){
+ text=text.replace(/^\uFEFF/,'');
+
+ const rows=[],row=[],cell="";
+ let currentRow=[],currentCell="",quoted=false;
+
+ for(let c of text){
+  if(c=='"') quoted=!quoted;
+  else if(c==','&&!quoted){
+    currentRow.push(currentCell); currentCell="";
+  }
+  else if((c=='\n'||c=='\r')&&!quoted){
+    if(currentCell||currentRow.length){
+      currentRow.push(currentCell);
+      rows.push(currentRow);
+      currentRow=[]; currentCell="";
+    }
+  }
+  else currentCell+=c;
+ }
+
+ if(currentCell||currentRow.length){
+   currentRow.push(currentCell);
+   rows.push(currentRow);
+ }
+
+ return rows;
 }
 
-];
+/* ===== LOAD DATA ===== */
 
-/* ================= RENDER ================= */
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(csv=>{
 
-const grid = document.getElementById("grid");
+ const rows=parseCSV(csv);
+ rows.shift();
 
-data.forEach(vb => {
+ const now=new Date();
 
-  const card = document.createElement("div");
-  card.className = "card";
+ voicebanks=rows.map(r=>{
 
-  /* NEW CHECK */
+ let tags=[];
+ [5,6,7,8,9,15].forEach(i=>{
+  if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
+ });
 
-  const publishDate = new Date(vb.date);
-  const days = (new Date() - publishDate) / 86400000;
+ const release=new Date(r[2]);
+ const isNew=!isNaN(release)&&(now-release)/86400000<=30;
 
-  if (days <= 30) {
-    const badge = document.createElement("div");
-    badge.className = "badge";
-    badge.textContent = "NEW";
-    card.appendChild(badge);
-  }
+ return{
+  name:r[3],
+  vendor:r[1],
+  engine:r[4],
+  releaseDate:r[2],
+  cloudImage:r[13],
+  cloudAudio:r[14],
+  url:r[12],
+  tags,
+  isNew
+ };
 
-  /* IMAGE */
+ });
 
-  const img = document.createElement("img");
-  img.className = "thumb";
-  img.src = vb.image;
-  img.alt = vb.name;
-
-  img.addEventListener("click", () => {
-    window.open(vb.official, "_blank");
-  });
-
-  /* INFO */
-
-  const info = document.createElement("div");
-  info.className = "info";
-
-  const title = document.createElement("div");
-  title.className = "title";
-  title.textContent = vb.name;
-
-  const vendor = document.createElement("div");
-  vendor.className = "vendor";
-  vendor.textContent = vb.vendor;
-
-  const tagsWrap = document.createElement("div");
-  tagsWrap.className = "tags";
-
-  vb.tags.forEach(t => {
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.textContent = t;
-    tagsWrap.appendChild(tag);
-  });
-
-  info.appendChild(title);
-  info.appendChild(vendor);
-  info.appendChild(tagsWrap);
-
-  /* AUDIO */
-
-  const audio = new Audio(vb.demo);
-
-  const playBtn = document.createElement("button");
-  playBtn.className = "play";
-  playBtn.textContent = "▶";
-
-  playBtn.onclick = () => {
-
-    document.querySelectorAll("audio").forEach(a => a.pause());
-
-    if (audio.paused) {
-      audio.play();
-      playBtn.textContent = "⏸";
-    } else {
-      audio.pause();
-      playBtn.textContent = "▶";
-    }
-  };
-
-  audio.onended = () => {
-    playBtn.textContent = "▶";
-  };
-
-  document.body.appendChild(audio);
-
-  /* ASSEMBLY */
-
-  card.appendChild(img);
-  card.appendChild(info);
-  card.appendChild(playBtn);
-
-  grid.appendChild(card);
-
+ update();
 });
+
+/* ===== FILTERS ===== */
+
+function toggleFilter(tag){
+ activeFilters.includes(tag)?
+ activeFilters=activeFilters.filter(t=>t!==tag):
+ activeFilters.push(tag);
+
+ update();
+}
+
+function renderFilters(){
+
+ const set=new Set();
+ voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
+
+ filters.innerHTML=[...set].map(t=>
+ `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
+ onclick="toggleFilter('${t}')">${t}</span>`
+ ).join("");
+
+}
+
+/* ===== UPDATE ===== */
+
+function update(){
+
+ const s=searchInput.value.toLowerCase();
+
+ const filtered=voicebanks.filter(v=>
+  v.name.toLowerCase().includes(s) &&
+  activeFilters.every(t=>v.tags.includes(t))
+ );
+
+ filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
+
+ renderCards(filtered);
+ renderFilters();
+}
+
+/* ===== CARDS ===== */
+
+function renderCards(list){
+
+ cards.innerHTML=list.map(v=>`
+
+ <div class="card">
+
+ ${v.isNew?`<div class="ribbon">NEW</div>`:""}
+
+ <img class="thumb" src="${v.cloudImage}"
+ onclick="window.open('${v.url}','_blank')">
+
+ <div class="info">
+
+   <div class="title">${v.name}</div>
+   <div class="vendor">${v.vendor||""}</div>
+
+   <div class="tags">
+
+   ${v.engine?`<span class="tag" onclick="toggleFilter('${v.engine}')">${v.engine}</span>`:""}
+
+   ${v.tags.filter(t=>t!=v.engine).map(t=>
+    `<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`
+   ).join("")}
+
+   </div>
+
+ </div>
+
+ ${v.cloudAudio?`
+
+ <audio src="${v.cloudAudio}"></audio>
+
+ <button class="audio-btn">
+
+  <svg class="audio-progress">
+   <circle cx="22" cy="22" r="22"></circle>
+  </svg>
+
+  <svg class="audio-icon" viewBox="0 0 24 24">
+   <path d="M3 9v6h4l5 5V4L7 9z"/>
+  </svg>
+
+ </button>
+
+ `:""}
+
+ </div>
+
+ `).join("");
+
+ setupAudio();
+}
+
+/* ===== AUDIO ===== */
+
+function setupAudio(){
+
+ document.querySelectorAll(".audio-btn").forEach(btn=>{
+
+  const audio=btn.previousElementSibling;
+  const icon=btn.querySelector("path");
+  const circle=btn.querySelector("circle");
+  const length=138;
+
+  btn.onclick=()=>{
+
+   document.querySelectorAll("audio").forEach(a=>{
+    if(a!==audio){ a.pause(); a.currentTime=0; }
+   });
+
+   document.querySelectorAll(".audio-icon path").forEach(i=>{
+    i.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+   });
+
+   if(audio.paused){
+    audio.play();
+    icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
+   } else {
+    audio.pause();
+    audio.currentTime=0;
+    icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+   }
+
+   audio.ontimeupdate=()=>{
+    circle.style.strokeDashoffset=
+    length-(audio.currentTime/audio.duration)*length;
+   };
+
+   audio.onended=()=>{
+    icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+    circle.style.strokeDashoffset=length;
+   };
+
+  };
+
+ });
+
+}
+
+searchInput.addEventListener("input",update);
 
 </script>
 

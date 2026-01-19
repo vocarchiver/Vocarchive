@@ -96,6 +96,7 @@ body {
   gap:14px;
   align-items:center;
   position:relative;
+  overflow:hidden;
   border:1px solid rgba(0,229,255,.08);
   transition:.2s;
 }
@@ -105,18 +106,21 @@ body {
   border-color:rgba(0,229,255,.25);
 }
 
-/* ===== NEW RIBBON ===== */
+/* ===== NEW RIBBON (AUTO SIZE) ===== */
 
 .ribbon {
   position:absolute;
-  top:10px;
-  left:-35px;
+  top:14px;
+  left:-40%;
+  width:180%;
+  text-align:center;
   transform:rotate(-45deg);
   background:#ff2f92;
   color:white;
-  padding:4px 40px;
   font-size:11px;
-  font-weight:bold;
+  font-weight:600;
+  padding:4px 0;
+  pointer-events:none;
 }
 
 /* ===== IMAGE ===== */
@@ -243,17 +247,17 @@ let voicebanks=[],activeFilters=[];
 function parseCSV(text){
  text=text.replace(/^\uFEFF/,'');
 
- const rows=[],row=[],cell="";
- let currentRow=[],currentCell="",quoted=false;
+ let rows=[],currentRow=[],currentCell="",quoted=false;
 
  for(let c of text){
   if(c=='"') quoted=!quoted;
   else if(c==','&&!quoted){
-    currentRow.push(currentCell); currentCell="";
+    currentRow.push(currentCell.trim());
+    currentCell="";
   }
   else if((c=='\n'||c=='\r')&&!quoted){
     if(currentCell||currentRow.length){
-      currentRow.push(currentCell);
+      currentRow.push(currentCell.trim());
       rows.push(currentRow);
       currentRow=[]; currentCell="";
     }
@@ -262,7 +266,7 @@ function parseCSV(text){
  }
 
  if(currentCell||currentRow.length){
-   currentRow.push(currentCell);
+   currentRow.push(currentCell.trim());
    rows.push(currentRow);
  }
 
@@ -283,8 +287,14 @@ fetch(SHEET_URL)
  voicebanks=rows.map(r=>{
 
  let tags=[];
+
+ // TAG COLUMNS
  [4,5,6,7,8,9,15].forEach(i=>{
-  if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
+  if(r[i]){
+    r[i].split(',').forEach(t=>{
+      if(t.trim()) tags.push(t.trim());
+    });
+  }
  });
 
  const release=new Date(r[2]);
@@ -293,12 +303,11 @@ fetch(SHEET_URL)
  return{
   name:r[3],
   vendor:r[2],
-  engine:r[4],
   releaseDate:r[2],
   cloudImage:r[13],
   cloudAudio:r[14],
   url:r[12],
-  tags,
+  tags:[...new Set(tags)],
   isNew
  };
 
@@ -307,9 +316,10 @@ fetch(SHEET_URL)
  update();
 });
 
-/* ===== FILTERS ===== */
+/* ===== FILTER ===== */
 
 function toggleFilter(tag){
+
  activeFilters.includes(tag)?
  activeFilters=activeFilters.filter(t=>t!==tag):
  activeFilters.push(tag);
@@ -317,12 +327,14 @@ function toggleFilter(tag){
  update();
 }
 
+/* ===== FILTER BAR ===== */
+
 function renderFilters(){
 
  const set=new Set();
  voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
 
- filters.innerHTML=[...set].map(t=>
+ filters.innerHTML=[...set].sort().map(t=>
  `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
  onclick="toggleFilter('${t}')">${t}</span>`
  ).join("");
@@ -365,13 +377,9 @@ function renderCards(list){
    <div class="vendor">${v.vendor||""}</div>
 
    <div class="tags">
-
-   ${v.engine?`<span class="tag" onclick="toggleFilter('${v.engine}')">${v.engine}</span>`:""}
-
-   ${v.tags.filter(t=>t!=v.engine).map(t=>
+   ${v.tags.map(t=>
     `<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`
    ).join("")}
-
    </div>
 
  </div>

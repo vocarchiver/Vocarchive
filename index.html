@@ -1,485 +1,325 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Vocarchive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+
+/* ---------------- BASE ---------------- */
+
 :root {
-  --bg-main:#05080f;
-  --panel:#0b111b;
-  --cyan:#00e5ff;
-  --text:#e9f1ff;
-  --muted:#7c93ad;
+  --bg: #0e0f11;
+  --card: #17191d;
+  --soft: #1f2228;
+  --text: #ffffff;
+  --muted: #9aa0a6;
+  --accent: #4cff7a;
+  --radius: 16px;
 }
 
-/* BASE */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
 
 body {
-  margin:0;
-  padding:20px;
-  font-family:Arial, sans-serif;
-  background:radial-gradient(circle at top,#101a2f,#05080f);
-  color:var(--text);
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* HEADER */
+/* ---------------- GRID ---------------- */
 
-.site-header {
-  background:#050b14;
-  padding:12px;
-  display:flex;
-  justify-content:center;
+.container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 24px;
 }
 
-.site-logo {
-  height:55px;
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
 }
 
-/* MENU */
+/* ---------------- CARD ---------------- */
 
-.top-menu {
-  background:#070d18;
-  padding:12px;
+.voice-card {
+  position: relative;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.menu-container {
-  display:flex;
-  justify-content:center;
-  gap:24px;
+.voice-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.4);
 }
 
-.menu-item {
-  text-decoration:none;
-  color:white;
-  font-weight:600;
+/* ---------------- IMAGE ---------------- */
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  object-fit: cover;
+  cursor: pointer;
 }
 
-.menu-item:hover {
-  color:var(--cyan);
+/* ---------------- INFO ---------------- */
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-/* SEARCH */
-
-.search {
-  max-width:420px;
-  margin:25px auto 10px;
+.name {
+  font-weight: 600;
+  font-size: 1rem;
 }
 
-.search input {
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #1f2c45;
-  background:#0c1324;
-  color:white;
+.vendor {
+  font-size: .8rem;
+  color: var(--muted);
 }
 
-/* FILTER TAGS */
+/* ---------------- TAGS ---------------- */
 
-.filters {
-  text-align:center;
-  margin-bottom:15px;
-}
-
-.filter-tag {
-  display:inline-block;
-  background:#141c2b;
-  color:var(--muted);
-  padding:6px 12px;
-  border-radius:14px;
-  margin:4px;
-  cursor:pointer;
-  font-size:12px;
-}
-
-.filter-tag.active {
-  background:var(--cyan);
-  color:black;
-}
-
-/* GRID */
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
-  gap:18px;
-}
-
-/* CARD */
-
-.card {
-  background:var(--panel);
-  border-radius:18px;
-  padding:14px;
-  display:flex;
-  gap:14px;
-  align-items:center;
-  position:relative;
-  border:1px solid rgba(255,255,255,.05);
-  box-shadow:0 10px 20px rgba(0,0,0,.6);
-  transition:.2s;
-}
-
-.card:hover {
-  transform:translateY(-3px);
-}
-
-/* IMAGE */
-
-.card-image-section {
-  width:72px;
-  height:72px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.card-image-section img {
-  width:64px;
-  height:64px;
-  border-radius:14px;
-  object-fit:cover;
-}
-
-/* NEW RIBBON */
-
-.ribbon {
-  position:absolute;
-  top:10px;
-  left:-30px;
-  background:#ff2f92;
-  color:white;
-  padding:4px 40px;
-  font-size:11px;
-  font-weight:bold;
-  transform:rotate(-45deg);
-}
-
-/* INFO */
-
-.card-info {
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
-
-/* TITLE */
-
-.card-info h2 {
-  font-size:15px;
-  margin:0;
-  font-weight:600;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-/* TAGS */
-
-.title-tags {
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .tag {
-  background:#141c2b;
-  color:#8faac4;
-  font-size:10px;
-  padding:3px 8px;
-  border-radius:8px;
-  cursor:pointer;
+  font-size: .65rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--soft);
+  color: var(--muted);
+  white-space: nowrap;
 }
 
-.tag:hover {
-  background:#00e5ff22;
-  color:var(--cyan);
+/* ---------------- PLAY BUTTON ---------------- */
+
+.play-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #22252b;
+  color: white;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  position: relative;
 }
 
-.tag.engine {
-  background:#00e5ff22;
-  color:var(--cyan);
+.play-btn:hover {
+  background: #2b2f36;
 }
 
-/* META */
+/* progress ring */
 
-.meta-row {
-  font-size:11px;
-  color:var(--muted);
+.play-btn svg {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  transform: rotate(-90deg);
 }
 
-/* AUDIO */
-
-.audio-btn {
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  border:none;
-  background:#121a2a;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
+circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: 126;
+  stroke-dashoffset: 126;
+  transition: stroke-dashoffset .2s linear;
 }
 
-.audio-btn svg {
-  width:18px;
-  height:18px;
-  fill:var(--cyan);
+/* ---------------- NEW BADGE ---------------- */
+
+.ribbon {
+  position: absolute;
+  top: 10px;
+  left: -28px;
+  background: var(--accent);
+  color: black;
+  font-size: .65rem;
+  font-weight: bold;
+  padding: 4px 40px;
+  transform: rotate(-45deg);
 }
 
-.audio-btn.playing {
-  box-shadow:0 0 15px rgba(0,229,255,.6);
-}
+/* ---------------- MOBILE ---------------- */
 
-/* PAGINATION */
+@media (max-width: 500px) {
+  .voice-card {
+    flex-direction: column;
+    text-align: center;
+  }
 
-#pagination {
-  text-align:center;
-  margin:30px;
-}
-
-#pagination button {
-  background:#141c2b;
-  color:white;
-  border:none;
-  padding:7px 14px;
-  margin:4px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-#pagination .active-page {
-  background:var(--cyan);
-  color:black;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-  .grid {
-    grid-template-columns:100%;
+  .avatar {
+    width: 90px;
+    height: 90px;
   }
 }
+
 </style>
 </head>
 
 <body>
 
-<header class="site-header">
-  <img class="site-logo"
-  src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
-</header>
-
-<nav class="top-menu">
-  <div class="menu-container">
-    <a class="menu-item" href="#">Home</a>
-    <a class="menu-item" href="#">Contribute</a>
-    <a class="menu-item" href="#">Guidelines</a>
-    <a class="menu-item" href="#">Synths</a>
-  </div>
-</nav>
-
-<div class="search">
-  <input id="searchInput" placeholder="Search voicebank...">
+<div class="container">
+  <div id="grid" class="card-grid"></div>
 </div>
-
-<div id="filters" class="filters"></div>
-
-<div id="cards" class="grid"></div>
-<div id="pagination"></div>
 
 <script>
-const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-let voicebanks=[],activeFilters=[],currentPage=1;
-const ITEMS_PER_PAGE=9;
+/* ---------------- SAMPLE DATA ---------------- */
+/* Reemplaza esto luego con tu CSV/JSON */
 
-/* CSV */
+const voicebanks = [
 
-function parseCSV(text){
-  const rows=[]; let row=[],cell="",q=false;
-  for(let c of text){
-    if(c=='"') q=!q;
-    else if(c==','&&!q){row.push(cell);cell="";}
-    else if((c=='\n'||c=='\r')&&!q){
-      if(cell||row.length){row.push(cell);rows.push(row);row=[];cell="";}
-    } else cell+=c;
-  }
-  if(cell||row.length){row.push(cell);rows.push(row);}
-  return rows;
+{
+  name: "Otomachi UNA",
+  vendor: "INTERNET Co., Ltd.",
+  image: "https://i.imgur.com/jvWZJ1x.png",
+  demo: "demo1.mp3",
+  officialPage: "https://www.ssw.co.jp/products/vocaloid/otomachi/",
+  publishDate: "2025-12-20",
+  tags: ["Female", "Japanese", "VOCALOID6", "Commercial"]
+},
+
+{
+  name: "Felicia",
+  vendor: "Dreamtonics",
+  image: "https://i.imgur.com/M0f8Zbl.png",
+  demo: "demo2.mp3",
+  officialPage: "https://dreamtonics.com/",
+  publishDate: "2024-02-01",
+  tags: ["Female", "English", "SynthV", "Commercial"]
 }
 
-/* LOAD */
+];
 
-fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
-  const rows=parseCSV(csv); rows.shift();
-  const now=new Date();
+/* ---------------- RENDER ---------------- */
 
-  voicebanks=rows.map(r=>{
-    const releaseDate=r[2]||"";
-    const d=new Date(releaseDate);
+const grid = document.getElementById("grid");
 
-    const isNew=!isNaN(d)&&(now-d)/86400000<=30;
+voicebanks.forEach(vb => {
 
-    const tagCols=[5,6,7,8,9,15];
-    let tags=[];
+  const card = document.createElement("div");
+  card.className = "voice-card";
 
-    tagCols.forEach(i=>{
-      if(r[i]) r[i].split(',').forEach(t=>tags.push(t.trim()));
-    });
+  /* NEW badge */
 
-    return{
-      name:r[3],
-      engine:r[4],
-      releaseDate,
-      url:r[12],
-      cloudImage:r[13],
-      cloudAudio:r[14],
-      isNew,
-      tags
-    };
+  const publish = new Date(vb.publishDate);
+  const diffDays = (new Date() - publish) / 86400000;
+
+  if (diffDays <= 30) {
+    const ribbon = document.createElement("div");
+    ribbon.className = "ribbon";
+    ribbon.innerText = "NEW";
+    card.appendChild(ribbon);
+  }
+
+  /* IMAGE */
+
+  const img = document.createElement("img");
+  img.className = "avatar";
+  img.src = vb.image;
+  img.onclick = () => window.open(vb.officialPage, "_blank");
+
+  /* INFO */
+
+  const info = document.createElement("div");
+  info.className = "info";
+
+  const name = document.createElement("div");
+  name.className = "name";
+  name.innerText = vb.name;
+
+  const vendor = document.createElement("div");
+  vendor.className = "vendor";
+  vendor.innerText = vb.vendor;
+
+  const tags = document.createElement("div");
+  tags.className = "tags";
+
+  vb.tags.forEach(t => {
+    const tag = document.createElement("div");
+    tag.className = "tag";
+    tag.innerText = t;
+    tags.appendChild(tag);
   });
 
-  update();
-});
+  info.appendChild(name);
+  info.appendChild(vendor);
+  info.appendChild(tags);
 
-/* FILTER TAGS */
+  /* PLAY BUTTON */
 
-function renderFilters(){
-  const set=new Set();
-  voicebanks.forEach(v=>v.tags.forEach(t=>set.add(t)));
+  const btn = document.createElement("button");
+  btn.className = "play-btn";
+  btn.innerHTML = "▶";
 
-  filters.innerHTML=[...set].map(t=>
-    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
-     onclick="toggleFilter('${t}')">${t}</span>`
-  ).join("");
-}
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 
-function toggleFilter(t){
-  activeFilters.includes(t)
-  ? activeFilters=activeFilters.filter(x=>x!=t)
-  : activeFilters.push(t);
+  circle.setAttribute("cx","21");
+  circle.setAttribute("cy","21");
+  circle.setAttribute("r","20");
 
-  currentPage=1;
-  update();
-}
+  svg.appendChild(circle);
+  btn.appendChild(svg);
 
-/* UPDATE */
+  const audio = new Audio(vb.demo);
 
-function update(){
-  const s=searchInput.value.toLowerCase();
+  btn.onclick = () => {
 
-  const filtered=voicebanks.filter(v=>
-    v.name.toLowerCase().includes(s) &&
-    activeFilters.every(t=>v.tags.includes(t))
-  );
-
-  filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
-
-  renderCards(filtered);
-  renderFilters();
-  renderPagination(filtered.length);
-}
-
-/* CARDS */
-
-function renderCards(list){
-  const slice=list.slice((currentPage-1)*ITEMS_PER_PAGE,currentPage*ITEMS_PER_PAGE);
-
-  cards.innerHTML=slice.map(v=>`
-<div class="card">
-
-${v.isNew?'<div class="ribbon">NEW</div>':''}
-
-<div class="card-image-section">
-<img src="${v.cloudImage}">
-</div>
-
-<div class="card-info">
-
-<h2>${v.name}</h2>
-
-<div class="title-tags">
-${v.tags.filter(t=>t!=v.engine).map(t=>
-`<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`).join("")}
-</div>
-
-<div class="meta-row">
-${v.engine?`<span class="tag engine">${v.engine}</span>`:''}
- • ${v.releaseDate||"Unknown"}
-</div>
-
-</div>
-
-${v.cloudAudio?`
-<audio src="${v.cloudAudio}"></audio>
-<button class="audio-btn">
-<svg viewBox="0 0 24 24">
-<path d="M3 9v6h4l5 5V4L7 9z"/>
-</svg>
-</button>`:''}
-
-</div>`).join("");
-
-document.querySelectorAll(".audio-btn").forEach(btn=>{
-  const audio=btn.previousElementSibling;
-  const icon=btn.querySelector("path");
-
-  btn.onclick=()=>{
-
-    document.querySelectorAll("audio").forEach(a=>{
-      if(a!==audio){ a.pause(); a.currentTime=0; }
-    });
-
-    document.querySelectorAll(".audio-btn").forEach(b=>{
-      b.classList.remove("playing");
-      b.querySelector("path").setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-    });
-
-    if(audio.paused){
+    if (audio.paused) {
       audio.play();
-      btn.classList.add("playing");
-      icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
+      btn.innerHTML = "⏸";
+      btn.appendChild(svg);
     } else {
       audio.pause();
-      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+      btn.innerHTML = "▶";
+      btn.appendChild(svg);
     }
+  };
 
-    audio.onended=()=>{
-      btn.classList.remove("playing");
-      icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-    }
-  }
+  audio.ontimeupdate = () => {
+    const progress = audio.currentTime / audio.duration;
+    const offset = 126 - (126 * progress);
+    circle.style.strokeDashoffset = offset;
+  };
+
+  audio.onended = () => {
+    btn.innerHTML = "▶";
+    btn.appendChild(svg);
+    circle.style.strokeDashoffset = 126;
+  };
+
+  /* ASSEMBLE */
+
+  card.appendChild(img);
+  card.appendChild(info);
+  card.appendChild(btn);
+
+  grid.appendChild(card);
+
 });
-}
 
-/* PAGINATION */
-
-function renderPagination(total){
-  const pages=Math.ceil(total/ITEMS_PER_PAGE);
-  pagination.innerHTML="";
-
-  for(let i=1;i<=pages;i++){
-    pagination.innerHTML+=
-    `<button class="${i==currentPage?'active-page':''}"
-     onclick="go(${i})">${i}</button>`;
-  }
-}
-
-function go(p){
-  currentPage=p;
-  update();
-}
-
-searchInput.addEventListener("input",()=>{
-  currentPage=1;
-  update();
-});
 </script>
 
 </body>

@@ -6,14 +6,17 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  background: #0e0e0e;
   margin: 0;
   padding: 0;
+  color: #e0e0e0;
 }
 
 header {
   background: #000;
   padding: 15px 20px;
+  display: flex;
+  align-items: center;
 }
 
 header a {
@@ -30,15 +33,15 @@ header a:hover {
 
 .main-container {
   max-width: 900px;
-  margin: 40px auto;
+  margin: 50px auto;
   padding: 0 20px;
 }
 
 h1 {
   text-align: center;
-  color: #000;
-  font-size: 36px;
-  margin-bottom: 20px;
+  color: #ffffff;
+  font-size: 40px;
+  margin-bottom: 30px;
 }
 
 .section {
@@ -47,14 +50,14 @@ h1 {
 
 .section h2 {
   font-size: 28px;
-  color: #000;
+  color: #ffffff;
   margin-bottom: 15px;
 }
 
 .section p, .section li {
   font-size: 18px;
   line-height: 1.7;
-  color: #333;
+  color: #cfcfcf;
 }
 
 ul {
@@ -67,11 +70,12 @@ ul {
 }
 
 .note {
-  background: #fff;
+  background: #161616;
   border-left: 5px solid #d6186c;
-  padding: 15px;
+  padding: 18px 20px;
   margin-top: 20px;
-  border-radius: 6px;
+  border-radius: 12px;
+  color: #e6e6e6;
 }
 </style>
 </head>
@@ -101,6 +105,9 @@ ul {
       <li>Official demos of voicebanks.</li>
       <li>New releases, legacy voices, discontinued banks, and experimental projects.</li>
     </ul>
+    <div class="note">
+      ⚠️ <strong>Note:</strong> Work-in-progress (WIP) voicebanks are only accepted if submitted directly by their creator.
+    </div>
   </div>
 
   <div class="section">
@@ -133,7 +140,7 @@ ul {
   <div class="section">
     <h2>Language policy</h2>
     <p>
-      Each voicebank should be submitted under its <strong>base language</strong> — the language it was officially designed for.  
+      Each voicebank should be submitted under its <strong>base language</strong> — the language it was officially designed for.
       If the voicebank can sing in additional languages due to phoneme coverage or custom tuning, those languages should be listed separately.
     </p>
     <div class="note">
@@ -155,21 +162,20 @@ ul {
   </div>
 
   <div class="section">
-    <h2>Copyright and permissions</h2>
-    <p>
-      By submitting, you confirm that:
-    </p>
+    <h2>Copyright, permissions, and creator control</h2>
+    <p>By submitting, you confirm that:</p>
     <ul>
       <li>You have the right to share the provided demo and image.</li>
       <li>The demo is official or permitted by the voicebank’s creator.</li>
       <li>You understand Vocarchive is a catalog and archive, not a redistribution platform.</li>
+      <li><strong>Creators may request the removal or modification of their entries at any time, without needing to provide a reason.</strong></li>
     </ul>
   </div>
 
   <div class="section">
     <h2>Moderation and edits</h2>
     <p>
-      All submissions are reviewed for accuracy, quality, and compliance with these guidelines.  
+      All submissions are reviewed for accuracy, quality, and compliance with these guidelines.
       Vocarchive reserves the right to edit metadata, reject submissions, or request corrections if needed.
     </p>
   </div>
@@ -177,7 +183,7 @@ ul {
   <div class="section">
     <h2>Why submit?</h2>
     <p>
-      Vocarchive exists to give <span class="highlight">equal visibility</span> to all voicebanks — commercial, indie, discontinued, or experimental.  
+      Vocarchive exists to give <span class="highlight">equal visibility</span> to all voicebanks — commercial, indie, discontinued, or experimental.
       By submitting, you help preserve the history of vocal synthesis and make it easier for people to discover new voices.
     </p>
   </div>

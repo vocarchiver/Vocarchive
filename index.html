@@ -390,7 +390,8 @@ fetch(SHEET_URL)
   additional:[],
   engine:[],
   status:[],
-  availability:[]
+  availability:[],
+  type:[]
  };
 
  if(r[7]) r[7].split(',').forEach(t=>tagMap.gender.push(t.trim()));
@@ -399,6 +400,7 @@ fetch(SHEET_URL)
  if(r[6]) r[6].split(',').forEach(t=>tagMap.additional.push(t.trim()));
  if(r[8]) r[8].split(',').forEach(t=>tagMap.status.push(t.trim()));
  if(r[9]) r[9].split(',').forEach(t=>tagMap.availability.push(t.trim()));
+ if(r[15]) r[15].split(',').forEach(t=>tagMap.availability.push(t.trim()));
 
  const release=new Date(r[2]);
  const isNew=!isNaN(release)&&(now-release)/86400000<=30;
@@ -409,7 +411,8 @@ fetch(SHEET_URL)
   ...tagMap.additional,
   ...tagMap.engine,
   ...tagMap.status,
-  ...tagMap.availability
+  ...tagMap.availability,
+  ...tagMap.type
  ])];
 
  return{
@@ -451,7 +454,8 @@ function renderFilters(){
   additional:new Set(),
   engine:new Set(),
   status:new Set(),
-  availability:new Set()
+  availability:new Set(),
+  type:new Set()
  };
 
  voicebanks.forEach(v=>{
@@ -468,7 +472,8 @@ function renderFilters(){
   additional:"Additional",
   engine:"Engine",
   status:"Status",
-  availability:"Availability"
+  availability:"Availability",
+  type:"Type"
  };
 
  filters.innerHTML=order.map(key=>`

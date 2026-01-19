@@ -323,35 +323,40 @@ function parseCSV(text){
 
 /* ===== LOAD ===== */
 fetch(SHEET_URL)
-.then(r=>r.text())
-.then(csv=>{
-  const rows=parseCSV(csv);
+.then(r => r.text())
+.then(csv => {
+
+  const rows = parseCSV(csv);
   rows.shift();
 
-  synths=rows.map(r=>{
-    const tags=[];
-    [5,7,8,9].forEach(i=>{
-      if(r[i]){
-        r[i].split(',').forEach(t=>{
-          if(t.trim()) tags.push(t.trim());
+  synths = rows.map(r => {
+
+    let tags = [];
+
+    // Tags en el orden solicitado
+    [3, 4, 5, 7, 8, 9].forEach(i => {
+      if (r[i]) {
+        r[i].split(',').forEach(t => {
+          if (t.trim()) tags.push(t.trim());
         });
       }
     });
 
-    return{
-      name:r[1],
-      website:r[2],
-      developer:r[3],
-      type:r[4],
-      languages:r[5],
-      releaseYear:r[6],
-      status:r[7],
-      availability:r[8],
-      os:r[9],
-      image:r[10],
-      description:r[11],
-      tags:[...new Set(tags)]
+    return {
+      name: r[1],
+      website: r[2],
+      developer: r[3],
+      type: r[4],
+      languages: r[5],
+      releaseYear: r[6],
+      status: r[7],
+      availability: r[8],
+      os: r[9],
+      image: r[10],
+      description: r[11],
+      tags
     };
+
   });
 
   update();

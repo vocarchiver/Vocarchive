@@ -21,10 +21,57 @@
 
 body {
   margin:0;
-  padding:20px;
+  padding-top:70px;
   font-family:Inter,Segoe UI,Arial,sans-serif;
   background:radial-gradient(circle at top,#0f1520,#080b11);
   color:var(--text);
+}
+
+/* ===== TOP NAV ===== */
+
+.top-nav {
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:60px;
+  background:rgba(11,14,19,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  z-index:1000;
+}
+
+.nav-container {
+  max-width:1200px;
+  margin:0 auto;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+}
+
+.nav-left {
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.nav-logo {
+  height:36px;
+}
+
+.nav-links a {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+  margin-left:14px;
+  transition:.2s;
+}
+
+.nav-links a:hover {
+  color:var(--accent);
 }
 
 /* ===== HEADER ===== */
@@ -84,6 +131,7 @@ body {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
   gap:18px;
+  padding:0 12px 40px;
 }
 
 /* ===== CARD ===== */
@@ -106,7 +154,7 @@ body {
   border-color:rgba(0,229,255,.25);
 }
 
-/* ===== NEW RIBBON CORNER ===== */
+/* ===== NEW RIBBON ===== */
 
 .ribbon {
   position:absolute;
@@ -221,6 +269,10 @@ body {
     width:130px;
     font-size:10px;
   }
+
+  .nav-links {
+    display:none;
+  }
 }
 
 </style>
@@ -228,13 +280,28 @@ body {
 
 <body>
 
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav">
+  <div class="nav-container">
+    <div class="nav-left">
+      <img class="nav-logo" src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="help.html">Contribute</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="synths.html">Synths</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
 <header class="site-header">
-<img class="site-logo"
-src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+  <img class="site-logo"
+  src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
 </header>
 
 <div class="search">
-<input id="searchInput" placeholder="Search voicebank...">
+  <input id="searchInput" placeholder="Search voicebank...">
 </div>
 
 <div id="filters" class="filters"></div>
@@ -308,7 +375,7 @@ fetch(SHEET_URL)
 
  return{
   name:r[3],
-  vendor:r[2],
+  vendor:r[4], // Engine
   releaseDate:r[2],
   cloudImage:r[13],
   cloudAudio:r[14],

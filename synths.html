@@ -334,7 +334,7 @@ fetch(SHEET_URL)
     let tags = [];
 
     // Tags en el orden solicitado
-    [3, 4, 5, 7, 8, 9].forEach(i => {
+    [5, 6, 8, 9, 10].forEach(i => {
       if (r[i]) {
         r[i].split(',').forEach(t => {
           if (t.trim()) tags.push(t.trim());
@@ -343,17 +343,17 @@ fetch(SHEET_URL)
     });
 
     return {
-      name: r[1],
-      website: r[2],
-      developer: r[3],
-      type: r[4],
-      languages: r[5],
-      releaseYear: r[6],
-      status: r[7],
-      availability: r[8],
-      os: r[9],
-      image: r[10],
-      description: r[11],
+      name: r[2],
+      website: r[3],
+      developer: r[4],
+      type: r[5],
+      languages: r[6],
+      releaseYear: r[7],
+      status: r[8],
+      availability: r[9],
+      os: r[10],
+      image: r[13],
+      description: r[12],
       tags
     };
 

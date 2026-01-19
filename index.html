@@ -9,9 +9,9 @@
 <style>
 
 :root {
-  --bg:#0b0e13;
-  --panel:#121720;
-  --soft:#1a2230;
+  --bg:#05070c;
+  --panel:#0d121b;
+  --soft:#141b28;
   --accent:#00e5ff;
   --text:#e7ecf5;
   --muted:#8fa2bb;
@@ -21,57 +21,10 @@
 
 body {
   margin:0;
-  padding-top:70px;
+  padding:20px;
   font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:radial-gradient(circle at top,#0f1520,#080b11);
+  background:#05070c;
   color:var(--text);
-}
-
-/* ===== TOP NAV ===== */
-
-.top-nav {
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:60px;
-  background:rgba(11,14,19,.85);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(255,255,255,.06);
-  z-index:1000;
-}
-
-.nav-container {
-  max-width:1200px;
-  margin:0 auto;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 16px;
-}
-
-.nav-left {
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-.nav-logo {
-  height:36px;
-}
-
-.nav-links a {
-  color:var(--muted);
-  text-decoration:none;
-  font-size:14px;
-  font-weight:500;
-  margin-left:14px;
-  transition:.2s;
-}
-
-.nav-links a:hover {
-  color:var(--accent);
 }
 
 /* ===== HEADER ===== */
@@ -131,7 +84,6 @@ body {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
   gap:18px;
-  padding:0 12px 40px;
 }
 
 /* ===== CARD ===== */
@@ -154,7 +106,7 @@ body {
   border-color:rgba(0,229,255,.25);
 }
 
-/* ===== NEW RIBBON ===== */
+/* ===== NEW RIBBON CORNER ===== */
 
 .ribbon {
   position:absolute;
@@ -259,6 +211,32 @@ body {
   stroke-dashoffset:138;
 }
 
+/* ===== PAGINATION ===== */
+
+.pagination {
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin:28px 0 12px;
+  flex-wrap:wrap;
+}
+
+.page-btn {
+  background:#0f1623;
+  color:var(--muted);
+  border:1px solid #1f293a;
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.page-btn.active {
+  background:var(--accent);
+  color:black;
+  border-color:var(--accent);
+}
+
 /* ===== MOBILE ===== */
 
 @media(max-width:600px){
@@ -269,10 +247,6 @@ body {
     width:130px;
     font-size:10px;
   }
-
-  .nav-links {
-    display:none;
-  }
 }
 
 </style>
@@ -280,33 +254,20 @@ body {
 
 <body>
 
-<!-- ===== TOP NAV ===== -->
-<nav class="top-nav">
-  <div class="nav-container">
-    <div class="nav-left">
-      <img class="nav-logo" src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
-      <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="help.html">Contribute</a>
-        <a href="guidelines.html">Guidelines</a>
-        <a href="synths.html">Synths</a>
-      </div>
-    </div>
-  </div>
-</nav>
-
 <header class="site-header">
-  <img class="site-logo"
-  src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+<img class="site-logo"
+src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
 </header>
 
 <div class="search">
-  <input id="searchInput" placeholder="Search voicebank...">
+<input id="searchInput" placeholder="Search voicebank...">
 </div>
 
 <div id="filters" class="filters"></div>
 
 <div id="cards" class="grid"></div>
+
+<div id="pagination" class="pagination"></div>
 
 <script>
 
@@ -314,7 +275,8 @@ body {
 
 const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
 
-let voicebanks=[],activeFilters=[];
+let voicebanks=[],activeFilters=[],currentPage=1;
+const ITEMS_PER_PAGE=12;
 
 /* ===== CSV PARSER ===== */
 
@@ -375,7 +337,7 @@ fetch(SHEET_URL)
 
  return{
   name:r[3],
-  vendor:r[4], // Engine
+  vendor:r[2],
   releaseDate:r[2],
   cloudImage:r[13],
   cloudAudio:r[14],
@@ -397,6 +359,7 @@ function toggleFilter(tag){
  activeFilters=activeFilters.filter(t=>t!==tag):
  activeFilters.push(tag);
 
+ currentPage=1;
  update();
 }
 
@@ -427,8 +390,34 @@ function update(){
 
  filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
 
- renderCards(filtered);
+ const totalPages=Math.ceil(filtered.length/ITEMS_PER_PAGE);
+ const start=(currentPage-1)*ITEMS_PER_PAGE;
+ const pageItems=filtered.slice(start,start+ITEMS_PER_PAGE);
+
+ renderCards(pageItems);
+ renderPagination(totalPages);
  renderFilters();
+}
+
+/* ===== PAGINATION ===== */
+
+function renderPagination(total){
+
+ pagination.innerHTML="";
+
+ if(total<=1) return;
+
+ for(let i=1;i<=total;i++){
+  const btn=document.createElement("button");
+  btn.className="page-btn"+(i===currentPage?" active":"");
+  btn.textContent=i;
+  btn.onclick=()=>{
+    currentPage=i;
+    update();
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+  pagination.appendChild(btn);
+ }
 }
 
 /* ===== CARDS ===== */
@@ -528,7 +517,10 @@ function setupAudio(){
 
 }
 
-searchInput.addEventListener("input",update);
+searchInput.addEventListener("input",()=>{
+ currentPage=1;
+ update();
+});
 
 </script>
 

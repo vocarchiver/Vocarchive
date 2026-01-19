@@ -106,20 +106,21 @@ body {
   border-color:rgba(0,229,255,.25);
 }
 
-/* ===== NEW RIBBON (AUTO SIZE) ===== */
+/* ===== NEW RIBBON CORNER ===== */
 
 .ribbon {
   position:absolute;
-  top:14px;
-  left:-40%;
-  width:180%;
+  top:10px;
+  left:-38px;
+  width:140px;
   text-align:center;
-  transform:rotate(-45deg);
   background:#ff2f92;
   color:white;
   font-size:11px;
   font-weight:600;
   padding:4px 0;
+  transform:rotate(-45deg);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
   pointer-events:none;
 }
 
@@ -214,6 +215,12 @@ body {
 
 @media(max-width:600px){
   .grid { grid-template-columns:100%; }
+
+  .ribbon {
+    left:-42px;
+    width:130px;
+    font-size:10px;
+  }
 }
 
 </style>
@@ -273,7 +280,7 @@ function parseCSV(text){
  return rows;
 }
 
-/* ===== LOAD DATA ===== */
+/* ===== LOAD ===== */
 
 fetch(SHEET_URL)
 .then(r=>r.text())
@@ -288,7 +295,6 @@ fetch(SHEET_URL)
 
  let tags=[];
 
- // TAG COLUMNS
  [4,5,6,7,8,9,15].forEach(i=>{
   if(r[i]){
     r[i].split(',').forEach(t=>{

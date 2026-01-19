@@ -76,6 +76,17 @@ body {
   height:56px;
 }
 
+/* ===== PAGE HEADER ===== */
+.page-header {
+  text-align:center;
+  margin:10px 0 10px;
+}
+
+.page-header h1 {
+  font-size:32px;
+  margin:0;
+}
+
 /* ===== SEARCH ===== */
 .search {
   max-width:420px;
@@ -291,19 +302,6 @@ body {
   src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
 </header>
 
-<div class="search">
-  <input id="searchInput" placeholder="Search voicebank...">
-</div>
-
-<div id="filters" class="filters"></div>
-
-<div id="cards" class="grid"></div>
-
-<div id="pagination" class="pagination"></div>
-
-<script>
-
-<!-- ===== PAGE TITLE ===== -->
 <div class="page-header">
   <h1>Synths</h1>
 </div>
@@ -390,18 +388,8 @@ fetch(SHEET_URL)
 
   });
 
-  sortByYear(true);   // ⬅ Ordenar por año al cargar
   update();
 });
-
-/* ===== SORT BY YEAR ===== */
-function sortByYear(desc = true){
-  synths.sort((a, b) => {
-    const yA = parseInt(a.releaseYear) || 0;
-    const yB = parseInt(b.releaseYear) || 0;
-    return desc ? yB - yA : yA - yB;
-  });
-}
 
 /* ===== FILTER ===== */
 function toggleFilter(tag){
@@ -432,7 +420,8 @@ function update(){
     activeFilters.every(t=>v.tags.includes(t))
   );
 
-  filtered.sort((a,b)=>(b.releaseYear||0)-(a.releaseYear||0)); // mantiene orden por año
+  // Ordenar por año (más reciente primero)
+  filtered.sort((a,b)=>(b.releaseYear||0)-(a.releaseYear||0));
 
   renderPagination(filtered);
   renderCards(filtered);

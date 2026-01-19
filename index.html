@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>Vocarchive</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
-/* ---------------- BASE ---------------- */
+/* ================= THEME ================= */
 
 :root {
-  --bg: #0e0f11;
-  --card: #17191d;
-  --soft: #1f2228;
+  --bg: #0d0f12;
+  --card: #171a1f;
+  --soft: #22262d;
   --text: #ffffff;
-  --muted: #9aa0a6;
-  --accent: #4cff7a;
-  --radius: 16px;
+  --muted: #9ca3af;
+  --accent: #4cff85;
+  --radius: 14px;
 }
 
 * {
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+  font-family: Inter, system-ui, sans-serif;
 }
 
 body {
@@ -30,23 +30,23 @@ body {
   color: var(--text);
 }
 
-/* ---------------- GRID ---------------- */
+/* ================= LAYOUT ================= */
 
 .container {
   max-width: 1400px;
   margin: auto;
-  padding: 24px;
+  padding: 28px;
 }
 
-.card-grid {
+.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 18px;
 }
 
-/* ---------------- CARD ---------------- */
+/* ================= CARD ================= */
 
-.voice-card {
+.card {
   position: relative;
   background: var(--card);
   border-radius: var(--radius);
@@ -54,25 +54,25 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: all .15s ease;
 }
 
-.voice-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(0,0,0,.4);
+.card:hover {
+  transform: translateY(-2px);
+  background: #1c2026;
 }
 
-/* ---------------- IMAGE ---------------- */
+/* ================= IMAGE ================= */
 
-.avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 14px;
+.thumb {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
   object-fit: cover;
   cursor: pointer;
 }
 
-/* ---------------- INFO ---------------- */
+/* ================= INFO ================= */
 
 .info {
   flex: 1;
@@ -81,9 +81,9 @@ body {
   gap: 4px;
 }
 
-.name {
-  font-weight: 600;
+.title {
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .vendor {
@@ -91,87 +91,70 @@ body {
   color: var(--muted);
 }
 
-/* ---------------- TAGS ---------------- */
+/* ================= TAGS ================= */
 
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .tag {
   font-size: .65rem;
   padding: 3px 8px;
-  border-radius: 20px;
+  border-radius: 999px;
   background: var(--soft);
   color: var(--muted);
-  white-space: nowrap;
 }
 
-/* ---------------- PLAY BUTTON ---------------- */
+/* ================= PLAY BUTTON ================= */
 
-.play-btn {
+.play {
   width: 42px;
   height: 42px;
   border-radius: 50%;
+  background: var(--soft);
   border: none;
-  background: #22252b;
   color: white;
   cursor: pointer;
+  font-size: 15px;
   display: grid;
   place-items: center;
-  position: relative;
 }
 
-.play-btn:hover {
-  background: #2b2f36;
+.play:hover {
+  background: #2b3039;
 }
 
-/* progress ring */
+/* ================= NEW BADGE ================= */
 
-.play-btn svg {
-  position: absolute;
-  width: 42px;
-  height: 42px;
-  transform: rotate(-90deg);
-}
-
-circle {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 3;
-  stroke-dasharray: 126;
-  stroke-dashoffset: 126;
-  transition: stroke-dashoffset .2s linear;
-}
-
-/* ---------------- NEW BADGE ---------------- */
-
-.ribbon {
+.badge {
   position: absolute;
   top: 10px;
-  left: -28px;
+  left: 10px;
   background: var(--accent);
-  color: black;
+  color: #000;
   font-size: .65rem;
   font-weight: bold;
-  padding: 4px 40px;
-  transform: rotate(-45deg);
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 
-/* ---------------- MOBILE ---------------- */
+/* ================= MOBILE ================= */
 
-@media (max-width: 500px) {
-  .voice-card {
+@media(max-width: 520px) {
+
+  .card {
     flex-direction: column;
     text-align: center;
   }
 
-  .avatar {
+  .thumb {
     width: 90px;
     height: 90px;
   }
+
 }
 
 </style>
@@ -180,24 +163,24 @@ circle {
 <body>
 
 <div class="container">
-  <div id="grid" class="card-grid"></div>
+  <div id="grid" class="grid"></div>
 </div>
 
 <script>
 
-/* ---------------- SAMPLE DATA ---------------- */
-/* Reemplaza esto luego con tu CSV/JSON */
+/* ================= DATA ================= */
+/* Simula tu CSV (puedes conectar luego) */
 
-const voicebanks = [
+const data = [
 
 {
   name: "Otomachi UNA",
   vendor: "INTERNET Co., Ltd.",
   image: "https://i.imgur.com/jvWZJ1x.png",
   demo: "demo1.mp3",
-  officialPage: "https://www.ssw.co.jp/products/vocaloid/otomachi/",
-  publishDate: "2025-12-20",
-  tags: ["Female", "Japanese", "VOCALOID6", "Commercial"]
+  official: "https://www.ssw.co.jp/products/vocaloid/otomachi/",
+  date: "2025-12-20",
+  tags: ["Female","Japanese","VOCALOID6","Commercial"]
 },
 
 {
@@ -205,116 +188,104 @@ const voicebanks = [
   vendor: "Dreamtonics",
   image: "https://i.imgur.com/M0f8Zbl.png",
   demo: "demo2.mp3",
-  officialPage: "https://dreamtonics.com/",
-  publishDate: "2024-02-01",
-  tags: ["Female", "English", "SynthV", "Commercial"]
+  official: "https://dreamtonics.com/",
+  date: "2024-02-01",
+  tags: ["Female","English","SynthV","Commercial"]
 }
 
 ];
 
-/* ---------------- RENDER ---------------- */
+/* ================= RENDER ================= */
 
 const grid = document.getElementById("grid");
 
-voicebanks.forEach(vb => {
+data.forEach(vb => {
 
   const card = document.createElement("div");
-  card.className = "voice-card";
+  card.className = "card";
 
-  /* NEW badge */
+  /* NEW CHECK */
 
-  const publish = new Date(vb.publishDate);
-  const diffDays = (new Date() - publish) / 86400000;
+  const publishDate = new Date(vb.date);
+  const days = (new Date() - publishDate) / 86400000;
 
-  if (diffDays <= 30) {
-    const ribbon = document.createElement("div");
-    ribbon.className = "ribbon";
-    ribbon.innerText = "NEW";
-    card.appendChild(ribbon);
+  if (days <= 30) {
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = "NEW";
+    card.appendChild(badge);
   }
 
   /* IMAGE */
 
   const img = document.createElement("img");
-  img.className = "avatar";
+  img.className = "thumb";
   img.src = vb.image;
-  img.onclick = () => window.open(vb.officialPage, "_blank");
+  img.alt = vb.name;
+
+  img.addEventListener("click", () => {
+    window.open(vb.official, "_blank");
+  });
 
   /* INFO */
 
   const info = document.createElement("div");
   info.className = "info";
 
-  const name = document.createElement("div");
-  name.className = "name";
-  name.innerText = vb.name;
+  const title = document.createElement("div");
+  title.className = "title";
+  title.textContent = vb.name;
 
   const vendor = document.createElement("div");
   vendor.className = "vendor";
-  vendor.innerText = vb.vendor;
+  vendor.textContent = vb.vendor;
 
-  const tags = document.createElement("div");
-  tags.className = "tags";
+  const tagsWrap = document.createElement("div");
+  tagsWrap.className = "tags";
 
   vb.tags.forEach(t => {
-    const tag = document.createElement("div");
+    const tag = document.createElement("span");
     tag.className = "tag";
-    tag.innerText = t;
-    tags.appendChild(tag);
+    tag.textContent = t;
+    tagsWrap.appendChild(tag);
   });
 
-  info.appendChild(name);
+  info.appendChild(title);
   info.appendChild(vendor);
-  info.appendChild(tags);
+  info.appendChild(tagsWrap);
 
-  /* PLAY BUTTON */
-
-  const btn = document.createElement("button");
-  btn.className = "play-btn";
-  btn.innerHTML = "▶";
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-
-  circle.setAttribute("cx","21");
-  circle.setAttribute("cy","21");
-  circle.setAttribute("r","20");
-
-  svg.appendChild(circle);
-  btn.appendChild(svg);
+  /* AUDIO */
 
   const audio = new Audio(vb.demo);
 
-  btn.onclick = () => {
+  const playBtn = document.createElement("button");
+  playBtn.className = "play";
+  playBtn.textContent = "▶";
+
+  playBtn.onclick = () => {
+
+    document.querySelectorAll("audio").forEach(a => a.pause());
 
     if (audio.paused) {
       audio.play();
-      btn.innerHTML = "⏸";
-      btn.appendChild(svg);
+      playBtn.textContent = "⏸";
     } else {
       audio.pause();
-      btn.innerHTML = "▶";
-      btn.appendChild(svg);
+      playBtn.textContent = "▶";
     }
   };
 
-  audio.ontimeupdate = () => {
-    const progress = audio.currentTime / audio.duration;
-    const offset = 126 - (126 * progress);
-    circle.style.strokeDashoffset = offset;
-  };
-
   audio.onended = () => {
-    btn.innerHTML = "▶";
-    btn.appendChild(svg);
-    circle.style.strokeDashoffset = 126;
+    playBtn.textContent = "▶";
   };
 
-  /* ASSEMBLE */
+  document.body.appendChild(audio);
+
+  /* ASSEMBLY */
 
   card.appendChild(img);
   card.appendChild(info);
-  card.appendChild(btn);
+  card.appendChild(playBtn);
 
   grid.appendChild(card);
 

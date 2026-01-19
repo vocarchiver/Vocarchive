@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synths – Vocarchive</title>
+
+<style>
+:root {
+  --bg:#0b0e13;
+  --panel:#121720;
+  --soft:#1a2230;
+  --accent:#00e5ff;
+  --text:#e7ecf5;
+  --muted:#8fa2bb;
+}
+
+body {
+  margin:0;
+  padding:20px;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:#0b0e13;
+  color:var(--text);
+}
+
+/* ===== TOP MENU ===== */
+.top-menu {
+  width:100%;
+  background:#000;
+  padding:12px 0;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+
+.menu-container {
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 20px;
+  display:flex;
+  gap:24px;
+}
+
+.menu-item {
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  font-size:15px;
+  transition:.2s;
+}
+
+.menu-item:hover {
+  color:var(--accent);
+}
+
+/* ===== HEADER ===== */
+.page-header {
+  text-align:center;
+  margin:20px 0 10px;
+}
+
+.page-header h1 {
+  font-size:36px;
+  margin:0;
+}
+
+/* ===== SEARCH ===== */
+.search {
+  max-width:420px;
+  margin:20px auto 14px;
+}
+
+.search input {
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #1f293a;
+  background:var(--panel);
+  color:white;
+  font-size:14px;
+}
+
+/* ===== FILTER TAGS ===== */
+.filters {
+  text-align:center;
+  margin-bottom:18px;
+}
+
+.filter-tag {
+  display:inline-block;
+  background:var(--soft);
+  color:var(--muted);
+  padding:6px 12px;
+  border-radius:12px;
+  margin:4px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.filter-tag.active {
+  background:var(--accent);
+  color:#000;
+}
+
+/* ===== GRID ===== */
+.grid {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  max-width:1100px;
+  margin:0 auto;
+}
+
+/* ===== CARD ===== */
+.card {
+  background:linear-gradient(180deg,#121720,#0d121b);
+  border-radius:14px;
+  padding:16px;
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+  border:1px solid rgba(0,229,255,.08);
+  transition:.2s;
+}
+
+.card:hover {
+  transform:translateY(-2px);
+  border-color:rgba(0,229,255,.25);
+}
+
+/* ===== INFO LEFT ===== */
+.info {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.title-row {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+}
+
+.title {
+  font-size:18px;
+  font-weight:600;
+}
+
+.type-year {
+  font-size:13px;
+  color:var(--muted);
+}
+
+.description {
+  font-size:14px;
+  line-height:1.6;
+  color:#cfd8ea;
+}
+
+.tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.tag {
+  background:var(--soft);
+  padding:4px 8px;
+  border-radius:10px;
+  font-size:11px;
+  color:#b6c6dd;
+  cursor:pointer;
+}
+
+.tag:hover {
+  background:var(--accent);
+  color:black;
+}
+
+/* ===== IMAGE RIGHT ===== */
+.image-box {
+  width:160px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+
+.image-box img {
+  width:140px;
+  height:140px;
+  object-fit:contain;
+  border-radius:12px;
+  background:#0b0f17;
+}
+
+.details-btn {
+  display:block;
+  width:100%;
+  text-align:center;
+  padding:8px 10px;
+  border-radius:10px;
+  background:black;
+  color:white;
+  font-size:13px;
+  text-decoration:none;
+  transition:.2s;
+}
+
+.details-btn:hover {
+  background:var(--accent);
+  color:black;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  margin:30px auto 10px;
+  text-align:center;
+}
+
+.page-btn {
+  display:inline-block;
+  margin:0 4px;
+  padding:6px 12px;
+  border-radius:8px;
+  background:var(--soft);
+  color:var(--muted);
+  cursor:pointer;
+  font-size:13px;
+}
+
+.page-btn.active {
+  background:var(--accent);
+  color:black;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:700px){
+  .card {
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .image-box {
+    width:100%;
+    flex-direction:row;
+    justify-content:space-between;
+  }
+  .image-box img {
+    width:120px;
+    height:120px;
+  }
+  .details-btn {
+    width:auto;
+    padding:10px 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== MENU ===== -->
+<nav class="top-menu">
+  <div class="menu-container">
+    <a href="index.html" class="menu-item">Home</a>
+    <a href="contribute.html" class="menu-item">Contribute</a>
+    <a href="guidelines.html" class="menu-item">Guidelines</a>
+    <a href="synths.html" class="menu-item">Synths</a>
+  </div>
+</nav>
+
+<!-- ===== HEADER ===== -->
+<div class="page-header">
+  <h1>Synths</h1>
+</div>
+
+<div class="search">
+  <input id="searchInput" placeholder="Search synthesizer...">
+</div>
+
+<div id="filters" class="filters"></div>
+
+<div id="cards" class="grid"></div>
+
+<div id="pagination" class="pagination"></div>
+
+<script>
+
+/* ===== SHEET ===== */
+const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
+
+let synths=[], activeFilters=[], currentPage=1;
+const ITEMS_PER_PAGE=12;
+
+/* ===== CSV PARSER ===== */
+function parseCSV(text){
+  text=text.replace(/^\uFEFF/,'');
+  let rows=[],row=[],cell="",quoted=false;
+
+  for(let c of text){
+    if(c=='"') quoted=!quoted;
+    else if(c==','&&!quoted){
+      row.push(cell.trim()); cell="";
+    }
+    else if((c=='\n'||c=='\r')&&!quoted){
+      if(cell||row.length){
+        row.push(cell.trim());
+        rows.push(row);
+        row=[]; cell="";
+      }
+    }
+    else cell+=c;
+  }
+  if(cell||row.length){
+    row.push(cell.trim());
+    rows.push(row);
+  }
+  return rows;
+}
+
+/* ===== LOAD ===== */
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(csv=>{
+  const rows=parseCSV(csv);
+  rows.shift();
+
+  synths=rows.map(r=>{
+    const tags=[];
+    [5,7,8,9].forEach(i=>{
+      if(r[i]){
+        r[i].split(',').forEach(t=>{
+          if(t.trim()) tags.push(t.trim());
+        });
+      }
+    });
+
+    return{
+      name:r[1],
+      website:r[2],
+      developer:r[3],
+      type:r[4],
+      languages:r[5],
+      releaseYear:r[6],
+      status:r[7],
+      availability:r[8],
+      os:r[9],
+      image:r[10],
+      description:r[11],
+      tags:[...new Set(tags)]
+    };
+  });
+
+  update();
+});
+
+/* ===== FILTER ===== */
+function toggleFilter(tag){
+  activeFilters.includes(tag)?
+    activeFilters=activeFilters.filter(t=>t!==tag):
+    activeFilters.push(tag);
+  currentPage=1;
+  update();
+}
+
+/* ===== FILTER BAR ===== */
+function renderFilters(){
+  const set=new Set();
+  synths.forEach(v=>v.tags.forEach(t=>set.add(t)));
+
+  filters.innerHTML=[...set].sort().map(t=>
+    `<span class="filter-tag ${activeFilters.includes(t)?'active':''}"
+     onclick="toggleFilter('${t}')">${t}</span>`
+  ).join("");
+}
+
+/* ===== UPDATE ===== */
+function update(){
+  const s=searchInput.value.toLowerCase();
+
+  let filtered=synths.filter(v=>
+    v.name.toLowerCase().includes(s) &&
+    activeFilters.every(t=>v.tags.includes(t))
+  );
+
+  filtered.sort((a,b)=>(b.releaseYear||0)-(a.releaseYear||0));
+
+  renderPagination(filtered);
+  renderCards(filtered);
+  renderFilters();
+}
+
+/* ===== CARDS ===== */
+function renderCards(list){
+  const start=(currentPage-1)*ITEMS_PER_PAGE;
+  const pageItems=list.slice(start,start+ITEMS_PER_PAGE);
+
+  cards.innerHTML=pageItems.map(v=>`
+    <div class="card">
+
+      <div class="info">
+        <div class="title-row">
+          <div class="title">${v.name}</div>
+          <div class="type-year">[${v.type||"Synth"} - ${v.releaseYear||"—"}]</div>
+        </div>
+
+        <div class="description">${v.description||""}</div>
+
+        <div class="tags">
+          ${v.tags.map(t=>`<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`).join("")}
+        </div>
+      </div>
+
+      <div class="image-box">
+        <img src="${v.image}" alt="${v.name}">
+        <a class="details-btn" href="${v.website}" target="_blank">See more details</a>
+      </div>
+
+    </div>
+  `).join("");
+}
+
+/* ===== PAGINATION ===== */
+function renderPagination(list){
+  const pages=Math.ceil(list.length/ITEMS_PER_PAGE);
+  pagination.innerHTML="";
+
+  for(let i=1;i<=pages;i++){
+    pagination.innerHTML+=`
+      <span class="page-btn ${i===currentPage?'active':''}"
+       onclick="goToPage(${i})">${i}</span>
+    `;
+  }
+}
+
+function goToPage(p){
+  currentPage=p;
+  update();
+}
+
+searchInput.addEventListener("input",()=>{
+  currentPage=1;
+  update();
+});
+
+</script>
+
+</body>
+</html>

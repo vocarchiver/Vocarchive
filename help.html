@@ -1,136 +1,227 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Contribute - Vocarchive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contribute – Vocarchive</title>
+
 <style>
+:root {
+  --bg:#0b0e13;
+  --panel:#121720;
+  --soft:#1a2230;
+  --accent:#00e5ff;
+  --text:#e7ecf5;
+  --muted:#8fa2bb;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 0;
+  margin:0;
+  padding:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
-header {
-  background: #000;
-  padding: 15px 20px;
+/* ===== TOP MENU ===== */
+.top-menu {
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(5,7,12,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid #111826;
 }
 
-header a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  margin-right: 20px;
-  transition: color 0.2s;
+.menu-container {
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 20px;
 }
 
-header a:hover {
-  color: #d6186c;
+.menu-left {
+  display:flex;
+  align-items:center;
+  gap:16px;
 }
 
+.menu-logo {
+  height:34px;
+}
+
+.menu-item {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+  transition:.2s;
+}
+
+.menu-item:hover {
+  color:var(--accent);
+}
+
+/* ===== HEADER ===== */
+.site-header {
+  text-align:center;
+  padding:12px 0;
+}
+
+.site-logo {
+  height:56px;
+}
+
+/* ===== MAIN ===== */
 .main-container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 0 20px;
+  max-width:900px;
+  margin:30px auto 60px;
+  padding:0 20px;
 }
 
 h1 {
-  text-align: center;
-  color: #000;
-  font-size: 36px;
-  margin-bottom: 20px;
+  text-align:center;
+  font-size:36px;
+  margin-bottom:10px;
 }
 
+h2 {
+  font-size:26px;
+  margin-bottom:12px;
+}
+
+p, li {
+  font-size:16px;
+  line-height:1.7;
+  color:#cfd8ea;
+}
+
+/* ===== BUTTONS ===== */
 .button-submit {
-  display: inline-block;
-  background: #d6186c;
-  color: white;
-  font-weight: bold;
-  padding: 15px 25px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-size: 18px;
-  margin: 20px 0;
-  transition: background 0.2s;
+  display:inline-block;
+  background:var(--accent);
+  color:#000;
+  font-weight:600;
+  padding:14px 24px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:16px;
+  margin:10px;
+  transition:.2s;
 }
 
 .button-submit:hover {
-  background: #ff2a94;
+  background:#4ff3ff;
 }
 
+.button-secondary {
+  display:inline-block;
+  background:var(--soft);
+  color:var(--text);
+  font-weight:500;
+  padding:14px 24px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:16px;
+  margin:10px;
+  transition:.2s;
+}
+
+.button-secondary:hover {
+  background:var(--accent);
+  color:#000;
+}
+
+/* ===== SECTIONS ===== */
 .section {
-  margin-top: 50px;
-}
-
-.section h2 {
-  font-size: 28px;
-  color: #000;
-  margin-bottom: 15px;
-}
-
-.section p, .section li {
-  font-size: 18px;
-  line-height: 1.7;
-  color: #333;
+  margin-top:50px;
 }
 
 .highlight {
-  font-weight: bold;
-  color: #d6186c;
+  font-weight:600;
+  color:var(--accent);
 }
 
 .resources-box {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 25px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-  margin-top: 20px;
+  background:linear-gradient(180deg,#121720,#0d121b);
+  border-radius:16px;
+  padding:25px;
+  border:1px solid rgba(0,229,255,.1);
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  margin-top:20px;
 }
 
 .resources-box a {
-  color: #d6186c;
-  font-weight: bold;
-  text-decoration: none;
+  color:var(--accent);
+  font-weight:600;
+  text-decoration:none;
 }
 
 .resources-box a:hover {
-  text-decoration: underline;
+  text-decoration:underline;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+  h1 { font-size:28px; }
+  h2 { font-size:22px; }
+  .button-submit, .button-secondary { width:100%; text-align:center; }
 }
 </style>
 </head>
+
 <body>
 
-<header>
-  <a href="index.html">Home</a>
-  <a href="contribute.html">Contribute</a>
-  <a href="guidelines.html">Guidelines</a>
+<!-- ===== TOP MENU ===== -->
+<nav class="top-menu">
+  <div class="menu-container">
+    <div class="menu-left">
+      <img class="menu-logo" src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="contribute.html" class="menu-item">Contribute</a>
+      <a href="guidelines.html" class="menu-item">Guidelines</a>
+      <a href="synths.html" class="menu-item">Synths</a>
+    </div>
+  </div>
+</nav>
+
+<header class="site-header">
+  <img class="site-logo"
+  src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
 </header>
 
 <div class="main-container">
   <h1>Submit to Vocarchive</h1>
 
-  <!-- Botón de envío -->
+  <!-- ===== SUBMIT BUTTONS ===== -->
   <div style="text-align:center;">
     <a class="button-submit" href="https://forms.gle/taBx2MrN641VJcUQ9" target="_blank">
-      Submit a voicebank to Vocarchive
+      Submit a voicebank
     </a>
-    <p style="margin-top:10px; font-size:16px;">
-      Created a voicebank and want to share it with the world?<br>
+
+    <a class="button-secondary" href="https://forms.gle/REPLACE_WITH_SYNTH_FORM_LINK" target="_blank">
+      Submit a synth
+    </a>
+
+    <p style="margin-top:12px; font-size:15px; color:var(--muted);">
+      Created a voicebank or synthesizer and want to share it with the world?<br>
       Submit it here and help grow the global voice synthesis archive.
     </p>
   </div>
 
-  <!-- Sección de información -->
+  <!-- ===== INFO ===== -->
   <div class="section">
     <h2>What is Vocarchive?</h2>
     <p>
       <span class="highlight">Vocarchive</span> is a centralized catalog of voicebanks and vocal synthesis software across all platforms — from Vocaloid and Synthesizer V to UTAU and beyond.<br><br>
-      Our mission is to preserve, document, and give equal visibility to voices from creators of all sizes, while providing a reliable place to discover both new and historical voicebanks.<br><br>
+      Our mission is to preserve, document, and give equal visibility to voices and tools from creators of all sizes, while providing a reliable place to discover both new and historical projects.<br><br>
       Every submission helps grow the archive and keeps the history of vocal synthesis alive.
     </p>
   </div>
 
-  <!-- Demo Resources -->
+  <!-- ===== DEMO RESOURCES ===== -->
   <div class="section">
     <h2>Demo Resources</h2>
     <div class="resources-box">
@@ -143,7 +234,7 @@ h1 {
         <li>All demos must still follow the demo format rules listed in the Guidelines.</li>
       </ul>
       <p>
-        👉 <a href="https://drive.google.com/drive/folders/1BZvY3MsKkZNPVxMGjhwk8LdlvnoyZBpE?usp=sharing">
+        👉 <a href="https://drive.google.com/drive/folders/1BZvY3MsKkZNPVxMGjhwk8LdlvnoyZBpE?usp=sharing" target="_blank">
         Access the official Vocarchive demo MIDIs</a>
       </p>
     </div>

@@ -386,7 +386,7 @@ fetch(SHEET_URL)
  if(r[8]) r[8].split(',').forEach(t=>tagMap.language.push(t.trim()));
  if(r[9]) r[9].split(',').forEach(t=>tagMap.additional.push(t.trim()));
  if(r[11]) r[11].split(',').forEach(t=>tagMap.status.push(t.trim()));
- if(r[13]) r[13].split(',').forEach(t=>tagMap.availability.push(t.trim()));
+ if(r[13]) r[12].split(',').forEach(t=>tagMap.availability.push(t.trim()));
  if(r[18]) r[18].split(',').forEach(t=>tagMap.type.push(t.trim()));
 
  const release=new Date(r[6]);

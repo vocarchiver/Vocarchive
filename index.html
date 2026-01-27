@@ -9,33 +9,32 @@
 <style>
 
 :root {
-  --bg:#05070c;
-  --panel:#0d121b;
-  --soft:#141b28;
-  --accent:#00e5ff;
-  --text:#e7ecf5;
-  --muted:#8fa2bb;
+  --bg: #f5f5f5;
+  --panel: #ffffff;
+  --soft: #f0f2f5;
+  --accent: #3b82f6;
+  --text: #1f2937;
+  --muted: #6b7280;
 }
+
 
 /* ===== BASE ===== */
 
 body {
-  margin:0;
-  padding:20px;
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:#05070c;
-  color:var(--text);
+  margin: 0;
+  padding: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
+
 
 /* ===== TOP MENU ===== */
 
 .top-menu {
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(5,7,12,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid #111826;
+  background: rgba(255,255,255,.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .menu-container {
@@ -58,11 +57,11 @@ body {
 }
 
 .menu-item {
-  color:var(--muted);
-  text-decoration:none;
-  font-size:14px;
-  font-weight:500;
-  transition:.2s;
+  color: var(--muted);
+}
+
+.menu-item:hover {
+  color: var(--accent);
 }
 
 .menu-item:hover {
@@ -88,13 +87,10 @@ body {
 }
 
 .search input {
-  width:100%;
-  padding:12px 14px;
-  border-radius:10px;
-  border:1px solid #1f293a;
-  background:var(--panel);
-  color:white;
-  font-size:14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: var(--text);
 }
 
 /* ===== FILTER TAGS ===== */
@@ -108,18 +104,13 @@ body {
 }
 
 .filter-tag {
-  background:var(--soft);
-  color:var(--muted);
-  padding:6px 12px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:12px;
-  white-space:nowrap;
+  background: #e5e7eb;
+  color: #374151;
 }
 
 .filter-tag.active {
-  background:var(--accent);
-  color:#000;
+  background: var(--accent);
+  color: white;
 }
 
 /* ===== GRID ===== */
@@ -205,17 +196,13 @@ body {
 }
 
 .tag {
-  background:var(--soft);
-  padding:4px 8px;
-  border-radius:10px;
-  font-size:11px;
-  color:#b6c6dd;
-  cursor:pointer;
+  background: #eef2ff;
+  color: #1e3a8a;
 }
 
 .tag:hover {
-  background:var(--accent);
-  color:black;
+  background: var(--accent);
+  color: white;
 }
 
 /* ===== AUDIO BUTTON ===== */
@@ -394,15 +381,15 @@ fetch(SHEET_URL)
   type:[]
  };
 
- if(r[7]) r[7].split(',').forEach(t=>tagMap.gender.push(t.trim()));
- if(r[4]) r[4].split(',').forEach(t=>tagMap.engine.push(t.trim()));
- if(r[5]) r[5].split(',').forEach(t=>tagMap.language.push(t.trim()));
- if(r[6]) r[6].split(',').forEach(t=>tagMap.additional.push(t.trim()));
- if(r[8]) r[8].split(',').forEach(t=>tagMap.status.push(t.trim()));
- if(r[9]) r[9].split(',').forEach(t=>tagMap.availability.push(t.trim()));
- if(r[15]) r[15].split(',').forEach(t=>tagMap.availability.push(t.trim()));
+ if(r[10]) r[10].split(',').forEach(t=>tagMap.gender.push(t.trim()));
+ if(r[7]) r[7].split(',').forEach(t=>tagMap.engine.push(t.trim()));
+ if(r[8]) r[8].split(',').forEach(t=>tagMap.language.push(t.trim()));
+ if(r[9]) r[9].split(',').forEach(t=>tagMap.additional.push(t.trim()));
+ if(r[11]) r[11].split(',').forEach(t=>tagMap.status.push(t.trim()));
+ if(r[13]) r[13].split(',').forEach(t=>tagMap.availability.push(t.trim()));
+ if(r[18]) r[18].split(',').forEach(t=>tagMap.type.push(t.trim()));
 
- const release=new Date(r[2]);
+ const release=new Date(r[6]);
  const isNew=!isNaN(release)&&(now-release)/86400000<=30;
 
  const allTags=[...new Set([
@@ -416,12 +403,12 @@ fetch(SHEET_URL)
  ])];
 
  return{
-  name:r[3],
-  vendor:r[2],
-  releaseDate:r[2],
-  cloudImage:r[13],
-  cloudAudio:r[14],
-  url:r[12],
+  name:r[6],
+  vendor:r[7],
+  releaseDate:r[6],
+  cloudImage:r[16],
+  cloudAudio:r[17],
+  url:r[15],
   tags:allTags,
   tagGroups:tagMap,
   isNew

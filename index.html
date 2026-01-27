@@ -6,6 +6,14 @@
 
 <title>Vocarchive</title>
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vocarchive</title>
+
 <style>
 /* ===== SVS INDEX STYLE PALETTE ===== */
 
@@ -312,10 +320,306 @@ body {
 <div id="filters" class="filters"></div>
 <div id="cards" class="grid"></div>
 <div id="pagination" class="pagination"></div>
-
-<!-- ===== TU SCRIPT ORIGINAL, SIN CAMBIOS ===== -->
+  
 <script>
-/* (JS idéntico al que enviaste, no se toca) */
+
+/* ===== SHEET ===== */
+
+const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
+
+let voicebanks=[],activeFilters=[],currentPage=1;
+const ITEMS_PER_PAGE=12;
+
+/* ===== CSV PARSER ===== */
+
+function parseCSV(text){
+ text=text.replace(/^\uFEFF/,'');
+
+ let rows=[],currentRow=[],currentCell="",quoted=false;
+
+ for(let c of text){
+  if(c=='"') quoted=!quoted;
+  else if(c==','&&!quoted){
+    currentRow.push(currentCell.trim());
+    currentCell="";
+  }
+  else if((c=='\n'||c=='\r')&&!quoted){
+    if(currentCell||currentRow.length){
+      currentRow.push(currentCell.trim());
+      rows.push(currentRow);
+      currentRow=[]; currentCell="";
+    }
+  }
+  else currentCell+=c;
+ }
+
+ if(currentCell||currentRow.length){
+   currentRow.push(currentCell.trim());
+   rows.push(currentRow);
+ }
+
+ return rows;
+}
+
+/* ===== LOAD ===== */
+
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(csv=>{
+
+ const rows=parseCSV(csv);
+ rows.shift();
+
+ const now=new Date();
+
+ voicebanks=rows.map(r=>{
+
+ const tagMap={
+  gender:[],
+  language:[],
+  additional:[],
+  engine:[],
+  status:[],
+  availability:[],
+  type:[]
+ };
+
+ if(r[10]) r[10].split(',').forEach(t=>tagMap.gender.push(t.trim()));
+ if(r[7]) r[7].split(',').forEach(t=>tagMap.engine.push(t.trim()));
+ if(r[8]) r[8].split(',').forEach(t=>tagMap.language.push(t.trim()));
+ if(r[9]) r[9].split(',').forEach(t=>tagMap.additional.push(t.trim()));
+ if(r[11]) r[11].split(',').forEach(t=>tagMap.status.push(t.trim()));
+ if(r[13]) r[12].split(',').forEach(t=>tagMap.availability.push(t.trim()));
+ if(r[18]) r[18].split(',').forEach(t=>tagMap.type.push(t.trim()));
+
+ const release=new Date(r[6]);
+ const isNew=!isNaN(release)&&(now-release)/86400000<=30;
+
+ const allTags=[...new Set([
+  ...tagMap.gender,
+  ...tagMap.language,
+  ...tagMap.additional,
+  ...tagMap.engine,
+  ...tagMap.status,
+  ...tagMap.availability,
+  ...tagMap.type
+ ])];
+
+ return{
+  name:r[6],
+  vendor:r[7],
+  releaseDate:r[6],
+  cloudImage:r[16],
+  cloudAudio:r[17],
+  url:r[15],
+  tags:allTags,
+  tagGroups:tagMap,
+  isNew
+ };
+
+ });
+
+ update();
+});
+
+/* ===== FILTER ===== */
+
+function toggleFilter(tag){
+
+ activeFilters.includes(tag)?
+ activeFilters=activeFilters.filter(t=>t!==tag):
+ activeFilters.push(tag);
+
+ currentPage=1;
+ update();
+}
+
+/* ===== FILTER BAR (ORDERED GROUPS) ===== */
+
+function renderFilters(){
+
+ const groups={
+  gender:new Set(),
+  language:new Set(),
+  additional:new Set(),
+  engine:new Set(),
+  status:new Set(),
+  availability:new Set(),
+  type:new Set()
+ };
+
+ voicebanks.forEach(v=>{
+  Object.keys(groups).forEach(k=>{
+    v.tagGroups[k].forEach(t=>groups[k].add(t));
+  });
+ });
+
+ const order=["gender","language","additional","engine","status","availability"];
+
+ const labels={
+  gender:"Gender",
+  language:"Language",
+  additional:"Additional",
+  engine:"Engine",
+  status:"Status",
+  availability:"Availability",
+  type:"Type"
+ };
+
+ filters.innerHTML=order.map(key=>`
+   ${[...groups[key]].sort().map(t=>`
+     <span class="filter-tag ${activeFilters.includes(t)?'active':''}"
+     onclick="toggleFilter('${t}')">${t}</span>
+   `).join("")}
+ `).join("");
+
+}
+
+/* ===== UPDATE ===== */
+
+function update(){
+
+ const s=searchInput.value.toLowerCase();
+
+ const filtered=voicebanks.filter(v=>
+  v.name.toLowerCase().includes(s) &&
+  activeFilters.every(t=>v.tags.includes(t))
+ );
+
+ filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
+
+ const totalPages=Math.ceil(filtered.length/ITEMS_PER_PAGE);
+ const start=(currentPage-1)*ITEMS_PER_PAGE;
+ const pageItems=filtered.slice(start,start+ITEMS_PER_PAGE);
+
+ renderCards(pageItems);
+ renderPagination(totalPages);
+ renderFilters();
+}
+
+/* ===== PAGINATION ===== */
+
+function renderPagination(total){
+
+ pagination.innerHTML="";
+
+ if(total<=1) return;
+
+ for(let i=1;i<=total;i++){
+  const btn=document.createElement("button");
+  btn.className="page-btn"+(i===currentPage?" active":"");
+  btn.textContent=i;
+  btn.onclick=()=>{
+    currentPage=i;
+    update();
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+  pagination.appendChild(btn);
+ }
+}
+
+/* ===== CARDS ===== */
+
+function renderCards(list){
+
+ cards.innerHTML=list.map(v=>`
+
+ <div class="card">
+
+ ${v.isNew?`<div class="ribbon">NEW</div>`:""}
+
+ <img class="thumb" src="${v.cloudImage}"
+ onclick="window.open('${v.url}','_blank')">
+
+ <div class="info">
+
+   <div class="title">${v.name}</div>
+   <div class="vendor">${v.vendor||""}</div>
+
+   <div class="tags">
+   ${v.tags.map(t=>
+    `<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`
+   ).join("")}
+   </div>
+
+ </div>
+
+ ${v.cloudAudio?`
+
+ <audio src="${v.cloudAudio}"></audio>
+
+ <button class="audio-btn">
+
+  <svg class="audio-progress">
+   <circle cx="22" cy="22" r="22"></circle>
+  </svg>
+
+  <svg class="audio-icon" viewBox="0 0 24 24">
+   <path d="M3 9v6h4l5 5V4L7 9z"/>
+  </svg>
+
+ </button>
+
+ `:""}
+
+ </div>
+
+ `).join("");
+
+ setupAudio();
+}
+
+/* ===== AUDIO ===== */
+
+function setupAudio(){
+
+ document.querySelectorAll(".audio-btn").forEach(btn=>{
+
+  const audio=btn.previousElementSibling;
+  const icon=btn.querySelector("path");
+  const circle=btn.querySelector("circle");
+  const length=138;
+
+  btn.onclick=()=>{
+
+   document.querySelectorAll("audio").forEach(a=>{
+    if(a!==audio){ a.pause(); a.currentTime=0; }
+   });
+
+   document.querySelectorAll(".audio-icon path").forEach(i=>{
+    i.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+   });
+
+   if(audio.paused){
+    audio.play();
+    icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
+   } else {
+    audio.pause();
+    audio.currentTime=0;
+    icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+   }
+
+   audio.ontimeupdate=()=>{
+    circle.style.strokeDashoffset=
+    length-(audio.currentTime/audio.duration)*length;
+   };
+
+   audio.onended=()=>{
+    icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
+    circle.style.strokeDashoffset=length;
+   };
+
+  };
+
+ });
+
+}
+
+searchInput.addEventListener("input",()=>{
+ currentPage=1;
+ update();
+});
+
 </script>
 
 </body>

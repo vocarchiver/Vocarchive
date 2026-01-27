@@ -3,22 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Vocarchive</title>
+<title>SVS Voicebank Index</title>
 
 <style>
-
 :root {
-  --bg: #f5f5f5;
-  --panel: #ffffff;
-  --soft: #f0f2f5;
-  --accent: #3b82f6;
-  --text: #1f2937;
-  --muted: #6b7280;
+  --bg: #1c1c1e;
+  --panel: #1c1c1e;
+  --border: #38383a;
+  --text: #38383a;
+  --tag-bg: #1a3a52;
+  --tag-text: #64b5f6;
 }
 
+/* ---------- Base ---------- */
 
-/* ===== BASE ===== */
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -28,596 +29,211 @@ body {
   color: var(--text);
 }
 
-
-/* ===== TOP MENU ===== */
-
-.top-menu {
-  background: rgba(255,255,255,.9);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e5e7eb;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.menu-container {
-  max-width:1200px;
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 20px;
+/* ---------- Header ---------- */
+
+header {
+  max-width: 1200px;
+  margin: 0 auto 20px;
 }
-
-.menu-left {
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-.menu-logo {
-  height:34px;
-}
-
-.menu-item {
-  color: var(--muted);
-}
-
-.menu-item:hover {
-  color: var(--accent);
-}
-
-.menu-item:hover {
-  color:var(--accent);
-}
-
-/* ===== HEADER ===== */
-
-.site-header {
-  text-align:center;
-  padding:12px 0;
-}
-
-.site-logo {
-  height:56px;
-}
-
-/* ===== SEARCH ===== */
 
 .search {
-  max-width:420px;
-  margin:20px auto 14px;
+  margin-bottom: 14px;
 }
 
 .search input {
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #151517;
+  border: 1px solid var(--border);
   color: var(--text);
+  font-size: 14px;
 }
 
-/* ===== FILTER TAGS ===== */
+/* ---------- Filters ---------- */
 
 .filters {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:6px;
-  margin-bottom:18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .filter-tag {
-  background: #e5e7eb;
-  color: #374151;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  border: 1px solid var(--border);
 }
 
 .filter-tag.active {
-  background: var(--accent);
-  color: white;
+  filter: brightness(1.2);
 }
 
-/* ===== GRID ===== */
+/* ---------- Grid ---------- */
 
 .grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
-  gap:18px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
 }
 
-/* ===== CARD ===== */
+/* ---------- Card ---------- */
 
 .card {
-  background:linear-gradient(180deg,#121720,#0d121b);
-  border-radius:14px;
-  padding:14px;
-  display:flex;
-  gap:14px;
-  align-items:center;
-  position:relative;
-  overflow:hidden;
-  border:1px solid rgba(0,229,255,.08);
-  transition:.2s;
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid var(--border);
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
 .card:hover {
-  transform:translateY(-3px);
-  border-color:rgba(0,229,255,.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,.35);
 }
 
-/* ===== NEW RIBBON CORNER ===== */
-
-.ribbon {
-  position:absolute;
-  top:10px;
-  left:-38px;
-  width:140px;
-  text-align:center;
-  background:#ff2f92;
-  color:white;
-  font-size:11px;
-  font-weight:600;
-  padding:4px 0;
-  transform:rotate(-45deg);
-  box-shadow:0 2px 8px rgba(0,0,0,.35);
-  pointer-events:none;
-}
-
-/* ===== IMAGE ===== */
+/* ---------- Thumbnail ---------- */
 
 .thumb {
-  width:64px;
-  height:64px;
-  object-fit:contain;
-  border-radius:10px;
-  background:#0b0f17;
-  cursor:pointer;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  background: #151517;
+  flex-shrink: 0;
 }
 
-/* ===== INFO ===== */
+/* ---------- Card content ---------- */
 
 .info {
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .title {
-  font-size:15px;
-  font-weight:600;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
 }
 
 .vendor {
-  font-size:12px;
-  color:var(--muted);
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 6px;
 }
 
+/* ---------- Tags ---------- */
+
 .tags {
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .tag {
-  background: #eef2ff;
-  color: #1e3a8a;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid var(--border);
 }
 
 .tag:hover {
-  background: var(--accent);
-  color: white;
+  filter: brightness(1.15);
 }
 
-/* ===== AUDIO BUTTON ===== */
-
-.audio-btn {
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  border:none;
-  background:#0f1623;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  position:relative;
-}
-
-.audio-icon {
-  fill:var(--accent);
-  width:18px;
-  height:18px;
-  z-index:2;
-}
-
-.audio-progress {
-  position:absolute;
-  width:44px;
-  height:44px;
-  transform:rotate(-90deg);
-}
-
-.audio-progress circle {
-  fill:none;
-  stroke:var(--accent);
-  stroke-width:3;
-  stroke-dasharray:138;
-  stroke-dashoffset:138;
-}
-
-/* ===== PAGINATION ===== */
+/* ---------- Pagination ---------- */
 
 .pagination {
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  margin:28px 0 12px;
-  flex-wrap:wrap;
+  max-width: 1200px;
+  margin: 24px auto 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
 
 .page-btn {
-  background:#0f1623;
-  color:var(--muted);
-  border:1px solid #1f293a;
-  padding:6px 12px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 .page-btn.active {
-  background:var(--accent);
-  color:black;
-  border-color:var(--accent);
+  filter: brightness(1.25);
 }
-
-/* ===== MOBILE ===== */
-
-@media(max-width:600px){
-  .grid { grid-template-columns:100%; }
-
-  .ribbon {
-    left:-42px;
-    width:130px;
-    font-size:10px;
-  }
-
-  .menu-container {
-    flex-direction:column;
-    gap:8px;
-  }
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- ===== TOP MENU ===== -->
-<nav class="top-menu">
-  <div class="menu-container">
-    <div class="menu-left">
-      <img class="menu-logo" src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
-      <a href="index.html" class="menu-item">Home</a>
-      <a href="help.html" class="menu-item">Contribute</a>
-      <a href="guidelines.html" class="menu-item">Guidelines</a>
-      <a href="synths.html" class="menu-item">Synths</a>
-    </div>
+<header>
+  <div class="search">
+    <input type="text" placeholder="Buscar voicebank...">
   </div>
-</nav>
 
-<header class="site-header">
-  <img class="site-logo"
-  src="https://github.com/vocarchiver/Vocarchive/blob/main/assets/img/vocarchive-logo2.png?raw=true">
+  <div class="filters">
+    <div class="filter-tag active">Todos</div>
+    <div class="filter-tag">Español</div>
+    <div class="filter-tag">Inglés</div>
+    <div class="filter-tag">CV</div>
+    <div class="filter-tag">VCV</div>
+  </div>
 </header>
 
-<div class="search">
-  <input id="searchInput" placeholder="Search voicebank...">
+<main class="grid">
+
+  <div class="card">
+    <div class="thumb"></div>
+    <div class="info">
+      <div class="title">Voicebank Name</div>
+      <div class="vendor">Autor / Vendor</div>
+      <div class="tags">
+        <div class="tag">SVS</div>
+        <div class="tag">ES</div>
+        <div class="tag">VCV</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="thumb"></div>
+    <div class="info">
+      <div class="title">Otro Voicebank</div>
+      <div class="vendor">Otro Autor</div>
+      <div class="tags">
+        <div class="tag">EN</div>
+        <div class="tag">CV</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="pagination">
+  <div class="page-btn active">1</div>
+  <div class="page-btn">2</div>
+  <div class="page-btn">3</div>
 </div>
-
-<div id="filters" class="filters"></div>
-
-<div id="cards" class="grid"></div>
-
-<div id="pagination" class="pagination"></div>
-
-<script>
-
-/* ===== SHEET ===== */
-
-const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7kkYSZzuZWqbIHJirQ9gqY5FEI5J6varhsYCWdftjXD4PfU8ziayU99tuiE9hOvBnssbBW-XEq0J9/pub?output=csv";
-
-let voicebanks=[],activeFilters=[],currentPage=1;
-const ITEMS_PER_PAGE=12;
-
-/* ===== CSV PARSER ===== */
-
-function parseCSV(text){
- text=text.replace(/^\uFEFF/,'');
-
- let rows=[],currentRow=[],currentCell="",quoted=false;
-
- for(let c of text){
-  if(c=='"') quoted=!quoted;
-  else if(c==','&&!quoted){
-    currentRow.push(currentCell.trim());
-    currentCell="";
-  }
-  else if((c=='\n'||c=='\r')&&!quoted){
-    if(currentCell||currentRow.length){
-      currentRow.push(currentCell.trim());
-      rows.push(currentRow);
-      currentRow=[]; currentCell="";
-    }
-  }
-  else currentCell+=c;
- }
-
- if(currentCell||currentRow.length){
-   currentRow.push(currentCell.trim());
-   rows.push(currentRow);
- }
-
- return rows;
-}
-
-/* ===== LOAD ===== */
-
-fetch(SHEET_URL)
-.then(r=>r.text())
-.then(csv=>{
-
- const rows=parseCSV(csv);
- rows.shift();
-
- const now=new Date();
-
- voicebanks=rows.map(r=>{
-
- const tagMap={
-  gender:[],
-  language:[],
-  additional:[],
-  engine:[],
-  status:[],
-  availability:[],
-  type:[]
- };
-
- if(r[10]) r[10].split(',').forEach(t=>tagMap.gender.push(t.trim()));
- if(r[7]) r[7].split(',').forEach(t=>tagMap.engine.push(t.trim()));
- if(r[8]) r[8].split(',').forEach(t=>tagMap.language.push(t.trim()));
- if(r[9]) r[9].split(',').forEach(t=>tagMap.additional.push(t.trim()));
- if(r[11]) r[11].split(',').forEach(t=>tagMap.status.push(t.trim()));
- if(r[13]) r[12].split(',').forEach(t=>tagMap.availability.push(t.trim()));
- if(r[18]) r[18].split(',').forEach(t=>tagMap.type.push(t.trim()));
-
- const release=new Date(r[6]);
- const isNew=!isNaN(release)&&(now-release)/86400000<=30;
-
- const allTags=[...new Set([
-  ...tagMap.gender,
-  ...tagMap.language,
-  ...tagMap.additional,
-  ...tagMap.engine,
-  ...tagMap.status,
-  ...tagMap.availability,
-  ...tagMap.type
- ])];
-
- return{
-  name:r[6],
-  vendor:r[7],
-  releaseDate:r[6],
-  cloudImage:r[16],
-  cloudAudio:r[17],
-  url:r[15],
-  tags:allTags,
-  tagGroups:tagMap,
-  isNew
- };
-
- });
-
- update();
-});
-
-/* ===== FILTER ===== */
-
-function toggleFilter(tag){
-
- activeFilters.includes(tag)?
- activeFilters=activeFilters.filter(t=>t!==tag):
- activeFilters.push(tag);
-
- currentPage=1;
- update();
-}
-
-/* ===== FILTER BAR (ORDERED GROUPS) ===== */
-
-function renderFilters(){
-
- const groups={
-  gender:new Set(),
-  language:new Set(),
-  additional:new Set(),
-  engine:new Set(),
-  status:new Set(),
-  availability:new Set(),
-  type:new Set()
- };
-
- voicebanks.forEach(v=>{
-  Object.keys(groups).forEach(k=>{
-    v.tagGroups[k].forEach(t=>groups[k].add(t));
-  });
- });
-
- const order=["gender","language","additional","engine","status","availability"];
-
- const labels={
-  gender:"Gender",
-  language:"Language",
-  additional:"Additional",
-  engine:"Engine",
-  status:"Status",
-  availability:"Availability",
-  type:"Type"
- };
-
- filters.innerHTML=order.map(key=>`
-   ${[...groups[key]].sort().map(t=>`
-     <span class="filter-tag ${activeFilters.includes(t)?'active':''}"
-     onclick="toggleFilter('${t}')">${t}</span>
-   `).join("")}
- `).join("");
-
-}
-
-/* ===== UPDATE ===== */
-
-function update(){
-
- const s=searchInput.value.toLowerCase();
-
- const filtered=voicebanks.filter(v=>
-  v.name.toLowerCase().includes(s) &&
-  activeFilters.every(t=>v.tags.includes(t))
- );
-
- filtered.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
-
- const totalPages=Math.ceil(filtered.length/ITEMS_PER_PAGE);
- const start=(currentPage-1)*ITEMS_PER_PAGE;
- const pageItems=filtered.slice(start,start+ITEMS_PER_PAGE);
-
- renderCards(pageItems);
- renderPagination(totalPages);
- renderFilters();
-}
-
-/* ===== PAGINATION ===== */
-
-function renderPagination(total){
-
- pagination.innerHTML="";
-
- if(total<=1) return;
-
- for(let i=1;i<=total;i++){
-  const btn=document.createElement("button");
-  btn.className="page-btn"+(i===currentPage?" active":"");
-  btn.textContent=i;
-  btn.onclick=()=>{
-    currentPage=i;
-    update();
-    window.scrollTo({top:0,behavior:"smooth"});
-  };
-  pagination.appendChild(btn);
- }
-}
-
-/* ===== CARDS ===== */
-
-function renderCards(list){
-
- cards.innerHTML=list.map(v=>`
-
- <div class="card">
-
- ${v.isNew?`<div class="ribbon">NEW</div>`:""}
-
- <img class="thumb" src="${v.cloudImage}"
- onclick="window.open('${v.url}','_blank')">
-
- <div class="info">
-
-   <div class="title">${v.name}</div>
-   <div class="vendor">${v.vendor||""}</div>
-
-   <div class="tags">
-   ${v.tags.map(t=>
-    `<span class="tag" onclick="toggleFilter('${t}')">${t}</span>`
-   ).join("")}
-   </div>
-
- </div>
-
- ${v.cloudAudio?`
-
- <audio src="${v.cloudAudio}"></audio>
-
- <button class="audio-btn">
-
-  <svg class="audio-progress">
-   <circle cx="22" cy="22" r="22"></circle>
-  </svg>
-
-  <svg class="audio-icon" viewBox="0 0 24 24">
-   <path d="M3 9v6h4l5 5V4L7 9z"/>
-  </svg>
-
- </button>
-
- `:""}
-
- </div>
-
- `).join("");
-
- setupAudio();
-}
-
-/* ===== AUDIO ===== */
-
-function setupAudio(){
-
- document.querySelectorAll(".audio-btn").forEach(btn=>{
-
-  const audio=btn.previousElementSibling;
-  const icon=btn.querySelector("path");
-  const circle=btn.querySelector("circle");
-  const length=138;
-
-  btn.onclick=()=>{
-
-   document.querySelectorAll("audio").forEach(a=>{
-    if(a!==audio){ a.pause(); a.currentTime=0; }
-   });
-
-   document.querySelectorAll(".audio-icon path").forEach(i=>{
-    i.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-   });
-
-   if(audio.paused){
-    audio.play();
-    icon.setAttribute("d","M6 6h4v12H6zm8 0h4v12h-4z");
-   } else {
-    audio.pause();
-    audio.currentTime=0;
-    icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-   }
-
-   audio.ontimeupdate=()=>{
-    circle.style.strokeDashoffset=
-    length-(audio.currentTime/audio.duration)*length;
-   };
-
-   audio.onended=()=>{
-    icon.setAttribute("d","M3 9v6h4l5 5V4L7 9z");
-    circle.style.strokeDashoffset=length;
-   };
-
-  };
-
- });
-
-}
-
-searchInput.addEventListener("input",()=>{
- currentPage=1;
- update();
-});
-
-</script>
 
 </body>
 </html>

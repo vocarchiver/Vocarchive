@@ -1,0 +1,83 @@
+name: "🧩 Crear Personaje"
+description: "Formulario para agregar un nuevo personaje al índice de Vocarchive."
+title: "Nuevo personaje: <ID_del_personaje>"
+labels: ["character", "pending-validation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por contribuir al proyecto.  
+        Por favor completa todos los campos obligatorios.
+
+  - type: input
+    id: character_id
+    attributes:
+      label: "ID único del personaje"
+      description: "Ejemplo: hibiki_koto — Solo minúsculas, guiones bajos, sin espacios."
+      placeholder: "hibiki_koto"
+    validations:
+      required: true
+
+  - type: input
+    id: name_en
+    attributes:
+      label: "Nombre (Inglés)"
+      placeholder: "Hibiki Koto"
+    validations:
+      required: true
+
+  - type: input
+    id: name_jp
+    attributes:
+      label: "Nombre (Japonés)"
+      placeholder: "響コト"
+    validations:
+      required: false
+
+  - type: input
+    id: name_es
+    attributes:
+      label: "Nombre (Español)"
+      placeholder: "Hibiki Koto"
+    validations:
+      required: false
+
+  - type: input
+    id: official_link
+    attributes:
+      label: "Enlace oficial del personaje"
+      placeholder: "https://example.com"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descripción del personaje (opcional)"
+      placeholder: "Información general o notas del autor."
+    validations:
+      required: false
+
+  - type: textarea
+    id: tags
+    attributes:
+      label: "Etiquetas del personaje (opcional)"
+      placeholder: "female, japanese, mascot"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 📸 Subir imagen
+        Adjunta aquí la imagen principal del personaje (PNG/JPG).  
+        GitHub Actions la subirá automáticamente a Cloudflare Images.
+
+  - type: input
+    id: image_attachment_note
+    attributes:
+      label: "Importante"
+      description: "Por favor adjunta la imagen arrastrándola al comentario antes de enviar el formulario."
+      placeholder: "(Este campo no requiere texto)"
+    validations:
+      required: false

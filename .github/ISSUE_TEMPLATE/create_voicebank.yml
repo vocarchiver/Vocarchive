@@ -1,0 +1,141 @@
+name: "🎙️ Crear Voicebank"
+description: "Formulario para agregar un nuevo voicebank al índice Vocarchive."
+title: "Nuevo voicebank para <ID_del_personaje>"
+labels: ["voicebank", "pending-validation"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por contribuir al índice.  
+        Para mantener consistencia con el sistema, completa los siguientes campos.
+
+        ---  
+        ## 🧩 1. Selección del personaje  
+        Debajo verás una lista de personajes existentes y sus imágenes.
+
+  # -----------------------------------------------
+  # 🔽 SECCIÓN DINÁMICA GENERADA POR GITHUB ACTIONS
+  # Aquí el script insertará:
+  # - Lista de IDs existentes
+  # - Imágenes de personajes
+  # - Dropdown de selección
+  # -----------------------------------------------
+  - type: markdown
+    id: dynamic_character_preview
+    attributes:
+      value: |
+        <!-- AUTO-GENERATED: DO NOT EDIT -->
+        A continuación se mostrarán automáticamente:
+        - La lista completa de personajes
+        - Sus imágenes asociadas
+        - Sus IDs válidos
+        ---
+        {{CHARACTER_LIST_PREVIEW}}
+  
+  - type: dropdown
+    id: character_id
+    attributes:
+      label: "Selecciona el personaje asociado"
+      description: "Solo IDs existentes listados arriba."
+      options:
+        # AUTO-GENERATED
+        {{CHARACTER_ID_OPTIONS}}
+    validations:
+      required: true
+
+  # -----------------------------------------------
+  # 🔽 CAMPOS MANUALES DEL VOICEBANK
+  # -----------------------------------------------
+
+  - type: input
+    id: voicebank_id
+    attributes:
+      label: "ID único del voicebank"
+      description: "Ejemplo: hibiki_koto_ai_v1 — minúsculas y guiones bajos."
+      placeholder: "hibiki_koto_ai_v1"
+    validations:
+      required: true
+
+  - type: input
+    id: name
+    attributes:
+      label: "Nombre del voicebank"
+      placeholder: "Hibiki Koto AI V1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: engine
+    attributes:
+      label: "Motor de síntesis"
+      options:
+        - openutau
+        - utau
+        - synthv
+        - deepvocal
+        - cevio
+        - vocaloid
+        - voicepeak
+        - otros
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: "Versión del voicebank"
+      placeholder: "1.0"
+    validations:
+      required: false
+
+  - type: input
+    id: release_date
+    attributes:
+      label: "Fecha de lanzamiento"
+      placeholder: "YYYY-MM-DD"
+    validations:
+      required: true
+
+  - type: textarea
+    id: tags
+    attributes:
+      label: "Etiquetas del voicebank (opcional)"
+      placeholder: "Japanese, AI, Whisper"
+    validations:
+      required: false
+
+  - type: textarea
+    id: demos
+    attributes:
+      label: "Enlaces a demo de audio"
+      description: "Uno por línea."
+      placeholder: "https://demo1.mp3"
+    validations:
+      required: false
+
+  - type: input
+    id: download
+    attributes:
+      label: "Enlace de descarga del voicebank"
+      placeholder: "https://example.com/download"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 📸 2. Imagen opcional del voicebank  
+        Si el voicebank tiene una imagen distinta a la del personaje, adjúntala aquí.  
+        Si no, se usará automáticamente la del personaje.
+
+        Arrastra aquí la imagen → GitHub Actions la subirá a Cloudflare automáticamente.
+
+  - type: input
+    id: attach_image
+    attributes:
+      label: "Sube aquí la imagen (si aplica)"
+      description: "Arrastra la imagen al comentario antes de enviar."
+      placeholder: "(Campo opcional)"
+    validations:
+      required: false

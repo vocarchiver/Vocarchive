@@ -1,0 +1,139 @@
+name: "Procesar creación de voicebank"
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-voicebank:
+    if: startsWith(github.event.issue.title, 'Nuevo voicebank')
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          pip install pyyaml requests
+
+      - name: Analizar contenido del issue
+        id: parse
+        run: |
+          python3 << 'EOF'
+          import re, json, os
+
+          body = """${{ github.event.issue.body }}"""
+
+          def extract(field):
+              pattern = rf"{field}:\s*(.*)"
+              m = re.search(pattern, body)
+              return m.group(1).strip() if m else ""
+
+          data = {
+              "character_id": extract("character_id"),
+              "voicebank_id": extract("voicebank_id"),
+              "name": extract("name"),
+              "engine": extract("engine"),
+              "version": extract("version"),
+              "release_date": extract("release_date"),
+              "tags": extract("tags"),
+              "demos_raw": extract("demos"),
+              "download": extract("download"),
+          }
+
+          # Procesar demos
+          demos = [x.strip() for x in data["demos_raw"].split("\n") if x.strip()]
+          data["demos"] = demos
+
+          # Detectar attachments del issue
+          attachment_urls = re.findall(r"https://user-images\.githubusercontent\.com/[^\s)]+", body)
+          data["attachments"] = attachment_urls
+
+          with open("issue_data.json", "w") as f:
+              json.dump(data, f)
+
+          print("::set-output name=data::" + json.dumps(data))
+          EOF
+
+      - name: Subir imagen a Cloudflare (si existe)
+        id: upload
+        if: steps.parse.outputs.data != ''
+        run: |
+          python3 << 'EOF'
+          import json, requests, os
+
+          with open("issue_data.json") as f:
+              data = json.load(f)
+
+          attachments = data["attachments"]
+
+          if len(attachments) == 0:
+              print("No hay imagen adjunta, usar imagen del personaje.")
+              print("::set-output name=image_url::none")
+              raise SystemExit(0)
+
+          img_url = attachments[0]
+          print(f"Descargando imagen: {img_url}")
+
+          img_bytes = requests.get(img_url).content
+
+          # Enviar al Cloudflare Worker
+          WORKER_URL = "${{ secrets.CLOUDFLARE_WORKER_URL }}"
+          resp = requests.post(WORKER_URL, data=img_bytes)
+
+          if resp.status_code != 200:
+              raise SystemExit(f"Error al subir imagen: {resp.text}")
+
+          result = resp.json()
+          if not result.get("success"):
+              raise SystemExit(f"Cloudflare devolvió error: {result}")
+
+          final_url = result["url"]
+          print("Imagen subida:", final_url)
+          print(f"::set-output name=image_url::{final_url}")
+          EOF
+
+      - name: Generar YAML del voicebank
+        id: build_yaml
+        run: |
+          python3 << 'EOF'
+          import yaml, json, os
+
+          with open("issue_data.json") as f:
+              data = json.load(f)
+
+          image_url = "${{ steps.upload.outputs.image_url }}"
+
+          vb = {
+              "id": data["voicebank_id"],
+              "character": data["character_id"],
+              "name": data["name"],
+              "engine": data["engine"],
+              "version": data["version"] or None,
+              "release": data["release_date"],
+              "tags": data["tags"].split(",") if data["tags"] else [],
+              "samples": data["demos"],
+              "download": data["download"] or None,
+          }
+
+          if image_url and image_url != "none":
+              vb["image"] = image_url
+
+          path = f"voicebanks/{data['voicebank_id']}.yaml"
+
+          with open(path, "w", encoding="utf-8") as f:
+              yaml.dump(vb, f, allow_unicode=True)
+
+          print("YAML generado en:", path)
+          EOF
+
+      - name: Crear Pull Request automáticamente
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Agregar voicebank desde formulario"
+          title: "Nuevo voicebank: ${{ steps.parse.outputs.data.voicebank_id }}"
+          body: "Voicebank generado automáticamente desde Issue."
+          branch: "auto/add-voicebank-${{ github.event.issue.number }}"

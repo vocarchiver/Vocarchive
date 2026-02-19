@@ -1,0 +1,175 @@
+name: "Procesar creación de personaje"
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-character:
+    if: startsWith(github.event.issue.title, 'Nuevo personaje')
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install pyyaml requests
+
+      - name: Parse Issue
+        id: parse
+        run: |
+          python3 << 'EOF'
+          import re, json
+
+          body = """${{ github.event.issue.body }}"""
+
+          def extract(field):
+              pattern = rf"{field}.*?\n\n(.*?)\n"
+              m = re.search(pattern, body, re.DOTALL)
+              return m.group(1).strip() if m else ""
+
+          data = {
+              "character_id": extract("ID único del personaje"),
+              "name_en": extract("Nombre \\(Inglés\\)"),
+              "name_jp": extract("Nombre \\(Japonés\\)"),
+              "name_es": extract("Nombre \\(Español\\)"),
+              "official": extract("Enlace oficial"),
+              "tags": extract("Etiquetas del personaje"),
+              "existing_image": extract("Elige una imagen existente"),
+          }
+
+          # Detect attachments
+          attachments = re.findall(
+              r"https://user-images\.githubusercontent\.com/[^\s)]+",
+              body
+          )
+          data["attachments"] = attachments
+
+          with open("character_data.json", "w") as f:
+              json.dump(data, f)
+
+          print("Datos extraídos.")
+          EOF
+
+      - name: Subir imagen nueva a Cloudflare (si existe)
+        id: upload
+        run: |
+          python3 << 'EOF'
+          import json, requests, os
+
+          with open("character_data.json") as f:
+              data = json.load(f)
+
+          WORKER_URL = "${{ secrets.CLOUDFLARE_WORKER_URL }}"
+
+          final_url = None
+
+          # Si el usuario seleccionó imagen existente
+          if data["existing_image"] and data["existing_image"] != "No hay imágenes disponibles":
+              base = "https://pub-92a6942c0cae495fbe8ae746307c2af1.r2.dev/"
+              final_url = base + data["existing_image"]
+              print("Usando imagen existente:", final_url)
+
+          # Si adjuntó imagen nueva
+          elif data["attachments"]:
+              img_url = data["attachments"][0]
+              print("Descargando:", img_url)
+              img_bytes = requests.get(img_url).content
+
+              resp = requests.post(WORKER_URL, data=img_bytes)
+              result = resp.json()
+
+              if not result.get("success"):
+                  raise Exception(result)
+
+              final_url = result["url"]
+              print("Imagen subida:", final_url)
+
+          else:
+              raise Exception("No se proporcionó imagen.")
+
+          with open("image_result.txt", "w") as f:
+              f.write(final_url)
+          EOF
+
+      - name: Generar YAML del personaje
+        run: |
+          python3 << 'EOF'
+          import yaml, json, os, pathlib
+
+          with open("character_data.json") as f:
+              data = json.load(f)
+
+          with open("image_result.txt") as f:
+              image_url = f.read().strip()
+
+          char = {
+              "id": data["character_id"],
+              "name": {
+                  "en": data["name_en"],
+                  "jp": data["name_jp"] or None,
+                  "es": data["name_es"] or None,
+              },
+              "official": data["official"],
+              "avatar": image_url,
+              "tags": [t.strip() for t in data["tags"].split(",")] if data["tags"] else []
+          }
+
+          pathlib.Path("characters").mkdir(exist_ok=True)
+
+          yaml_path = f"characters/{data['character_id']}.yaml"
+
+          with open(yaml_path, "w", encoding="utf-8") as f:
+              yaml.dump(char, f, allow_unicode=True)
+
+          print("YAML creado:", yaml_path)
+          EOF
+
+      - name: Actualizar index.json
+        run: |
+          python3 << 'EOF'
+          import json, os
+
+          path = "characters/index.json"
+
+          try:
+              with open(path) as f:
+                  index = json.load(f)
+          except:
+              index = []
+
+          with open("character_data.json") as f:
+              data = json.load(f)
+
+          with open("image_result.txt") as f:
+              image_url = f.read().strip()
+
+          # Evitar duplicados
+          index = [c for c in index if c["id"] != data["character_id"]]
+
+          index.append({
+              "id": data["character_id"],
+              "name": data["name_en"],
+              "avatar": image_url
+          })
+
+          with open(path, "w") as f:
+              json.dump(index, f, indent=2)
+
+          print("index.json actualizado.")
+          EOF
+
+      - name: Crear Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Agregar personaje automáticamente"
+          title: "Nuevo personaje: ${{ github.event.issue.number }}"
+          body: "Personaje generado automáticamente desde formulario."
+          branch: "auto/add-character-${{ github.event.issue.number }}"
